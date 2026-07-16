@@ -36,13 +36,18 @@ td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: 
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: #F9F8F5; }
 .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
-.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-.d-PROJ  { background: #D8EDFC; }
-.d-LDG   { background: #9BBDE8; }
-.d-LDD   { background: #6490D4; }
-.d-ENR   { background: #4E67C8; }
-.d-INPRT { background: #354AA0; }
-.d-D     { background: #212745; }
+.nu-row { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 4px; border-bottom:1px solid var(--border); }
+.nu-row:last-child { border-bottom:none; }
+.nu-date { font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; flex-shrink:0; }
+.nu-tag { font-weight:400; color:var(--text-3); font-size:11px; }
+.nu-info { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; text-align:right; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 0 1.5px rgba(0,0,0,.12); }
+.d-PROJ  { background: #C5DCF4; }
+.d-LDG   { background: #BACFEE; }
+.d-LDD   { background: #82AADB; }
+.d-ENR   { background: #4476C4; }
+.d-INPRT { background: #1D4D9A; }
+.d-D     { background: #0E2855; }
 .route-pipeline { display: flex; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 16px; }
 .rp-step { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 64px; }
 .rp-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; margin-bottom: 4px; }
@@ -89,25 +94,35 @@ tr:hover td { background: #F9F8F5; }
   #ctn > div[style*="display:flex"] > * { width: 100% !important; flex-shrink: unset !important; }
   #next-up-card { order: -1; }
   #mini-matrix-card { display: none !important; }
-  .route-pipeline { flex-wrap: nowrap; gap: 0; padding: 8px 6px; }
+  .nu-date { font-size: 11px !important; }
+  .nu-slabel { display: none !important; }
+  .nu-days { display: none !important; }
+  .nu-info { font-size: 10px !important; }
+  /* Route pipeline — compact on mobile, icon + number only */
+  .route-pipeline { flex-wrap: nowrap; gap: 0; padding: 8px 4px; }
   .rp-step { flex: 1; min-width: 0; }
   .rp-line { display: none; }
-  .rp-icon { width: 20px; height: 20px; font-size: 10px; margin-bottom: 2px; }
-  .rp-name { font-size: 7px; }
-  .rp-val  { font-size: 10px; }
+  .rp-icon { width: 18px; height: 18px; font-size: 9px; margin-bottom: 2px; }
+  .rp-name { display: none; }
+  .rp-val  { font-size: 12px; font-weight: 700; }
   .tw { overflow-x: unset; }
   th { padding: 6px 8px; font-size: 9px; }
   td { padding: 5px 8px; font-size: 10px; }
-  #ctn table th:nth-child(3), #ctn table td:nth-child(3),
-  #ctn table th:nth-child(4), #ctn table td:nth-child(4),
-  #ctn table th:nth-child(5), #ctn table td:nth-child(5),
-  #ctn table th:nth-child(6), #ctn table td:nth-child(6),
-  #ctn table th:nth-child(7), #ctn table td:nth-child(7) { display: none; }
+  /* Keep: CTN#(1), Status(2), Delivery(9), Confirmed?(11), Unit Qty(12) */
+  #ctn table th:nth-child(3),  #ctn table td:nth-child(3),
+  #ctn table th:nth-child(4),  #ctn table td:nth-child(4),
+  #ctn table th:nth-child(5),  #ctn table td:nth-child(5),
+  #ctn table th:nth-child(6),  #ctn table td:nth-child(6),
+  #ctn table th:nth-child(7),  #ctn table td:nth-child(7),
+  #ctn table th:nth-child(8),  #ctn table td:nth-child(8),
+  #ctn table th:nth-child(10), #ctn table td:nth-child(10),
+  #ctn table th:nth-child(13), #ctn table td:nth-child(13) { display: none; }
   #bldg-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .form-grid { grid-template-columns: 1fr !important; }
 }
 </style>
 </head>
+<script src="config.js"></script>
 <body>
 <div class="shell">
 
@@ -189,14 +204,7 @@ tr:hover td { background: #F9F8F5; }
     <div class="rp-line"></div>
     <div class="rp-step"><div class="rp-icon" style="background:#E5F2EE;">&#128230;</div><div class="rp-name">Loading</div><div id="rp-LDG" class="rp-val"></div></div>
     <div class="rp-line"></div>
-    <div class="rp-step"><div class="rp-icon" style="background:#E5F2EE;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14" fill="none">
-  <rect x="1" y="2" width="16" height="10" rx="1" stroke="#3A6040" stroke-width="1.5" fill="none"/>
-  <line x1="1" y1="5.5" x2="17" y2="5.5" stroke="#3A6040" stroke-width="1"/>
-  <line x1="1" y1="8.5" x2="17" y2="8.5" stroke="#3A6040" stroke-width="1"/>
-  <line x1="5" y1="2" x2="5" y2="12" stroke="#3A6040" stroke-width="1"/>
-  <line x1="13" y1="2" x2="13" y2="12" stroke="#3A6040" stroke-width="1"/>
-  <line x1="7" y1="12" x2="11" y2="12" stroke="#3A6040" stroke-width="1.5"/>
-</svg></div><div class="rp-name">Loaded</div><div id="rp-LDD" class="rp-val"></div></div>
+    <div class="rp-step"><div class="rp-icon" style="background:#E5F2EE;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="12" viewBox="0 0 200 100" fill="none"><defs><clipPath id="ldd-side"><polygon points="42,28 186,18 186,72 42,82"/></clipPath><clipPath id="ldd-door"><polygon points="16,20 42,28 42,82 16,74"/></clipPath><clipPath id="ldd-top"><polygon points="16,10 160,2 186,18 42,28"/></clipPath></defs><polygon points="42,28 186,18 186,72 42,82" fill="#4A9FD8"/><g clip-path="url(#ldd-side)"><line x1="50" y1="0" x2="50" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="52" y1="0" x2="52" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="60" y1="0" x2="60" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="62" y1="0" x2="62" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="70" y1="0" x2="70" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="72" y1="0" x2="72" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="80" y1="0" x2="80" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="82" y1="0" x2="82" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="90" y1="0" x2="90" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="92" y1="0" x2="92" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="100" y1="0" x2="100" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="102" y1="0" x2="102" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="110" y1="0" x2="110" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="112" y1="0" x2="112" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="120" y1="0" x2="120" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="122" y1="0" x2="122" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="130" y1="0" x2="130" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="132" y1="0" x2="132" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="140" y1="0" x2="140" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="142" y1="0" x2="142" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="150" y1="0" x2="150" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="152" y1="0" x2="152" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="160" y1="0" x2="160" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="162" y1="0" x2="162" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="170" y1="0" x2="170" y2="100" stroke="#2878B0" stroke-width="2"/><line x1="172" y1="0" x2="172" y2="100" stroke="#72BBEA" stroke-width="1.2"/><line x1="180" y1="0" x2="180" y2="100" stroke="#2878B0" stroke-width="2"/></g><line x1="42" y1="30" x2="186" y2="20" stroke="#1A5A90" stroke-width="1.5"/><line x1="42" y1="80" x2="186" y2="70" stroke="#1A5A90" stroke-width="1.5"/><polygon points="16,10 160,2 186,18 42,28" fill="#82C8F0"/><g clip-path="url(#ldd-top)"><line x1="0" y1="6" x2="200" y2="6" stroke="#5AAADE" stroke-width="1.5"/><line x1="0" y1="8" x2="200" y2="8" stroke="#A8DCFC" stroke-width="0.8"/><line x1="0" y1="11" x2="200" y2="11" stroke="#5AAADE" stroke-width="1.5"/><line x1="0" y1="13" x2="200" y2="13" stroke="#A8DCFC" stroke-width="0.8"/><line x1="0" y1="16" x2="200" y2="16" stroke="#5AAADE" stroke-width="1.5"/><line x1="0" y1="18" x2="200" y2="18" stroke="#A8DCFC" stroke-width="0.8"/><line x1="0" y1="21" x2="200" y2="21" stroke="#5AAADE" stroke-width="1.5"/><line x1="0" y1="23" x2="200" y2="23" stroke="#A8DCFC" stroke-width="0.8"/><line x1="0" y1="26" x2="200" y2="26" stroke="#5AAADE" stroke-width="1.5"/></g><polygon points="16,20 42,28 42,82 16,74" fill="#3882BC"/><g clip-path="url(#ldd-door)"><line x1="29" y1="0" x2="29" y2="100" stroke="#1A5A90" stroke-width="1.2"/><rect x="21.5" y="28" width="2.5" height="44" rx="1.2" fill="#C8E4F8" stroke="#1A5A90" stroke-width="0.5"/><rect x="20" y="44" width="5" height="6" rx="1" fill="#A0C8E8"/><rect x="34.5" y="30" width="2.5" height="44" rx="1.2" fill="#C8E4F8" stroke="#1A5A90" stroke-width="0.5"/><rect x="33" y="46" width="5" height="6" rx="1" fill="#A0C8E8"/></g><polygon points="16,20 42,28 42,82 16,74" fill="none" stroke="#0E3E6A" stroke-width="1.5" stroke-linejoin="round"/><polygon points="42,28 186,18 186,72 42,82" fill="none" stroke="#0E3E6A" stroke-width="1.5" stroke-linejoin="round"/><polygon points="16,10 160,2 186,18 42,28" fill="none" stroke="#0E3E6A" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div class="rp-name">Loaded</div><div id="rp-LDD" class="rp-val"></div></div>
     <div class="rp-line"></div>
     <div class="rp-step"><div class="rp-icon" style="background:#E5F2EE;">&#128674;</div><div class="rp-name">Sea Freight</div><div id="rp-ENR" class="rp-val"></div></div>
     <div class="rp-line"></div>
@@ -212,9 +220,9 @@ tr:hover td { background: #F9F8F5; }
   <div class="tw">
     <table>
       <thead><tr>
-        <th>CTN #</th><th>Status</th><th>Load Wk</th><th>Load Date</th>
+        <th>CTN #</th><th>Status</th><th>Ctnr Code</th><th>Load Wk</th><th>Load Date</th>
         <th>Ship Date</th><th>Vessel</th><th>Port Arrival</th>
-        <th>Delivery</th><th>Confirmed?</th><th>Unit Qty</th><th>Units</th>
+        <th>Delivery</th><th>Del. Time</th><th>Confirmed?</th><th>Unit Qty</th><th>Units</th>
       </tr></thead>
       <tbody id="ctn-tbody"></tbody>
     </table>
@@ -247,99 +255,92 @@ tr:hover td { background: #F9F8F5; }
 <!-- ===== DAMAGE / OPEN ITEMS ===== -->
 <div id="dmg" class="panel">
   <div class="form-card">
-    <div style="font-size:13px;font-weight:700;margin-bottom:14px;">Log New Damage / Open Item</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Log a damage or open item</div>
+    <p class="form-sub" style="font-size:11px;color:var(--text-3);margin-bottom:14px;">Fill in each field and click <strong>+ Add to report</strong>. Repeat for each item. When done, click <strong>Send Report</strong> — this emails you the list and saves a CSV to your device. Items are cleared when you close the tab.</p>
     <div class="form-grid">
       <div class="form-group">
-        <label>Unit Number</label>
+        <label>1. Unit Number</label>
         <select id="dmg-unit"></select>
       </div>
       <div class="form-group">
-        <label>Date</label>
-        <input type="date" id="dmg-date">
+        <label>2. Item Code</label>
+        <input type="text" id="dmg-code" placeholder="e.g. 2PFCF000377 or 77">
       </div>
       <div class="form-group">
-        <label>Code</label>
-        <select id="dmg-code">
-          <option value="">— Select code —</option>
-          <option>D1 – Scratch</option><option>D2 – Dent</option>
-          <option>D3 – Chip</option><option>D4 – Broken</option>
-          <option>D5 – Missing</option><option>D6 – Wrong item</option>
-          <option>D7 – Other</option>
-        </select>
+        <label>3. Item Description</label>
+        <input type="text" id="dmg-itemdesc" placeholder='e.g. Wall Unit W31" or Sink Base W31 1/2"'>
       </div>
       <div class="form-group">
-        <label>Component</label>
-        <select id="dmg-component">
-          <option value="">— Select —</option>
-          <option>Kitchen</option><option>Door</option><option>Drawer</option>
-          <option>Panel</option><option>Hardware</option><option>Countertop</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="form-group full">
-        <label>Issue Description</label>
-        <textarea id="dmg-issue" placeholder="Describe the damage or open item…"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Photo Link</label>
-        <input type="url" id="dmg-photo" placeholder="https://…">
-      </div>
-      <div class="form-group">
-        <label>Status</label>
-        <select id="dmg-status">
-          <option>Open</option><option>In Progress</option><option>Resolved</option>
+        <label>4. Issue Type</label>
+        <select id="dmg-issuetype">
+          <option value="">&#8212; Select type &#8212;</option>
+          <option value="LMI">LMI &#8211; Lost / Missing Item</option>
+          <option value="DB">DB &#8211; Door Broken</option>
+          <option value="CB">CB &#8211; Carcass Broken</option>
+          <option value="FCB">FCB &#8211; Full Cabinet Broken</option>
+          <option value="HHI">HHI &#8211; Hardware / Hinge Issue</option>
+          <option value="WID">WID &#8211; Wrong Item Delivered</option>
+          <option value="NIR">NIR &#8211; New Item Request</option>
         </select>
       </div>
       <div class="form-group full">
-        <label>Action / Notes</label>
-        <textarea id="dmg-notes" placeholder="Next step or resolution notes…"></textarea>
+        <label>5. Issue Description</label>
+        <textarea id="dmg-issue" placeholder="Describe what was found &#8212; damage type, location, severity&#8230;"></textarea>
       </div>
     </div>
-    <button class="btn-submit" onclick="submitDmg()">Log Item</button>
+    <button class="btn-submit" onclick="addToReport111w()">+ Add to report</button>
+    <span class="form-msg" id="dmg-msg" style="display:none;margin-left:10px;font-size:11px;"></span>
   </div>
   <div style="margin-top:20px;">
-    <div style="font-size:12px;font-weight:700;margin-bottom:8px;">Open Items</div>
-    <div class="tw"><table><thead><tr><th>Unit</th><th>Date</th><th>Code</th><th>Component</th><th>Issue</th><th>Photo</th><th>Notes</th><th>Status</th><th>Action</th></tr></thead><tbody id="dmg-open"></tbody></table></div>
-    <div style="font-size:12px;font-weight:700;margin-bottom:8px;margin-top:16px;">Resolved Items</div>
-    <div class="tw"><table><thead><tr><th>Unit</th><th>Date</th><th>Code</th><th>Component</th><th>Issue</th><th>Photo</th><th>Notes</th><th>Status</th><th>Action</th></tr></thead><tbody id="dmg-resolved"></tbody></table></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <span style="font-size:11px;color:var(--text-3);" id="dmg-111w-count">0 items in this report</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-submit" id="btn-clear-111w" style="display:none;background:var(--surface);color:var(--text);border:1px solid var(--border);font-size:11px;padding:5px 12px;" onclick="clearAll111w()">Clear all</button>
+        <button class="btn-submit" id="btn-send-111w" style="display:none;font-size:11px;padding:5px 12px;" onclick="sendReport111w()">&#9993; Send Report</button>
+      </div>
+    </div>
+    <div id="dmg-111w-table" style="display:none;">
+      <div class="tw"><table><thead><tr><th>Unit</th><th>Code</th><th>Item</th><th>Type</th><th>Issue</th><th></th></tr></thead><tbody id="dmg-session-tbody"></tbody></table></div>
+    </div>
+    <div id="dmg-111w-empty" style="text-align:center;padding:32px;color:var(--text-3);font-size:12px;">No items yet. Use the form above to log a damage or open item.</div>
   </div>
 </div>
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Jul 14, 2026 10:11 AM)
+// DATA_START (auto-generated Jul 16, 2026 10:40 AM)
 const CONTAINERS = [
-  { num:1, status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3" },
-  { num:2, status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3" },
-  { num:3, status:"PROJ", week:"Wk 32", units:"343:349,352:354,356:358,401:407", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3,4" },
-  { num:4, status:"PROJ", week:"Wk 37", units:"408:425", unitQty:18, vessel:"--", loadDate:"Sep 10, 2026", shipDate:"Sep 15, 2026", portArrival:"Oct 5, 2026", delivery:"Oct 10, 2026", confirmed:false, floors:"4" },
-  { num:5, status:"PROJ", week:"Wk 37", units:"426:443", unitQty:18, vessel:"--", loadDate:"Sep 10, 2026", shipDate:"Sep 15, 2026", portArrival:"Oct 5, 2026", delivery:"Oct 10, 2026", confirmed:false, floors:"4" },
-  { num:6, status:"PROJ", week:"Wk 38", units:"444:449,452:458,501:503", unitQty:16, vessel:"--", loadDate:"Sep 17, 2026", shipDate:"Sep 22, 2026", portArrival:"Oct 12, 2026", delivery:"Oct 17, 2026", confirmed:false, floors:"4,5" },
-  { num:7, status:"PROJ", week:"Wk 38", units:"504:521", unitQty:18, vessel:"--", loadDate:"Sep 17, 2026", shipDate:"Sep 22, 2026", portArrival:"Oct 12, 2026", delivery:"Oct 17, 2026", confirmed:false, floors:"5" },
-  { num:8, status:"PROJ", week:"Wk 39", units:"522:539", unitQty:18, vessel:"--", loadDate:"Sep 24, 2026", shipDate:"Sep 29, 2026", portArrival:"Oct 19, 2026", delivery:"Oct 24, 2026", confirmed:false, floors:"5" },
-  { num:9, status:"PROJ", week:"Wk 39", units:"540:549,552:557", unitQty:16, vessel:"--", loadDate:"Sep 24, 2026", shipDate:"Sep 29, 2026", portArrival:"Oct 19, 2026", delivery:"Oct 24, 2026", confirmed:false, floors:"5" },
-  { num:10, status:"PROJ", week:"Wk 40", units:"558,601:617", unitQty:18, vessel:"--", loadDate:"Oct 1, 2026", shipDate:"Oct 6, 2026", portArrival:"Oct 26, 2026", delivery:"Oct 31, 2026", confirmed:false, floors:"5,6" },
-  { num:11, status:"PROJ", week:"Wk 40", units:"618:635", unitQty:18, vessel:"--", loadDate:"Oct 1, 2026", shipDate:"Oct 6, 2026", portArrival:"Oct 26, 2026", delivery:"Oct 31, 2026", confirmed:false, floors:"6" },
-  { num:12, status:"PROJ", week:"Wk 41", units:"636:649,652:653", unitQty:16, vessel:"--", loadDate:"Oct 8, 2026", shipDate:"Oct 13, 2026", portArrival:"Nov 2, 2026", delivery:"Nov 7, 2026", confirmed:false, floors:"6" },
-  { num:13, status:"PROJ", week:"Wk 41", units:"654:658,701:713", unitQty:18, vessel:"--", loadDate:"Oct 8, 2026", shipDate:"Oct 13, 2026", portArrival:"Nov 2, 2026", delivery:"Nov 7, 2026", confirmed:false, floors:"6,7" },
-  { num:14, status:"PROJ", week:"Wk 42", units:"714:731", unitQty:18, vessel:"--", loadDate:"Oct 15, 2026", shipDate:"Oct 20, 2026", portArrival:"Nov 9, 2026", delivery:"Nov 14, 2026", confirmed:false, floors:"7" },
-  { num:15, status:"PROJ", week:"Wk 42", units:"732:749", unitQty:18, vessel:"--", loadDate:"Oct 15, 2026", shipDate:"Oct 20, 2026", portArrival:"Nov 9, 2026", delivery:"Nov 14, 2026", confirmed:false, floors:"7" },
-  { num:16, status:"PROJ", week:"Wk 43", units:"752:758,801:809", unitQty:16, vessel:"--", loadDate:"Oct 22, 2026", shipDate:"Oct 27, 2026", portArrival:"Nov 16, 2026", delivery:"Nov 21, 2026", confirmed:false, floors:"7,8" },
-  { num:17, status:"PROJ", week:"Wk 44", units:"810:827", unitQty:18, vessel:"--", loadDate:"Oct 29, 2026", shipDate:"Nov 3, 2026", portArrival:"Nov 23, 2026", delivery:"Nov 28, 2026", confirmed:false, floors:"8" },
-  { num:18, status:"PROJ", week:"Wk 44", units:"828:845", unitQty:18, vessel:"--", loadDate:"Oct 29, 2026", shipDate:"Nov 3, 2026", portArrival:"Nov 23, 2026", delivery:"Nov 28, 2026", confirmed:false, floors:"8" },
-  { num:19, status:"PROJ", week:"Wk 45", units:"846:849,852:858,901:905", unitQty:16, vessel:"--", loadDate:"Nov 5, 2026", shipDate:"Nov 10, 2026", portArrival:"Nov 30, 2026", delivery:"Dec 5, 2026", confirmed:false, floors:"8,9" },
-  { num:20, status:"PROJ", week:"Wk 46", units:"906:923", unitQty:18, vessel:"--", loadDate:"Nov 12, 2026", shipDate:"Nov 17, 2026", portArrival:"Dec 7, 2026", delivery:"Dec 12, 2026", confirmed:false, floors:"9" },
-  { num:21, status:"PROJ", week:"Wk 46", units:"924:941", unitQty:18, vessel:"--", loadDate:"Nov 12, 2026", shipDate:"Nov 17, 2026", portArrival:"Dec 7, 2026", delivery:"Dec 12, 2026", confirmed:false, floors:"9" },
-  { num:22, status:"PROJ", week:"Wk 47", units:"942:949,952:958,1001", unitQty:16, vessel:"--", loadDate:"Nov 19, 2026", shipDate:"Nov 24, 2026", portArrival:"Dec 14, 2026", delivery:"Dec 19, 2026", confirmed:false, floors:"9,10" },
-  { num:23, status:"PROJ", week:"Wk 47", units:"1002:1019", unitQty:18, vessel:"--", loadDate:"Nov 19, 2026", shipDate:"Nov 24, 2026", portArrival:"Dec 14, 2026", delivery:"Dec 19, 2026", confirmed:false, floors:"10" },
-  { num:24, status:"PROJ", week:"Wk 48", units:"1020:1037", unitQty:18, vessel:"--", loadDate:"Nov 26, 2026", shipDate:"Dec 1, 2026", portArrival:"Dec 21, 2026", delivery:"Dec 26, 2026", confirmed:false, floors:"10" },
-  { num:25, status:"PROJ", week:"Wk 48", units:"1038:1049,1052:1055", unitQty:16, vessel:"--", loadDate:"Nov 26, 2026", shipDate:"Dec 1, 2026", portArrival:"Dec 21, 2026", delivery:"Dec 26, 2026", confirmed:false, floors:"10" },
-  { num:26, status:"PROJ", week:"Wk 49", units:"1056:1058,1101:1115", unitQty:18, vessel:"--", loadDate:"Dec 3, 2026", shipDate:"Dec 8, 2026", portArrival:"Dec 28, 2026", delivery:"Jan 2, 2027", confirmed:false, floors:"10,11" },
-  { num:27, status:"PROJ", week:"Wk 49", units:"1116:1133", unitQty:18, vessel:"--", loadDate:"Dec 3, 2026", shipDate:"Dec 8, 2026", portArrival:"Dec 28, 2026", delivery:"Jan 2, 2027", confirmed:false, floors:"11" },
-  { num:28, status:"PROJ", week:"Wk 50", units:"1134:1149", unitQty:16, vessel:"--", loadDate:"Dec 10, 2026", shipDate:"Dec 15, 2026", portArrival:"Jan 4, 2027", delivery:"Jan 9, 2027", confirmed:false, floors:"11" },
-  { num:29, status:"PROJ", week:"Wk 50", units:"1152:1158,1201:1211", unitQty:18, vessel:"--", loadDate:"Dec 10, 2026", shipDate:"Dec 15, 2026", portArrival:"Jan 4, 2027", delivery:"Jan 9, 2027", confirmed:false, floors:"11,12" },
-  { num:30, status:"PROJ", week:"Wk 51", units:"1212:1229", unitQty:18, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", confirmed:false, floors:"12" },
-  { num:31, status:"PROJ", week:"Wk 51", units:"1230:1247", unitQty:18, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", confirmed:false, floors:"12" },
+  { num:1, status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3", code:"\u2014", delivTime:"\u2014" },
+  { num:2, status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3", code:"\u2014", delivTime:"\u2014" },
+  { num:3, status:"PROJ", week:"Wk 32", units:"343:349,352:354,356:358,401:407", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3,4", code:"\u2014", delivTime:"\u2014" },
+  { num:4, status:"PROJ", week:"Wk 37", units:"408:425", unitQty:18, vessel:"--", loadDate:"Sep 10, 2026", shipDate:"Sep 15, 2026", portArrival:"Oct 5, 2026", delivery:"Oct 10, 2026", confirmed:false, floors:"4", code:"\u2014", delivTime:"\u2014" },
+  { num:5, status:"PROJ", week:"Wk 37", units:"426:443", unitQty:18, vessel:"--", loadDate:"Sep 10, 2026", shipDate:"Sep 15, 2026", portArrival:"Oct 5, 2026", delivery:"Oct 10, 2026", confirmed:false, floors:"4", code:"\u2014", delivTime:"\u2014" },
+  { num:6, status:"PROJ", week:"Wk 38", units:"444:449,452:458,501:503", unitQty:16, vessel:"--", loadDate:"Sep 17, 2026", shipDate:"Sep 22, 2026", portArrival:"Oct 12, 2026", delivery:"Oct 17, 2026", confirmed:false, floors:"4,5", code:"\u2014", delivTime:"\u2014" },
+  { num:7, status:"PROJ", week:"Wk 38", units:"504:521", unitQty:18, vessel:"--", loadDate:"Sep 17, 2026", shipDate:"Sep 22, 2026", portArrival:"Oct 12, 2026", delivery:"Oct 17, 2026", confirmed:false, floors:"5", code:"\u2014", delivTime:"\u2014" },
+  { num:8, status:"PROJ", week:"Wk 39", units:"522:539", unitQty:18, vessel:"--", loadDate:"Sep 24, 2026", shipDate:"Sep 29, 2026", portArrival:"Oct 19, 2026", delivery:"Oct 24, 2026", confirmed:false, floors:"5", code:"\u2014", delivTime:"\u2014" },
+  { num:9, status:"PROJ", week:"Wk 39", units:"540:549,552:557", unitQty:16, vessel:"--", loadDate:"Sep 24, 2026", shipDate:"Sep 29, 2026", portArrival:"Oct 19, 2026", delivery:"Oct 24, 2026", confirmed:false, floors:"5", code:"\u2014", delivTime:"\u2014" },
+  { num:10, status:"PROJ", week:"Wk 40", units:"558,601:617", unitQty:18, vessel:"--", loadDate:"Oct 1, 2026", shipDate:"Oct 6, 2026", portArrival:"Oct 26, 2026", delivery:"Oct 31, 2026", confirmed:false, floors:"5,6", code:"\u2014", delivTime:"\u2014" },
+  { num:11, status:"PROJ", week:"Wk 40", units:"618:635", unitQty:18, vessel:"--", loadDate:"Oct 1, 2026", shipDate:"Oct 6, 2026", portArrival:"Oct 26, 2026", delivery:"Oct 31, 2026", confirmed:false, floors:"6", code:"\u2014", delivTime:"\u2014" },
+  { num:12, status:"PROJ", week:"Wk 41", units:"636:649,652:653", unitQty:16, vessel:"--", loadDate:"Oct 8, 2026", shipDate:"Oct 13, 2026", portArrival:"Nov 2, 2026", delivery:"Nov 7, 2026", confirmed:false, floors:"6", code:"\u2014", delivTime:"\u2014" },
+  { num:13, status:"PROJ", week:"Wk 41", units:"654:658,701:713", unitQty:18, vessel:"--", loadDate:"Oct 8, 2026", shipDate:"Oct 13, 2026", portArrival:"Nov 2, 2026", delivery:"Nov 7, 2026", confirmed:false, floors:"6,7", code:"\u2014", delivTime:"\u2014" },
+  { num:14, status:"PROJ", week:"Wk 42", units:"714:731", unitQty:18, vessel:"--", loadDate:"Oct 15, 2026", shipDate:"Oct 20, 2026", portArrival:"Nov 9, 2026", delivery:"Nov 14, 2026", confirmed:false, floors:"7", code:"\u2014", delivTime:"\u2014" },
+  { num:15, status:"PROJ", week:"Wk 42", units:"732:749", unitQty:18, vessel:"--", loadDate:"Oct 15, 2026", shipDate:"Oct 20, 2026", portArrival:"Nov 9, 2026", delivery:"Nov 14, 2026", confirmed:false, floors:"7", code:"\u2014", delivTime:"\u2014" },
+  { num:16, status:"PROJ", week:"Wk 43", units:"752:758,801:809", unitQty:16, vessel:"--", loadDate:"Oct 22, 2026", shipDate:"Oct 27, 2026", portArrival:"Nov 16, 2026", delivery:"Nov 21, 2026", confirmed:false, floors:"7,8", code:"\u2014", delivTime:"\u2014" },
+  { num:17, status:"PROJ", week:"Wk 44", units:"810:827", unitQty:18, vessel:"--", loadDate:"Oct 29, 2026", shipDate:"Nov 3, 2026", portArrival:"Nov 23, 2026", delivery:"Nov 28, 2026", confirmed:false, floors:"8", code:"\u2014", delivTime:"\u2014" },
+  { num:18, status:"PROJ", week:"Wk 44", units:"828:845", unitQty:18, vessel:"--", loadDate:"Oct 29, 2026", shipDate:"Nov 3, 2026", portArrival:"Nov 23, 2026", delivery:"Nov 28, 2026", confirmed:false, floors:"8", code:"\u2014", delivTime:"\u2014" },
+  { num:19, status:"PROJ", week:"Wk 45", units:"846:849,852:858,901:905", unitQty:16, vessel:"--", loadDate:"Nov 5, 2026", shipDate:"Nov 10, 2026", portArrival:"Nov 30, 2026", delivery:"Dec 5, 2026", confirmed:false, floors:"8,9", code:"\u2014", delivTime:"\u2014" },
+  { num:20, status:"PROJ", week:"Wk 46", units:"906:923", unitQty:18, vessel:"--", loadDate:"Nov 12, 2026", shipDate:"Nov 17, 2026", portArrival:"Dec 7, 2026", delivery:"Dec 12, 2026", confirmed:false, floors:"9", code:"\u2014", delivTime:"\u2014" },
+  { num:21, status:"PROJ", week:"Wk 46", units:"924:941", unitQty:18, vessel:"--", loadDate:"Nov 12, 2026", shipDate:"Nov 17, 2026", portArrival:"Dec 7, 2026", delivery:"Dec 12, 2026", confirmed:false, floors:"9", code:"\u2014", delivTime:"\u2014" },
+  { num:22, status:"PROJ", week:"Wk 47", units:"942:949,952:958,1001", unitQty:16, vessel:"--", loadDate:"Nov 19, 2026", shipDate:"Nov 24, 2026", portArrival:"Dec 14, 2026", delivery:"Dec 19, 2026", confirmed:false, floors:"9,10", code:"\u2014", delivTime:"\u2014" },
+  { num:23, status:"PROJ", week:"Wk 47", units:"1002:1019", unitQty:18, vessel:"--", loadDate:"Nov 19, 2026", shipDate:"Nov 24, 2026", portArrival:"Dec 14, 2026", delivery:"Dec 19, 2026", confirmed:false, floors:"10", code:"\u2014", delivTime:"\u2014" },
+  { num:24, status:"PROJ", week:"Wk 48", units:"1020:1037", unitQty:18, vessel:"--", loadDate:"Nov 26, 2026", shipDate:"Dec 1, 2026", portArrival:"Dec 21, 2026", delivery:"Dec 26, 2026", confirmed:false, floors:"10", code:"\u2014", delivTime:"\u2014" },
+  { num:25, status:"PROJ", week:"Wk 48", units:"1038:1049,1052:1055", unitQty:16, vessel:"--", loadDate:"Nov 26, 2026", shipDate:"Dec 1, 2026", portArrival:"Dec 21, 2026", delivery:"Dec 26, 2026", confirmed:false, floors:"10", code:"\u2014", delivTime:"\u2014" },
+  { num:26, status:"PROJ", week:"Wk 49", units:"1056:1058,1101:1115", unitQty:18, vessel:"--", loadDate:"Dec 3, 2026", shipDate:"Dec 8, 2026", portArrival:"Dec 28, 2026", delivery:"Jan 2, 2027", confirmed:false, floors:"10,11", code:"\u2014", delivTime:"\u2014" },
+  { num:27, status:"PROJ", week:"Wk 49", units:"1116:1133", unitQty:18, vessel:"--", loadDate:"Dec 3, 2026", shipDate:"Dec 8, 2026", portArrival:"Dec 28, 2026", delivery:"Jan 2, 2027", confirmed:false, floors:"11", code:"\u2014", delivTime:"\u2014" },
+  { num:28, status:"PROJ", week:"Wk 50", units:"1134:1149", unitQty:16, vessel:"--", loadDate:"Dec 10, 2026", shipDate:"Dec 15, 2026", portArrival:"Jan 4, 2027", delivery:"Jan 9, 2027", confirmed:false, floors:"11", code:"\u2014", delivTime:"\u2014" },
+  { num:29, status:"PROJ", week:"Wk 50", units:"1152:1158,1201:1211", unitQty:18, vessel:"--", loadDate:"Dec 10, 2026", shipDate:"Dec 15, 2026", portArrival:"Jan 4, 2027", delivery:"Jan 9, 2027", confirmed:false, floors:"11,12", code:"\u2014", delivTime:"\u2014" },
+  { num:30, status:"PROJ", week:"Wk 51", units:"1212:1229", unitQty:18, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", confirmed:false, floors:"12", code:"\u2014", delivTime:"\u2014" },
+  { num:31, status:"PROJ", week:"Wk 51", units:"1230:1247", unitQty:18, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", confirmed:false, floors:"12", code:"\u2014", delivTime:"\u2014" },
 ];
 
 const UNIT_STATUS = {
@@ -352,7 +353,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"29.714285714285715" },
 ];
 
-const LAST_UPDATED = "Jul 14, 2026 10:11 AM";
+const LAST_UPDATED = "Jul 16, 2026 10:40 AM";
 
 const BUILDING_MATRIX = [
   { floor:29, units:[{uid:"2901",ktype:"--",status:"--"}, {uid:"2902",ktype:"--",status:"--"}, {uid:"2903",ktype:"--",status:"--"}, {uid:"2904",ktype:"--",status:"--"}, {uid:"2905",ktype:"--",status:"--"}, {uid:"2906",ktype:"--",status:"--"}, {uid:"2907",ktype:"--",status:"--"}, {uid:"2908",ktype:"--",status:"--"}, {uid:"2909",ktype:"--",status:"--"}, {uid:"2910",ktype:"--",status:"--"}, {uid:"2911",ktype:"--",status:"--"}, {uid:"2912",ktype:"--",status:"--"}, {uid:"2913",ktype:"--",status:"--"}, {uid:"2914",ktype:"--",status:"--"}, {uid:"2915",ktype:"--",status:"--"}, {uid:"2916",ktype:"--",status:"--"}, {uid:"2917",ktype:"--",status:"--"}, {uid:"2918",ktype:"--",status:"--"}, {uid:"2919",ktype:"--",status:"--"}, {uid:"2920",ktype:"--",status:"--"}, {uid:"2921",ktype:"--",status:"--"}, {uid:"2922",ktype:"--",status:"--"}, {uid:"2923",ktype:"--",status:"--"}, {uid:"2924",ktype:"--",status:"--"}, {uid:"2925",ktype:"--",status:"--"}, {uid:"2926",ktype:"--",status:"--"}, {uid:"2927",ktype:"--",status:"--"}, {uid:"2928",ktype:"--",status:"--"}, {uid:"2929",ktype:"--",status:"--"}, {uid:"2930",ktype:"--",status:"--"}, {uid:"2931",ktype:"--",status:"--"}, {uid:"2932",ktype:"--",status:"--"}, {uid:"2933",ktype:"--",status:"--"}, {uid:"2934",ktype:"--",status:"--"}, {uid:"2935",ktype:"--",status:"--"}, {uid:"2936",ktype:"--",status:"--"}, {uid:"2937",ktype:"--",status:"--"}, {uid:"2938",ktype:"--",status:"--"}, {uid:"2939",ktype:"--",status:"--"}, {uid:"2940",ktype:"--",status:"--"}, {uid:"2941",ktype:"--",status:"--"}, {uid:"2942",ktype:"--",status:"--"}, {uid:"2943",ktype:"--",status:"--"}, {uid:"2944",ktype:"--",status:"--"}, {uid:"2945",ktype:"--",status:"--"}, {uid:"2946",ktype:"--",status:"--"}, {uid:"2947",ktype:"--",status:"--"}, {uid:"2948",ktype:"--",status:"--"}, {uid:"2949",ktype:"--",status:"--"}, {uid:"2950",ktype:"--",status:"--"}, {uid:"2951",ktype:"--",status:"--"}, {uid:"2952",ktype:"--",status:"--"}, {uid:"2953",ktype:"--",status:"--"}, {uid:"2954",ktype:"--",status:"--"}, {uid:"2955",ktype:"--",status:"--"}, {uid:"2956",ktype:"--",status:"--"}, {uid:"2957",ktype:"--",status:"--"}, {uid:"2958",ktype:"--",status:"--"}] },
@@ -385,8 +386,8 @@ const BUILDING_MATRIX = [
 ];
 // DATA_END
 
-const SCOLOR = { PROJ:'#D8EDFC', LDG:'#9BBDE8', LDD:'#6490D4', ENR:'#4E67C8', INPRT:'#354AA0', D:'#212745' };
-const STXT   = { PROJ:'#1A2A5E', LDG:'#1A2A5E', LDD:'#fff',    ENR:'#fff',    INPRT:'#fff',    D:'#fff'    };
+const SCOLOR = { PROJ:'#C5DCF4', LDG:'#BACFEE', LDD:'#82AADB', ENR:'#4476C4', INPRT:'#1D4D9A', D:'#0E2855' };
+const STXT   = { PROJ:'#0D2A6B', LDG:'#0D2A6B', LDD:'#0D2A6B', ENR:'#fff',    INPRT:'#fff',    D:'#fff'    };
 const ABBR   = { PROJ:'PROJ', LDG:'LDG', LDD:'LDD', ENR:'ENR', INPRT:'INPRT', D:'D' };
 const STATUS_ORDER = ['D','INPRT','ENR','LDD','LDG','PROJ'];
 const STATUS_LABEL = { PROJ:'Projected', LDG:'Loading', LDD:'Loaded', ENR:'En Route', INPRT:'In Port', D:'Delivered' };
@@ -436,20 +437,25 @@ function initDatePill() {
 }
 
 function renderDonut() {
-  const counts = {};
-  for (const s of STATUS_ORDER) counts[s] = 0;
-  for (const c of CONTAINERS) if (counts[c.status] !== undefined) counts[c.status]++;
+  // Grouped counts — for donut chart
+  const GROUP_MAP    = { D:'Delivered', INPRT:'Arrived', ENR:'EnRoute', LDD:'EnRoute', LDG:'EnRoute', PROJ:'Projected' };
+  const GROUP_ORDER  = ['Delivered','Arrived','EnRoute','Projected'];
+  const GROUP_COLORS = { Delivered:'#0E2855', Arrived:'#4476C4', EnRoute:'#82AADB', Projected:'#C5DCF4' };
+  const GROUP_LABELS = { Delivered:'Delivered', Arrived:'In Port', EnRoute:'En Route', Projected:'Projected' };
+  const gCounts = { Delivered:0, Arrived:0, EnRoute:0, Projected:0 };
+  for (const c of CONTAINERS) { const g = GROUP_MAP[c.status]||'Projected'; gCounts[g]++; }
+
   const canvas = document.getElementById('status-chart');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const total = CONTAINERS.length, cx=80, cy=80, r=65, inner=42;
   let angle = -Math.PI/2;
   ctx.clearRect(0,0,160,160);
-  for (const s of STATUS_ORDER) {
-    if (!counts[s]) continue;
-    const slice = (counts[s]/total)*Math.PI*2;
+  for (const g of GROUP_ORDER) {
+    if (!gCounts[g]) continue;
+    const slice = (gCounts[g]/total)*Math.PI*2;
     ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,angle,angle+slice);
-    ctx.closePath(); ctx.fillStyle=SCOLOR[s]; ctx.fill();
+    ctx.closePath(); ctx.fillStyle=GROUP_COLORS[g]; ctx.fill();
     angle += slice;
   }
   ctx.beginPath(); ctx.arc(cx,cy,inner,0,Math.PI*2);
@@ -460,13 +466,13 @@ function renderDonut() {
   ctx.fillText('containers', cx, cy+10);
   const leg = document.getElementById('donut-legend');
   if (!leg) return;
-  leg.innerHTML = STATUS_ORDER.filter(s=>counts[s]).map(s =>
+  leg.innerHTML = GROUP_ORDER.filter(g=>gCounts[g]).map(g =>
     `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
       <div style="display:flex;align-items:center;gap:5px;">
-        <span style="width:8px;height:8px;border-radius:50%;background:${SCOLOR[s]};flex-shrink:0;display:inline-block;"></span>
-        <span style="font-size:10px;color:var(--text-2);">${STATUS_LABEL[s]}</span>
+        <span style="width:8px;height:8px;border-radius:50%;background:${GROUP_COLORS[g]};flex-shrink:0;display:inline-block;"></span>
+        <span style="font-size:10px;color:var(--text-2);">${GROUP_LABELS[g]}</span>
       </div>
-      <span style="font-size:10px;font-weight:600;">${counts[s]}</span>
+      <span style="font-size:10px;font-weight:600;">${gCounts[g]}</span>
     </div>`
   ).join('');
 }
@@ -505,16 +511,21 @@ function renderTable() {
   if (!tbody) return;
   tbody.innerHTML = CONTAINERS.map(c => {
     const bg=SCOLOR[c.status]||'#ccc', txt=STXT[c.status]||'#fff';
-    const badge = `<span class="badge" style="background:${bg};color:${txt};">${ABBR[c.status]||c.status}</span>`;
+    const badgeStyle = c.status === 'PROJ'
+      ? `background:transparent;border:1px solid rgba(13,42,107,0.35);color:${txt};`
+      : `background:${bg};color:${txt};`;
+    const badge = `<span class="badge" style="${badgeStyle}">${ABBR[c.status]||c.status}</span>`;
     return `<tr>
-      <td style="font-weight:600;">${c.num}</td>
+      <td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${c.status}"></span>${c.num}</span></td>
       <td>${badge}</td>
+      <td class="mono" style="font-size:10px;">${c.code||'—'}</td>
       <td style="font-size:10px;color:var(--text-3);">${c.week}</td>
       <td style="font-size:10px;">${c.loadDate}</td>
       <td style="font-size:10px;">${c.shipDate}</td>
       <td style="font-size:10px;color:var(--text-3);">${c.vessel}</td>
       <td style="font-size:10px;">${c.portArrival}</td>
       <td style="font-size:10px;font-weight:600;">${c.delivery}</td>
+      <td style="font-size:10px;">${c.delivTime||'—'}</td>
       <td style="font-size:10px;color:var(--text-3);">${c.confirmed?'Confirmed':'ETA'}</td>
       <td style="font-size:10px;text-align:center;">${c.unitQty}</td>
       <td style="font-size:10px;color:var(--text-3);">${c.units}</td>
@@ -534,18 +545,20 @@ function renderNextUp() {
   if (!upcoming.length) { el.innerHTML='<div style="color:var(--text-3);font-size:11px;">No upcoming deliveries</div>'; return; }
   const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  el.innerHTML = upcoming.map(c => {
+  const ST_LABEL = { PROJ:'Projected', LDG:'Loading', LDD:'Loaded', ENR:'Sea Freight', INPRT:'In Port', D:'Delivered' };
+  const ST_COLOR = { PROJ:'#C5DCF4', LDG:'#BACFEE', LDD:'#82AADB', ENR:'#4476C4', INPRT:'#1D4D9A', D:'#0E2855' };
+  el.innerHTML = '<div>' + upcoming.map(c => {
     const d = new Date(c.delivery);
-    const tag = c.confirmed ? '[Confirmed]' : '[ETA]';
-    const tagColor = c.confirmed ? 'var(--accent)' : 'var(--text-3)';
-    return `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--border);">
-      <div>
-        <span style="font-size:13px;font-weight:600;">${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}</span>
-        <span style="font-size:13px;font-weight:600;color:${tagColor};margin-left:8px;">${tag}</span>
-      </div>
-      <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;margin-left:6px;">CTN ${c.num}${c.floors && c.floors !== "---" ? " · Floor " + c.floors : ""}</div>
+    const daysAway = Math.round((d - today) / 86400000);
+    const daysStr = daysAway === 0 ? 'Today' : daysAway + 'd';
+    const sLabel = ST_LABEL[c.status] || c.status;
+    const sColor = ST_COLOR[c.status] || '#9A9A94';
+    const floorStr = c.floors && c.floors !== '---' ? ' · Floor ' + c.floors : '';
+    return `<div class="nu-row">
+      <div class="nu-date">${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span></div>
+      <div class="nu-info">CTN ${c.num}${floorStr} &nbsp;·&nbsp; <span style="color:${sColor};font-weight:700;">●</span><span class="nu-slabel" style="color:${sColor};font-weight:700;"> ${sLabel}</span><span class="nu-days"> &nbsp;·&nbsp; ${daysStr}</span></div>
     </div>`;
-  }).join('');
+  }).join('') + '</div>';
 }
 
 function renderMiniMatrix() {
@@ -573,8 +586,8 @@ function renderBuildingMatrix() {
   const grid = document.getElementById('bldg-grid');
   if (!grid) return;
 
-  const SCOLOR = { PROJ:'#D8EDFC', LDG:'#9BBDE8', LDD:'#6490D4', ENR:'#4E67C8', INPRT:'#354AA0', D:'#212745' };
-  const STXT   = { PROJ:'#1A2A5E', LDG:'#1A2A5E', LDD:'#fff', ENR:'#fff', INPRT:'#fff', D:'#fff' };
+  const SCOLOR = { PROJ:'#C5DCF4', LDG:'#BACFEE', LDD:'#82AADB', ENR:'#4476C4', INPRT:'#1D4D9A', D:'#0E2855' };
+  const STXT   = { PROJ:'#0D2A6B', LDG:'#0D2A6B', LDD:'#0D2A6B', ENR:'#fff', INPRT:'#fff', D:'#fff' };
 
   // Build merged uid→{ktype,status} from BUILDING_MATRIX + unitMap overrides
   const bm = {};
@@ -649,7 +662,7 @@ function setBldgDir(asc) {
 function initUnitDropdown() {
   const sel = document.getElementById('dmg-unit');
   if (!sel) return;
-  let html = '<option value="">— Select unit —</option>';
+  let html = '<option value="">&#8212; Select unit &#8212;</option>';
   for (let floor = 3; floor <= 29; floor++) {
     html += '<optgroup label="Floor ' + floor + '">';
     for (let u = 1; u <= 58; u++) {
@@ -661,54 +674,123 @@ function initUnitDropdown() {
   sel.innerHTML = html;
 }
 
-let DAMAGE_LOG = [];
-try { DAMAGE_LOG = JSON.parse(localStorage.getItem('dmgLog_111w')||'[]'); } catch(e) { DAMAGE_LOG=[]; }
-function saveDmg() { try { localStorage.setItem('dmgLog_111w', JSON.stringify(DAMAGE_LOG)); } catch(e){} }
-function submitDmg() {
-  const unit=document.getElementById('dmg-unit').value, date=document.getElementById('dmg-date').value,
-        code=document.getElementById('dmg-code').value, comp=document.getElementById('dmg-component').value,
-        issue=document.getElementById('dmg-issue').value.trim(), photo=document.getElementById('dmg-photo').value.trim(),
-        status=document.getElementById('dmg-status').value, notes=document.getElementById('dmg-notes').value.trim();
-  if (!unit||!date||!issue) { alert('Please fill in unit, date, and issue.'); return; }
-  DAMAGE_LOG.push({unit,date,code,comp,issue,photo,status,notes,id:Date.now()});
-  saveDmg(); renderDmgTables();
-  document.getElementById('dmg-issue').value='';
-  document.getElementById('dmg-photo').value='';
-  document.getElementById('dmg-notes').value='';
-}
-function deleteDmg(id) {
-  if (!confirm('Delete this entry?')) return;
-  DAMAGE_LOG = DAMAGE_LOG.filter(e => e.id !== id);
-  saveDmg(); renderDmgTables();
-}
-function renderDmgTables() {
-  const open   = DAMAGE_LOG.filter(e => e.status === 'open');
-  const closed = DAMAGE_LOG.filter(e => e.status === 'closed');
-  const el = document.getElementById('dmg-list');
-  if (!el) return;
-  if (!DAMAGE_LOG.length) { el.innerHTML = '<div class="empty-state"><div>No entries yet.</div></div>'; return; }
-  let html = '';
-  [['Open Items', open, 'open'], ['Resolved', closed, 'closed']].forEach(([title, items, cls]) => {
-    if (!items.length) return;
-    html += '<div class="dmg-group ' + cls + '" style="margin-bottom:10px;">';
-    html += '<div class="dmg-group-hdr">' + title + ' <span style="font-weight:400;color:var(--text-3);">(' + items.length + ')</span></div>';
-    items.forEach(e => {
-      html += '<div style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;display:flex;justify-content:space-between;align-items:flex-start;">';
-      html += '<div><span style="font-weight:700;">Unit ' + e.unit + '</span> · ' + e.date + (e.code ? ' · ' + e.code : '') + '<br>' + e.issue + (e.notes ? '<br><span style="color:var(--text-3);">' + e.notes + '</span>' : '') + '</div>';
-      html += '<button onclick="deleteDmg(' + e.id + ')" style="font-size:10px;padding:2px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;margin-left:8px;flex-shrink:0;">✕</button>';
-      html += '</div>';
-    });
-    html += '</div>';
-  });
-  el.innerHTML = html;
+// ── DAMAGE REPORT (session-only) ──
+let SESSION_ITEMS_111W = [];
+
+function renderSession111w() {
+  const n = SESSION_ITEMS_111W.length;
+  const countEl = document.getElementById('dmg-111w-count');
+  const emptyEl = document.getElementById('dmg-111w-empty');
+  const tableEl = document.getElementById('dmg-111w-table');
+  if (countEl) countEl.textContent = n + ' item' + (n !== 1 ? 's' : '') + ' in this report';
+  if (emptyEl) emptyEl.style.display = n === 0 ? 'block' : 'none';
+  if (tableEl) tableEl.style.display = n > 0 ? 'block' : 'none';
+  const btnSend  = document.getElementById('btn-send-111w');
+  const btnClear = document.getElementById('btn-clear-111w');
+  if (btnSend)  btnSend.style.display  = n > 0 ? '' : 'none';
+  if (btnClear) btnClear.style.display = n > 0 ? '' : 'none';
+  const tbody = document.getElementById('dmg-session-tbody');
+  if (tbody) tbody.innerHTML = SESSION_ITEMS_111W.map((item, idx) => `<tr>
+    <td style="font-weight:600">${item.unit}</td>
+    <td>${item.code || '&#8212;'}</td>
+    <td>${item.itemdesc || '&#8212;'}</td>
+    <td>${item.issuetype || '&#8212;'}</td>
+    <td>${item.issue}</td>
+    <td><button onclick="removeItem111w(${idx})" style="font-size:10px;padding:2px 8px;border:1px solid var(--border);border-radius:4px;background:none;cursor:pointer;color:var(--text-3);">Remove</button></td>
+  </tr>`).join('');
 }
 
-initUnitMap();
-initDatePill();
-renderDonut();
-renderPipeline();
-renderMetrics();
-renderTransitPerf();
+function addToReport111w() {
+  const unit  = document.getElementById('dmg-unit').value;
+  const issue = document.getElementById('dmg-issue').value.trim();
+  const msgEl = document.getElementById('dmg-msg');
+  function showMsg(t, err) {
+    if (!msgEl) return;
+    msgEl.textContent = t; msgEl.style.color = err ? '#CC3030' : '#2A7A3A'; msgEl.style.display = 'inline';
+    setTimeout(() => { msgEl.style.display = 'none'; }, 3200);
+  }
+  if (!unit)  { showMsg('Please select a unit.', true); return; }
+  if (!issue) { showMsg('Please describe the issue.', true); return; }
+  SESSION_ITEMS_111W.push({
+    unit,
+    date: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}),
+    code: document.getElementById('dmg-code').value.trim(),
+    itemdesc: document.getElementById('dmg-itemdesc').value.trim(),
+    issuetype: document.getElementById('dmg-issuetype').value,
+    issue,
+  });
+  renderSession111w();
+  ['dmg-unit','dmg-code','dmg-itemdesc','dmg-issuetype','dmg-issue'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  showMsg('Added to report.', false);
+}
+
+function removeItem111w(idx) {
+  SESSION_ITEMS_111W.splice(idx, 1);
+  renderSession111w();
+}
+
+function clearAll111w() {
+  if (!confirm('Clear all items from this report?')) return;
+  SESSION_ITEMS_111W = [];
+  renderSession111w();
+}
+
+function showToast(html) {
+  const t = document.createElement('div');
+  t.innerHTML = html;
+  t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:14px 24px;border-radius:8px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);text-align:center;';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 5000);
+}
+
+function sendReport111w() {
+  if (!SESSION_ITEMS_111W.length) { alert('No items to send.'); return; }
+  const n = SESSION_ITEMS_111W.length;
+  const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+
+  // 1. Build report body and copy to clipboard
+  let body = 'SERVICE ORDER REPORT\n';
+  body += 'Report copied to clipboard - please paste it into the email and attach the CSV file in your downloads.\n\n';
+  body += '111 WALL ST · SERVICE REPORT\n';
+  body += 'Date: ' + dateStr + '\n';
+  body += 'Total Items: ' + n + ' item' + (n !== 1 ? 's' : '') + '\n\n';
+  body += 'Items:\n';
+  SESSION_ITEMS_111W.forEach((item, i) => {
+    body += (i + 1) + '. Unit: ' + item.unit + '\n';
+    body += '   Item Code: ' + (item.code || '—') + '\n';
+    body += '   Item Des.: ' + (item.itemdesc || '—') + '\n';
+    body += '   Issue Type: ' + (item.issuetype || '—') + '\n';
+    body += '   Issue Description: "' + item.issue + '"\n';
+    body += '\n';
+  });
+  navigator.clipboard.writeText(body).catch(() => {});
+
+  // 2. Download CSV
+  const hdr  = ['Unit','Date','Item Code','Item Description','Issue Type','Issue'];
+  const rows  = SESSION_ITEMS_111W.map(i =>
+    [i.unit, i.date, i.code||'', i.itemdesc||'', i.issuetype||'', i.issue]
+    .map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')
+  );
+  const csvStr = [hdr.join(','), ...rows].join('\r\n');
+  const blob = new Blob([csvStr], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = '111W_Damage_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+  URL.revokeObjectURL(url);
+
+  // 3. Open email with subject only — body is on clipboard
+  const _sd = new Date(); const _sdate = (_sd.getMonth()+1) + '/' + _sd.getDate() + '/' + _sd.getFullYear();
+  const subject = '111 Wall Service Request - ' + _sdate + ' - ' + n + ' item' + (n !== 1 ? 's' : '');
+  window.location.href = 'mailto:' + (typeof CONFIG !== 'undefined' ? CONFIG.notifyEmail : '')
+    + '?subject=' + encodeURIComponent(subject);
+
+  // 4. Toast
+  showToast('<div style="font-size:13px;font-weight:700;margin-bottom:5px;">SERVICE ORDER REPORT</div><div style="font-size:11px;opacity:.75;">Report copied to clipboard - please paste it into the email and attach the CSV file in your downloads.</div>');
+}
+
 initUnitMap();
 initDatePill();
 renderDonut();
@@ -720,9 +802,7 @@ renderNextUp();
 renderMiniMatrix();
 renderBuildingMatrix();
 initUnitDropdown();
-renderDmgTables();
-const dmgDate = document.getElementById('dmg-date');
-if (dmgDate) { const t = new Date(); dmgDate.value = t.toISOString().split('T')[0]; }
+renderSession111w();
 </script>
 </body>
 </html>
