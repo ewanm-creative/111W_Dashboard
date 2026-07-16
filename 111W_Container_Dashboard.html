@@ -38,9 +38,11 @@ tr:hover td { background: #F9F8F5; }
 .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
 .nu-row { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 4px; border-bottom:1px solid var(--border); }
 .nu-row:last-child { border-bottom:none; }
-.nu-date { font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; flex-shrink:0; }
-.nu-tag { font-weight:400; color:var(--text-3); font-size:11px; }
-.nu-info { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; text-align:right; }
+.nu-date { font-size:12px; font-weight:700; color:var(--text); white-space:nowrap; flex-shrink:0; }
+.nu-tag { font-weight:400; color:var(--text-3); font-size:10px; }
+.nu-info { font-size:11px; font-weight:600; color:var(--text); white-space:nowrap; text-align:right; }
+.nu-slabel { font-size:10px; font-weight:500; }
+.nu-days { display:none; }
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 0 1.5px rgba(0,0,0,.12); }
 .d-PROJ  { background: #C5DCF4; }
 .d-LDG   { background: #BACFEE; }
@@ -308,7 +310,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Jul 16, 2026 10:51 AM)
+// DATA_START (auto-generated Jul 16, 2026 12:45 PM)
 const CONTAINERS = [
   { num:1, status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3", code:"\u2014", delivTime:"\u2014" },
   { num:2, status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3", code:"\u2014", delivTime:"\u2014" },
@@ -353,7 +355,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"29.714285714285715" },
 ];
 
-const LAST_UPDATED = "Jul 16, 2026 10:51 AM";
+const LAST_UPDATED = "Jul 16, 2026 12:45 PM";
 
 const BUILDING_MATRIX = [
   { floor:29, units:[{uid:"2901",ktype:"--",status:"--"}, {uid:"2902",ktype:"--",status:"--"}, {uid:"2903",ktype:"--",status:"--"}, {uid:"2904",ktype:"--",status:"--"}, {uid:"2905",ktype:"--",status:"--"}, {uid:"2906",ktype:"--",status:"--"}, {uid:"2907",ktype:"--",status:"--"}, {uid:"2908",ktype:"--",status:"--"}, {uid:"2909",ktype:"--",status:"--"}, {uid:"2910",ktype:"--",status:"--"}, {uid:"2911",ktype:"--",status:"--"}, {uid:"2912",ktype:"--",status:"--"}, {uid:"2913",ktype:"--",status:"--"}, {uid:"2914",ktype:"--",status:"--"}, {uid:"2915",ktype:"--",status:"--"}, {uid:"2916",ktype:"--",status:"--"}, {uid:"2917",ktype:"--",status:"--"}, {uid:"2918",ktype:"--",status:"--"}, {uid:"2919",ktype:"--",status:"--"}, {uid:"2920",ktype:"--",status:"--"}, {uid:"2921",ktype:"--",status:"--"}, {uid:"2922",ktype:"--",status:"--"}, {uid:"2923",ktype:"--",status:"--"}, {uid:"2924",ktype:"--",status:"--"}, {uid:"2925",ktype:"--",status:"--"}, {uid:"2926",ktype:"--",status:"--"}, {uid:"2927",ktype:"--",status:"--"}, {uid:"2928",ktype:"--",status:"--"}, {uid:"2929",ktype:"--",status:"--"}, {uid:"2930",ktype:"--",status:"--"}, {uid:"2931",ktype:"--",status:"--"}, {uid:"2932",ktype:"--",status:"--"}, {uid:"2933",ktype:"--",status:"--"}, {uid:"2934",ktype:"--",status:"--"}, {uid:"2935",ktype:"--",status:"--"}, {uid:"2936",ktype:"--",status:"--"}, {uid:"2937",ktype:"--",status:"--"}, {uid:"2938",ktype:"--",status:"--"}, {uid:"2939",ktype:"--",status:"--"}, {uid:"2940",ktype:"--",status:"--"}, {uid:"2941",ktype:"--",status:"--"}, {uid:"2942",ktype:"--",status:"--"}, {uid:"2943",ktype:"--",status:"--"}, {uid:"2944",ktype:"--",status:"--"}, {uid:"2945",ktype:"--",status:"--"}, {uid:"2946",ktype:"--",status:"--"}, {uid:"2947",ktype:"--",status:"--"}, {uid:"2948",ktype:"--",status:"--"}, {uid:"2949",ktype:"--",status:"--"}, {uid:"2950",ktype:"--",status:"--"}, {uid:"2951",ktype:"--",status:"--"}, {uid:"2952",ktype:"--",status:"--"}, {uid:"2953",ktype:"--",status:"--"}, {uid:"2954",ktype:"--",status:"--"}, {uid:"2955",ktype:"--",status:"--"}, {uid:"2956",ktype:"--",status:"--"}, {uid:"2957",ktype:"--",status:"--"}, {uid:"2958",ktype:"--",status:"--"}] },
@@ -390,11 +392,11 @@ const SCOLOR = { PROJ:'#C5DCF4', LDG:'#BACFEE', LDD:'#82AADB', ENR:'#4476C4', IN
 const STXT   = { PROJ:'#0D2A6B', LDG:'#0D2A6B', LDD:'#0D2A6B', ENR:'#fff',    INPRT:'#fff',    D:'#fff'    };
 const ABBR   = { PROJ:'PROJ', LDG:'LDG', LDD:'LDD', ENR:'ENR', INPRT:'INPRT', D:'D' };
 const STATUS_ORDER = ['D','INPRT','ENR','LDD','LDG','PROJ'];
-const STATUS_LABEL = { PROJ:'Projected', LDG:'Loading', LDD:'Loaded', ENR:'En Route', INPRT:'In Port', D:'Delivered' };
+const STATUS_LABEL = { PROJ:'Projected', LDG:'Loading', LDD:'Loaded', ENR:'Sea Freight', INPRT:'In Port', D:'Delivered' };
 
 function expandRanges(s) {
   const ids = [];
-  if (!s || s === '—') return ids;
+  if (!s || s === '—' || s === '---') return ids;
   for (const part of String(s).split(',')) {
     const t = part.trim();
     if (t.includes(':')) {
@@ -538,8 +540,8 @@ function renderNextUp() {
   if (!el) return;
   const today = new Date(); today.setHours(0,0,0,0);
   const upcoming = CONTAINERS
-    .filter(c => c.delivery && c.delivery !== '—' && !isNaN(new Date(c.delivery)))
-    .sort((a,b) => new Date(a.delivery)-new Date(b.delivery))
+    .filter(c => c.status !== 'D' && c.delivery && c.delivery !== '—' && c.delivery !== '---' && !isNaN(new Date(c.delivery)))
+    .sort((a,b) => new Date(a.delivery)-new Date(b.delivery) || a.num - b.num)
     .filter(c => new Date(c.delivery) >= today)
     .slice(0,5);
   if (!upcoming.length) { el.innerHTML='<div style="color:var(--text-3);font-size:11px;">No upcoming deliveries</div>'; return; }
@@ -553,7 +555,7 @@ function renderNextUp() {
     const daysStr = daysAway === 0 ? 'Today' : daysAway + 'd';
     const sLabel = ST_LABEL[c.status] || c.status;
     const sColor = ST_COLOR[c.status] || '#9A9A94';
-    const floorStr = c.floors && c.floors !== '---' ? ' · Floor ' + c.floors : '';
+    const floorStr = c.floors && c.floors !== '---' ? ' · FL ' + c.floors : '';
     return `<div class="nu-row">
       <div class="nu-date">${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span></div>
       <div class="nu-info">CTN ${c.num}${floorStr} &nbsp;·&nbsp; <span style="color:${sColor};font-weight:700;">●</span><span class="nu-slabel" style="color:${sColor};font-weight:700;"> ${sLabel}</span><span class="nu-days"> &nbsp;·&nbsp; ${daysStr}</span></div>
@@ -752,9 +754,7 @@ function sendReport111w() {
   const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
   // 1. Build report body and copy to clipboard
-  let body = 'SERVICE ORDER REPORT\n';
-  body += 'Report copied to clipboard - please paste it into the email and attach the CSV file in your downloads.\n\n';
-  body += '111 WALL ST · SERVICE REPORT\n';
+  let body = '111 WALL ST · SERVICE REPORT\n';
   body += 'Date: ' + dateStr + '\n';
   body += 'Total Items: ' + n + ' item' + (n !== 1 ? 's' : '') + '\n\n';
   body += 'Items:\n';
@@ -784,8 +784,10 @@ function sendReport111w() {
   // 3. Open email with subject only — body is on clipboard
   const _sd = new Date(); const _sdate = (_sd.getMonth()+1) + '/' + _sd.getDate() + '/' + _sd.getFullYear();
   const subject = '111 Wall Service Request - ' + _sdate + ' - ' + n + ' item' + (n !== 1 ? 's' : '');
+  const emailNote = 'Report copied to clipboard - please paste it into the email and attach the CSV file in your downloads.';
   window.location.href = 'mailto:' + (typeof CONFIG !== 'undefined' ? CONFIG.notifyEmail : '')
-    + '?subject=' + encodeURIComponent(subject);
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(emailNote);
 
   // 4. Toast
   showToast('<div style="font-size:13px;font-weight:700;margin-bottom:5px;">SERVICE ORDER REPORT</div><div style="font-size:11px;opacity:.75;">Report copied to clipboard - please paste it into the email and attach the CSV file in your downloads.</div>');
