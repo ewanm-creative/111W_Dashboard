@@ -312,7 +312,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Jul 27, 2026 4:14 PM)
+// DATA_START (auto-generated Jul 27, 2026 4:30 PM)
 const CONTAINERS = [
   { num:"1", status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
   { num:"2", status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
@@ -359,7 +359,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"29.714285714285715" },
 ];
 
-const LAST_UPDATED = "Jul 27, 2026 4:14 PM";
+const LAST_UPDATED = "Jul 27, 2026 4:30 PM";
 const TOTAL_KITCHENS = 577;
 const DATA_WARNINGS = ["Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "13 kitchen(s) in the matrix are not in any container: 1150, 1151, 1248, 1249, 1250, 1251, 1252, 1253, 1254, 1255, 1256, 1257..."];
 
@@ -658,8 +658,8 @@ function renderNextUp() {
 function renderMiniMatrix() {
   const grid = document.getElementById('mini-matrix-grid');
   if (!grid) return;
-  // Only floors that have kitchens in this package, sorted top-down
-  const floors = scopedFloors().sort((a,b) => b.floor - a.floor);
+  // Whole tower, top-down. Floors with no kitchens yet render as empty cells.
+  const floors = [...BUILDING_MATRIX].sort((a,b) => b.floor - a.floor);
   let html = '<div style="display:flex;flex-direction:column;gap:1px;">';
   for (const f of floors) {
     html += '<div style="display:flex;gap:1px;">';
@@ -686,7 +686,7 @@ function renderBuildingMatrix() {
     for (const u of f.units)
       bm[u.uid] = { ktype: u.ktype, status: unitMap[+u.uid] || u.status };
 
-  const floors = scopedFloors().sort((a,b) => _bldgAsc ? a.floor - b.floor : b.floor - a.floor);
+  const floors = [...BUILDING_MATRIX].sort((a,b) => _bldgAsc ? a.floor - b.floor : b.floor - a.floor);
   if (!floors.length) {
     grid.innerHTML = '<div style="padding:24px;color:var(--text-3);font-size:11px;">No building matrix data. Re-run the update script.</div>';
     return;
@@ -712,11 +712,17 @@ function renderBuildingMatrix() {
     const pct = totalUnits > 0 ? Math.round(delCount / totalUnits * 100) : 0;
     const barCol = pct === 100 ? '#212745' : pct > 0 ? '#4E67C8' : 'var(--border)';
 
+    // No kitchens assigned on this floor yet - show "—" rather than 0/58 · 0%,
+    // which would read as "nothing delivered" instead of "not scheduled yet".
+    const progress = totalUnits > 0
+      ? `<div class="bm-fl-row"><span class="bm-fl-lbl">D</span><span>${delCount}/${totalUnits}</span></div>
+      <div class="bm-fl-bar"><div style="width:${pct}%;background:${barCol};"></div></div>`
+      : `<div class="bm-fl-row" title="No kitchen types assigned yet"><span style="color:var(--text-3);">&#8212;</span></div>`;
+
     html += '<tr>';
     html += `<td class="bm-floor-lbl">
       <div class="bm-fl-num">${f.floor}</div>
-      <div class="bm-fl-row"><span class="bm-fl-lbl">D</span><span>${delCount}/${totalUnits}</span></div>
-      <div class="bm-fl-bar"><div style="width:${pct}%;background:${barCol};"></div></div>
+      ${progress}
     </td>`;
 
     for (const uc of unitCols) {
@@ -777,7 +783,7 @@ function initUnitDropdown() {
 function initFloorLabel() {
   const el = document.getElementById('bldg-scope-label');
   if (!el) return;
-  const fl = scopedFloors().map(f => f.floor).sort((a,b) => a-b);
+  const fl = BUILDING_MATRIX.map(f => f.floor).sort((a,b) => a-b);
   el.textContent = fl.length
     ? 'Unit Delivery Status · Floors ' + fl[0] + '–' + fl[fl.length-1]
     : 'Unit Delivery Status';
