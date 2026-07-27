@@ -50,6 +50,7 @@ tr:hover td { background: #F9F8F5; }
 .d-ENR   { background: #4476C4; }
 .d-INPRT { background: #1D4D9A; }
 .d-D     { background: #0E2855; }
+.d-HOLD  { background: #9A9A94; }
 .route-pipeline { display: flex; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 16px; }
 .rp-step { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 64px; }
 .rp-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; margin-bottom: 4px; }
@@ -166,8 +167,8 @@ tr:hover td { background: #F9F8F5; }
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0;">
       <div class="mc" style="margin:0;">
         <div class="lbl">Total Containers</div>
-        <div class="val">37</div>
-        <div class="vsub">Apartment tower</div>
+        <div class="val" id="m-total">&#8212;</div>
+        <div class="vsub" id="m-total-sub">Apartment tower</div>
       </div>
       <div class="mc" style="margin:0;">
         <div class="lbl">Units Delivered</div>
@@ -235,7 +236,7 @@ tr:hover td { background: #F9F8F5; }
 <div id="bldg" class="panel">
   <div class="bldg-section">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-      <div style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;">Unit Delivery Status · Floors 3–29</div>
+      <div id="bldg-scope-label" style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;">Unit Delivery Status</div>
       <div style="display:flex;gap:6px;align-items:center;">
         <button id="btn-top-down" onclick="setBldgDir(false)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid var(--accent);cursor:pointer;background:var(--accent);color:#fff;font-weight:600;font-family:inherit;">Top → Bottom</button>
         <button id="btn-bottom-up" onclick="setBldgDir(true)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid var(--border);cursor:pointer;background:var(--surface);color:var(--text-2);font-weight:400;font-family:inherit;">Bottom → Top</button>
@@ -248,6 +249,7 @@ tr:hover td { background: #F9F8F5; }
       <span class="leg-i"><span class="dot d-ENR"></span> En Route</span>
       <span class="leg-i"><span class="dot d-INPRT"></span> In Port</span>
       <span class="leg-i"><span class="dot d-D"></span> Delivered</span>
+      <span class="leg-i"><span class="dot d-HOLD"></span> On Hold</span>
       <span class="leg-i"><span class="dot" style="background:#EBEBEB;border:1px solid #ccc;"></span> No Data</span>
     </div>
     <div id="bldg-grid" style="overflow-x:auto;"></div>
@@ -310,39 +312,41 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Jul 24, 2026 4:30 PM)
+// DATA_START (auto-generated Jul 27, 2026 1:32 PM)
 const CONTAINERS = [
-  { num:1, status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3", code:"\u2014", delivTime:"\u2014" },
-  { num:2, status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3", code:"\u2014", delivTime:"\u2014" },
-  { num:3, status:"PROJ", week:"Wk 32", units:"343:349,352:354,356:358,401:407", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", confirmed:false, floors:"3,4", code:"\u2014", delivTime:"\u2014" },
-  { num:4, status:"PROJ", week:"Wk 37", units:"408:425", unitQty:18, vessel:"--", loadDate:"Sep 10, 2026", shipDate:"Sep 15, 2026", portArrival:"Oct 5, 2026", delivery:"Oct 10, 2026", confirmed:false, floors:"4", code:"\u2014", delivTime:"\u2014" },
-  { num:5, status:"PROJ", week:"Wk 37", units:"426:443", unitQty:18, vessel:"--", loadDate:"Sep 10, 2026", shipDate:"Sep 15, 2026", portArrival:"Oct 5, 2026", delivery:"Oct 10, 2026", confirmed:false, floors:"4", code:"\u2014", delivTime:"\u2014" },
-  { num:6, status:"PROJ", week:"Wk 38", units:"444:449,452:458,501:503", unitQty:16, vessel:"--", loadDate:"Sep 17, 2026", shipDate:"Sep 22, 2026", portArrival:"Oct 12, 2026", delivery:"Oct 17, 2026", confirmed:false, floors:"4,5", code:"\u2014", delivTime:"\u2014" },
-  { num:7, status:"PROJ", week:"Wk 38", units:"504:521", unitQty:18, vessel:"--", loadDate:"Sep 17, 2026", shipDate:"Sep 22, 2026", portArrival:"Oct 12, 2026", delivery:"Oct 17, 2026", confirmed:false, floors:"5", code:"\u2014", delivTime:"\u2014" },
-  { num:8, status:"PROJ", week:"Wk 39", units:"522:539", unitQty:18, vessel:"--", loadDate:"Sep 24, 2026", shipDate:"Sep 29, 2026", portArrival:"Oct 19, 2026", delivery:"Oct 24, 2026", confirmed:false, floors:"5", code:"\u2014", delivTime:"\u2014" },
-  { num:9, status:"PROJ", week:"Wk 39", units:"540:549,552:557", unitQty:16, vessel:"--", loadDate:"Sep 24, 2026", shipDate:"Sep 29, 2026", portArrival:"Oct 19, 2026", delivery:"Oct 24, 2026", confirmed:false, floors:"5", code:"\u2014", delivTime:"\u2014" },
-  { num:10, status:"PROJ", week:"Wk 40", units:"558,601:617", unitQty:18, vessel:"--", loadDate:"Oct 1, 2026", shipDate:"Oct 6, 2026", portArrival:"Oct 26, 2026", delivery:"Oct 31, 2026", confirmed:false, floors:"5,6", code:"\u2014", delivTime:"\u2014" },
-  { num:11, status:"PROJ", week:"Wk 40", units:"618:635", unitQty:18, vessel:"--", loadDate:"Oct 1, 2026", shipDate:"Oct 6, 2026", portArrival:"Oct 26, 2026", delivery:"Oct 31, 2026", confirmed:false, floors:"6", code:"\u2014", delivTime:"\u2014" },
-  { num:12, status:"PROJ", week:"Wk 41", units:"636:649,652:653", unitQty:16, vessel:"--", loadDate:"Oct 8, 2026", shipDate:"Oct 13, 2026", portArrival:"Nov 2, 2026", delivery:"Nov 7, 2026", confirmed:false, floors:"6", code:"\u2014", delivTime:"\u2014" },
-  { num:13, status:"PROJ", week:"Wk 41", units:"654:658,701:713", unitQty:18, vessel:"--", loadDate:"Oct 8, 2026", shipDate:"Oct 13, 2026", portArrival:"Nov 2, 2026", delivery:"Nov 7, 2026", confirmed:false, floors:"6,7", code:"\u2014", delivTime:"\u2014" },
-  { num:14, status:"PROJ", week:"Wk 42", units:"714:731", unitQty:18, vessel:"--", loadDate:"Oct 15, 2026", shipDate:"Oct 20, 2026", portArrival:"Nov 9, 2026", delivery:"Nov 14, 2026", confirmed:false, floors:"7", code:"\u2014", delivTime:"\u2014" },
-  { num:15, status:"PROJ", week:"Wk 42", units:"732:749", unitQty:18, vessel:"--", loadDate:"Oct 15, 2026", shipDate:"Oct 20, 2026", portArrival:"Nov 9, 2026", delivery:"Nov 14, 2026", confirmed:false, floors:"7", code:"\u2014", delivTime:"\u2014" },
-  { num:16, status:"PROJ", week:"Wk 43", units:"752:758,801:809", unitQty:16, vessel:"--", loadDate:"Oct 22, 2026", shipDate:"Oct 27, 2026", portArrival:"Nov 16, 2026", delivery:"Nov 21, 2026", confirmed:false, floors:"7,8", code:"\u2014", delivTime:"\u2014" },
-  { num:17, status:"PROJ", week:"Wk 44", units:"810:827", unitQty:18, vessel:"--", loadDate:"Oct 29, 2026", shipDate:"Nov 3, 2026", portArrival:"Nov 23, 2026", delivery:"Nov 28, 2026", confirmed:false, floors:"8", code:"\u2014", delivTime:"\u2014" },
-  { num:18, status:"PROJ", week:"Wk 44", units:"828:845", unitQty:18, vessel:"--", loadDate:"Oct 29, 2026", shipDate:"Nov 3, 2026", portArrival:"Nov 23, 2026", delivery:"Nov 28, 2026", confirmed:false, floors:"8", code:"\u2014", delivTime:"\u2014" },
-  { num:19, status:"PROJ", week:"Wk 45", units:"846:849,852:858,901:905", unitQty:16, vessel:"--", loadDate:"Nov 5, 2026", shipDate:"Nov 10, 2026", portArrival:"Nov 30, 2026", delivery:"Dec 5, 2026", confirmed:false, floors:"8,9", code:"\u2014", delivTime:"\u2014" },
-  { num:20, status:"PROJ", week:"Wk 46", units:"906:923", unitQty:18, vessel:"--", loadDate:"Nov 12, 2026", shipDate:"Nov 17, 2026", portArrival:"Dec 7, 2026", delivery:"Dec 12, 2026", confirmed:false, floors:"9", code:"\u2014", delivTime:"\u2014" },
-  { num:21, status:"PROJ", week:"Wk 46", units:"924:941", unitQty:18, vessel:"--", loadDate:"Nov 12, 2026", shipDate:"Nov 17, 2026", portArrival:"Dec 7, 2026", delivery:"Dec 12, 2026", confirmed:false, floors:"9", code:"\u2014", delivTime:"\u2014" },
-  { num:22, status:"PROJ", week:"Wk 47", units:"942:949,952:958,1001", unitQty:16, vessel:"--", loadDate:"Nov 19, 2026", shipDate:"Nov 24, 2026", portArrival:"Dec 14, 2026", delivery:"Dec 19, 2026", confirmed:false, floors:"9,10", code:"\u2014", delivTime:"\u2014" },
-  { num:23, status:"PROJ", week:"Wk 47", units:"1002:1019", unitQty:18, vessel:"--", loadDate:"Nov 19, 2026", shipDate:"Nov 24, 2026", portArrival:"Dec 14, 2026", delivery:"Dec 19, 2026", confirmed:false, floors:"10", code:"\u2014", delivTime:"\u2014" },
-  { num:24, status:"PROJ", week:"Wk 48", units:"1020:1037", unitQty:18, vessel:"--", loadDate:"Nov 26, 2026", shipDate:"Dec 1, 2026", portArrival:"Dec 21, 2026", delivery:"Dec 26, 2026", confirmed:false, floors:"10", code:"\u2014", delivTime:"\u2014" },
-  { num:25, status:"PROJ", week:"Wk 48", units:"1038:1049,1052:1055", unitQty:16, vessel:"--", loadDate:"Nov 26, 2026", shipDate:"Dec 1, 2026", portArrival:"Dec 21, 2026", delivery:"Dec 26, 2026", confirmed:false, floors:"10", code:"\u2014", delivTime:"\u2014" },
-  { num:26, status:"PROJ", week:"Wk 49", units:"1056:1058,1101:1115", unitQty:18, vessel:"--", loadDate:"Dec 3, 2026", shipDate:"Dec 8, 2026", portArrival:"Dec 28, 2026", delivery:"Jan 2, 2027", confirmed:false, floors:"10,11", code:"\u2014", delivTime:"\u2014" },
-  { num:27, status:"PROJ", week:"Wk 49", units:"1116:1133", unitQty:18, vessel:"--", loadDate:"Dec 3, 2026", shipDate:"Dec 8, 2026", portArrival:"Dec 28, 2026", delivery:"Jan 2, 2027", confirmed:false, floors:"11", code:"\u2014", delivTime:"\u2014" },
-  { num:28, status:"PROJ", week:"Wk 50", units:"1134:1149", unitQty:16, vessel:"--", loadDate:"Dec 10, 2026", shipDate:"Dec 15, 2026", portArrival:"Jan 4, 2027", delivery:"Jan 9, 2027", confirmed:false, floors:"11", code:"\u2014", delivTime:"\u2014" },
-  { num:29, status:"PROJ", week:"Wk 50", units:"1152:1158,1201:1211", unitQty:18, vessel:"--", loadDate:"Dec 10, 2026", shipDate:"Dec 15, 2026", portArrival:"Jan 4, 2027", delivery:"Jan 9, 2027", confirmed:false, floors:"11,12", code:"\u2014", delivTime:"\u2014" },
-  { num:30, status:"PROJ", week:"Wk 51", units:"1212:1229", unitQty:18, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", confirmed:false, floors:"12", code:"\u2014", delivTime:"\u2014" },
-  { num:31, status:"PROJ", week:"Wk 51", units:"1230:1247", unitQty:18, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", confirmed:false, floors:"12", code:"\u2014", delivTime:"\u2014" },
+  { num:"1", status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"2", status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"3", status:"PROJ", week:"Wk 32", units:"343:349,352:354,356:358,401:407", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3,4", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"4", status:"PROJ", week:"Wk 37", units:"408:425", unitQty:18, vessel:"--", loadDate:"Sep 10, 2026", shipDate:"Sep 15, 2026", portArrival:"Oct 5, 2026", delivery:"Oct 10, 2026", deliveryISO:"2026-10-10", confirmed:false, floors:"4", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"5", status:"PROJ", week:"Wk 37", units:"426:443", unitQty:18, vessel:"--", loadDate:"Sep 10, 2026", shipDate:"Sep 15, 2026", portArrival:"Oct 5, 2026", delivery:"Oct 10, 2026", deliveryISO:"2026-10-10", confirmed:false, floors:"4", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"6", status:"PROJ", week:"Wk 38", units:"444:449,452:458,501:503", unitQty:16, vessel:"--", loadDate:"Sep 17, 2026", shipDate:"Sep 22, 2026", portArrival:"Oct 12, 2026", delivery:"Oct 17, 2026", deliveryISO:"2026-10-17", confirmed:false, floors:"4,5", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"7", status:"PROJ", week:"Wk 38", units:"504:521", unitQty:18, vessel:"--", loadDate:"Sep 17, 2026", shipDate:"Sep 22, 2026", portArrival:"Oct 12, 2026", delivery:"Oct 17, 2026", deliveryISO:"2026-10-17", confirmed:false, floors:"5", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"8", status:"PROJ", week:"Wk 39", units:"522:539", unitQty:18, vessel:"--", loadDate:"Sep 24, 2026", shipDate:"Sep 29, 2026", portArrival:"Oct 19, 2026", delivery:"Oct 24, 2026", deliveryISO:"2026-10-24", confirmed:false, floors:"5", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"9", status:"PROJ", week:"Wk 39", units:"540:549,552:557", unitQty:16, vessel:"--", loadDate:"Sep 24, 2026", shipDate:"Sep 29, 2026", portArrival:"Oct 19, 2026", delivery:"Oct 24, 2026", deliveryISO:"2026-10-24", confirmed:false, floors:"5", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"10", status:"PROJ", week:"Wk 40", units:"558,601:617", unitQty:18, vessel:"--", loadDate:"Oct 1, 2026", shipDate:"Oct 6, 2026", portArrival:"Oct 26, 2026", delivery:"Oct 31, 2026", deliveryISO:"2026-10-31", confirmed:false, floors:"5,6", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"11", status:"PROJ", week:"Wk 40", units:"618:635", unitQty:18, vessel:"--", loadDate:"Oct 1, 2026", shipDate:"Oct 6, 2026", portArrival:"Oct 26, 2026", delivery:"Oct 31, 2026", deliveryISO:"2026-10-31", confirmed:false, floors:"6", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"12", status:"PROJ", week:"Wk 41", units:"636:649,652:653", unitQty:16, vessel:"--", loadDate:"Oct 8, 2026", shipDate:"Oct 13, 2026", portArrival:"Nov 2, 2026", delivery:"Nov 7, 2026", deliveryISO:"2026-11-07", confirmed:false, floors:"6", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"13", status:"PROJ", week:"Wk 41", units:"654:658,701:713", unitQty:18, vessel:"--", loadDate:"Oct 8, 2026", shipDate:"Oct 13, 2026", portArrival:"Nov 2, 2026", delivery:"Nov 7, 2026", deliveryISO:"2026-11-07", confirmed:false, floors:"6,7", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"14", status:"PROJ", week:"Wk 42", units:"714:731", unitQty:18, vessel:"--", loadDate:"Oct 15, 2026", shipDate:"Oct 20, 2026", portArrival:"Nov 9, 2026", delivery:"Nov 14, 2026", deliveryISO:"2026-11-14", confirmed:false, floors:"7", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"15", status:"PROJ", week:"Wk 42", units:"732:749", unitQty:18, vessel:"--", loadDate:"Oct 15, 2026", shipDate:"Oct 20, 2026", portArrival:"Nov 9, 2026", delivery:"Nov 14, 2026", deliveryISO:"2026-11-14", confirmed:false, floors:"7", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"16", status:"PROJ", week:"Wk 43", units:"752:758,801:809", unitQty:16, vessel:"--", loadDate:"Oct 22, 2026", shipDate:"Oct 27, 2026", portArrival:"Nov 16, 2026", delivery:"Nov 21, 2026", deliveryISO:"2026-11-21", confirmed:false, floors:"7,8", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"17", status:"PROJ", week:"Wk 44", units:"810:827", unitQty:18, vessel:"--", loadDate:"Oct 29, 2026", shipDate:"Nov 3, 2026", portArrival:"Nov 23, 2026", delivery:"Nov 28, 2026", deliveryISO:"2026-11-28", confirmed:false, floors:"8", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"18", status:"PROJ", week:"Wk 44", units:"828:845", unitQty:18, vessel:"--", loadDate:"Oct 29, 2026", shipDate:"Nov 3, 2026", portArrival:"Nov 23, 2026", delivery:"Nov 28, 2026", deliveryISO:"2026-11-28", confirmed:false, floors:"8", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"19", status:"PROJ", week:"Wk 45", units:"846:849,852:858,901:905", unitQty:16, vessel:"--", loadDate:"Nov 5, 2026", shipDate:"Nov 10, 2026", portArrival:"Nov 30, 2026", delivery:"Dec 5, 2026", deliveryISO:"2026-12-05", confirmed:false, floors:"8,9", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"20", status:"PROJ", week:"Wk 46", units:"906:923", unitQty:18, vessel:"--", loadDate:"Nov 12, 2026", shipDate:"Nov 17, 2026", portArrival:"Dec 7, 2026", delivery:"Dec 12, 2026", deliveryISO:"2026-12-12", confirmed:false, floors:"9", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"21", status:"PROJ", week:"Wk 46", units:"924:941", unitQty:18, vessel:"--", loadDate:"Nov 12, 2026", shipDate:"Nov 17, 2026", portArrival:"Dec 7, 2026", delivery:"Dec 12, 2026", deliveryISO:"2026-12-12", confirmed:false, floors:"9", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"22", status:"PROJ", week:"Wk 47", units:"942:949,952:958,1001", unitQty:16, vessel:"--", loadDate:"Nov 19, 2026", shipDate:"Nov 24, 2026", portArrival:"Dec 14, 2026", delivery:"Dec 19, 2026", deliveryISO:"2026-12-19", confirmed:false, floors:"9,10", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"23", status:"PROJ", week:"Wk 47", units:"1002:1019", unitQty:18, vessel:"--", loadDate:"Nov 19, 2026", shipDate:"Nov 24, 2026", portArrival:"Dec 14, 2026", delivery:"Dec 19, 2026", deliveryISO:"2026-12-19", confirmed:false, floors:"10", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"24", status:"PROJ", week:"Wk 48", units:"1020:1037", unitQty:18, vessel:"--", loadDate:"Nov 26, 2026", shipDate:"Dec 1, 2026", portArrival:"Dec 21, 2026", delivery:"Dec 26, 2026", deliveryISO:"2026-12-26", confirmed:false, floors:"10", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"25", status:"PROJ", week:"Wk 48", units:"1038:1049,1052:1055", unitQty:16, vessel:"--", loadDate:"Nov 26, 2026", shipDate:"Dec 1, 2026", portArrival:"Dec 21, 2026", delivery:"Dec 26, 2026", deliveryISO:"2026-12-26", confirmed:false, floors:"10", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"26", status:"PROJ", week:"Wk 49", units:"1056:1058,1101:1115", unitQty:18, vessel:"--", loadDate:"Dec 3, 2026", shipDate:"Dec 8, 2026", portArrival:"Dec 28, 2026", delivery:"Jan 2, 2027", deliveryISO:"2027-01-02", confirmed:false, floors:"10,11", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"27", status:"PROJ", week:"Wk 49", units:"1116:1133", unitQty:18, vessel:"--", loadDate:"Dec 3, 2026", shipDate:"Dec 8, 2026", portArrival:"Dec 28, 2026", delivery:"Jan 2, 2027", deliveryISO:"2027-01-02", confirmed:false, floors:"11", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"28", status:"PROJ", week:"Wk 50", units:"1134:1149", unitQty:16, vessel:"--", loadDate:"Dec 10, 2026", shipDate:"Dec 15, 2026", portArrival:"Jan 4, 2027", delivery:"Jan 9, 2027", deliveryISO:"2027-01-09", confirmed:false, floors:"11", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"29", status:"PROJ", week:"Wk 50", units:"1152:1158,1201:1211", unitQty:18, vessel:"--", loadDate:"Dec 10, 2026", shipDate:"Dec 15, 2026", portArrival:"Jan 4, 2027", delivery:"Jan 9, 2027", deliveryISO:"2027-01-09", confirmed:false, floors:"11,12", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"30", status:"PROJ", week:"Wk 51", units:"1212:1229", unitQty:18, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", deliveryISO:"2027-01-16", confirmed:false, floors:"12", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"31", status:"PROJ", week:"Wk 51", units:"1230:1247", unitQty:18, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", deliveryISO:"2027-01-16", confirmed:false, floors:"12", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"Doors", status:"PROJ", week:"Wk 54", units:"3rd Floor Doors", unitQty:58, vessel:"--", loadDate:"Jan 7, 2027", shipDate:"Jan 12, 2027", portArrival:"Feb 1, 2027", delivery:"Feb 6, 2027", deliveryISO:"2027-02-06", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
+  { num:"H1", status:"PROJ", week:"Wk 51", units:"350:351,450:451,550:551,650:651,750:751,850:851,950:951,1050:1051", unitQty:16, vessel:"--", loadDate:"Dec 17, 2026", shipDate:"Dec 22, 2026", portArrival:"Jan 11, 2027", delivery:"Jan 16, 2027", deliveryISO:"2027-01-16", confirmed:false, floors:"3:10", note:"", code:"\u2014", delivTime:"\u2014" },
 ];
 
 const UNIT_STATUS = {
@@ -355,7 +359,9 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"29.714285714285715" },
 ];
 
-const LAST_UPDATED = "Jul 24, 2026 4:30 PM";
+const LAST_UPDATED = "Jul 27, 2026 1:32 PM";
+const TOTAL_KITCHENS = 577;
+const DATA_WARNINGS = ["Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "13 kitchen(s) in the matrix are not in any container: 1150, 1151, 1248, 1249, 1250, 1251, 1252, 1253, 1254, 1255, 1256, 1257..."];
 
 const BUILDING_MATRIX = [
   { floor:29, units:[{uid:"2901",ktype:"--",status:"--"}, {uid:"2902",ktype:"--",status:"--"}, {uid:"2903",ktype:"--",status:"--"}, {uid:"2904",ktype:"--",status:"--"}, {uid:"2905",ktype:"--",status:"--"}, {uid:"2906",ktype:"--",status:"--"}, {uid:"2907",ktype:"--",status:"--"}, {uid:"2908",ktype:"--",status:"--"}, {uid:"2909",ktype:"--",status:"--"}, {uid:"2910",ktype:"--",status:"--"}, {uid:"2911",ktype:"--",status:"--"}, {uid:"2912",ktype:"--",status:"--"}, {uid:"2913",ktype:"--",status:"--"}, {uid:"2914",ktype:"--",status:"--"}, {uid:"2915",ktype:"--",status:"--"}, {uid:"2916",ktype:"--",status:"--"}, {uid:"2917",ktype:"--",status:"--"}, {uid:"2918",ktype:"--",status:"--"}, {uid:"2919",ktype:"--",status:"--"}, {uid:"2920",ktype:"--",status:"--"}, {uid:"2921",ktype:"--",status:"--"}, {uid:"2922",ktype:"--",status:"--"}, {uid:"2923",ktype:"--",status:"--"}, {uid:"2924",ktype:"--",status:"--"}, {uid:"2925",ktype:"--",status:"--"}, {uid:"2926",ktype:"--",status:"--"}, {uid:"2927",ktype:"--",status:"--"}, {uid:"2928",ktype:"--",status:"--"}, {uid:"2929",ktype:"--",status:"--"}, {uid:"2930",ktype:"--",status:"--"}, {uid:"2931",ktype:"--",status:"--"}, {uid:"2932",ktype:"--",status:"--"}, {uid:"2933",ktype:"--",status:"--"}, {uid:"2934",ktype:"--",status:"--"}, {uid:"2935",ktype:"--",status:"--"}, {uid:"2936",ktype:"--",status:"--"}, {uid:"2937",ktype:"--",status:"--"}, {uid:"2938",ktype:"--",status:"--"}, {uid:"2939",ktype:"--",status:"--"}, {uid:"2940",ktype:"--",status:"--"}, {uid:"2941",ktype:"--",status:"--"}, {uid:"2942",ktype:"--",status:"--"}, {uid:"2943",ktype:"--",status:"--"}, {uid:"2944",ktype:"--",status:"--"}, {uid:"2945",ktype:"--",status:"--"}, {uid:"2946",ktype:"--",status:"--"}, {uid:"2947",ktype:"--",status:"--"}, {uid:"2948",ktype:"--",status:"--"}, {uid:"2949",ktype:"--",status:"--"}, {uid:"2950",ktype:"--",status:"--"}, {uid:"2951",ktype:"--",status:"--"}, {uid:"2952",ktype:"--",status:"--"}, {uid:"2953",ktype:"--",status:"--"}, {uid:"2954",ktype:"--",status:"--"}, {uid:"2955",ktype:"--",status:"--"}, {uid:"2956",ktype:"--",status:"--"}, {uid:"2957",ktype:"--",status:"--"}, {uid:"2958",ktype:"--",status:"--"}] },
@@ -388,33 +394,66 @@ const BUILDING_MATRIX = [
 ];
 // DATA_END
 
-const SCOLOR = { PROJ:'#C5DCF4', LDG:'#BACFEE', LDD:'#82AADB', ENR:'#4476C4', INPRT:'#1D4D9A', D:'#0E2855' };
-const STXT   = { PROJ:'#0D2A6B', LDG:'#0D2A6B', LDD:'#0D2A6B', ENR:'#fff',    INPRT:'#fff',    D:'#fff'    };
-const ABBR   = { PROJ:'PROJ', LDG:'LDG', LDD:'LDD', ENR:'ENR', INPRT:'INPRT', D:'D' };
+const SCOLOR = { PROJ:'#C5DCF4', LDG:'#BACFEE', LDD:'#82AADB', ENR:'#4476C4', INPRT:'#1D4D9A', D:'#0E2855', HOLD:'#9A9A94' };
+const STXT   = { PROJ:'#0D2A6B', LDG:'#0D2A6B', LDD:'#0D2A6B', ENR:'#fff',    INPRT:'#fff',    D:'#fff',    HOLD:'#fff'    };
+const ABBR   = { PROJ:'PROJ', LDG:'LDG', LDD:'LDD', ENR:'ENR', INPRT:'INPRT', D:'D', HOLD:'HOLD' };
 const STATUS_ORDER = ['D','INPRT','ENR','LDD','LDG','PROJ'];
-const STATUS_LABEL = { PROJ:'Projected', LDG:'Loading', LDD:'Loaded', ENR:'Sea Freight', INPRT:'In Port', D:'Delivered' };
+const STATUS_LABEL = { PROJ:'Projected', LDG:'Loading', LDD:'Loaded', ENR:'Sea Freight', INPRT:'In Port', D:'Delivered', HOLD:'On Hold' };
+
+// Escape anything that comes from the spreadsheet before it reaches the DOM.
+function esc(v) {
+  return String(v === null || v === undefined ? '' : v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Parse YYYY-MM-DD as a LOCAL date. new Date('2026-08-15') is UTC midnight,
+// which renders as Aug 14 in New York.
+function parseISO(s) {
+  if (!s) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s).trim());
+  if (!m) return null;
+  return new Date(+m[1], +m[2] - 1, +m[3]);
+}
 
 function expandRanges(s) {
   const ids = [];
-  if (!s || s === '—' || s === '---') return ids;
-  for (const part of String(s).split(',')) {
+  if (!s || s === '—' || s === '---' || s === '--') return ids;
+  for (const part of String(s).split(/[,;]/)) {
     const t = part.trim();
-    if (t.includes(':')) {
-      const [a,b] = t.split(':').map(Number);
+    if (!t) continue;
+    // (?![A-Za-z0-9]) so a label like "3rd Floor Doors" is not read as unit 3
+    let m = /^(\d+)\s*[:\-]\s*(\d+)(?![A-Za-z0-9])/.exec(t);
+    if (m) {
+      let a = +m[1], b = +m[2];
+      if (a > b) { const x = a; a = b; b = x; }
+      if (b - a > 500) continue;
       for (let i = a; i <= b; i++) ids.push(i);
-    } else if (t && !isNaN(+t)) {
-      ids.push(+t);
+      continue;
     }
+    m = /^(\d+)(?![A-Za-z0-9])/.exec(t);
+    if (m) ids.push(+m[1]);
   }
   return ids;
 }
 
+// Floors that actually have kitchens in scope. Floors with none are not
+// part of this package and must not be shown sitting at 0%.
+function scopedFloors() {
+  return BUILDING_MATRIX.filter(f => f.units.some(u => u.ktype !== '--'));
+}
+function kitchenUnits(f) { return f.units.filter(u => u.ktype !== '--'); }
+
 let unitMap = {};
+let UNIT_OWNER = {};
 function initUnitMap() {
   unitMap = {};
+  UNIT_OWNER = {};
   for (const c of CONTAINERS)
-    for (const uid of expandRanges(c.units))
+    for (const uid of expandRanges(c.units)) {
       unitMap[uid] = c.status;
+      UNIT_OWNER[uid] = c.num;
+    }
   Object.assign(unitMap, UNIT_STATUS);
 }
 
@@ -440,11 +479,11 @@ function initDatePill() {
 
 function renderDonut() {
   // Grouped counts — for donut chart
-  const GROUP_MAP    = { D:'Delivered', INPRT:'Arrived', ENR:'EnRoute', LDD:'EnRoute', LDG:'EnRoute', PROJ:'Projected' };
-  const GROUP_ORDER  = ['Delivered','Arrived','EnRoute','Projected'];
-  const GROUP_COLORS = { Delivered:'#0E2855', Arrived:'#4476C4', EnRoute:'#82AADB', Projected:'#C5DCF4' };
-  const GROUP_LABELS = { Delivered:'Delivered', Arrived:'In Port', EnRoute:'En Route', Projected:'Projected' };
-  const gCounts = { Delivered:0, Arrived:0, EnRoute:0, Projected:0 };
+  const GROUP_MAP    = { D:'Delivered', INPRT:'Arrived', ENR:'EnRoute', LDD:'EnRoute', LDG:'EnRoute', PROJ:'Projected', HOLD:'Hold' };
+  const GROUP_ORDER  = ['Delivered','Arrived','EnRoute','Projected','Hold'];
+  const GROUP_COLORS = { Delivered:'#0E2855', Arrived:'#4476C4', EnRoute:'#82AADB', Projected:'#C5DCF4', Hold:'#9A9A94' };
+  const GROUP_LABELS = { Delivered:'Delivered', Arrived:'In Port', EnRoute:'En Route', Projected:'Projected', Hold:'On Hold' };
+  const gCounts = { Delivered:0, Arrived:0, EnRoute:0, Projected:0, Hold:0 };
   for (const c of CONTAINERS) { const g = GROUP_MAP[c.status]||'Projected'; gCounts[g]++; }
 
   const canvas = document.getElementById('status-chart');
@@ -490,10 +529,30 @@ function renderPipeline() {
 }
 
 function renderMetrics() {
-  let delUnits = 0;
-  for (const c of CONTAINERS) if (c.status === 'D') delUnits += (c.unitQty||0);
+  const totalEl = document.getElementById('m-total');
+  if (totalEl) totalEl.textContent = CONTAINERS.length;
+  const totalSub = document.getElementById('m-total-sub');
+  if (totalSub) {
+    const named = CONTAINERS.filter(c => isNaN(+c.num)).length;
+    totalSub.textContent = named ? (CONTAINERS.length - named) + ' numbered + ' + named + ' named' : 'Apartment tower';
+  }
+
+  // Count delivered KITCHENS off the matrix so unit-level overrides
+  // (partial deliveries) move this number, not just whole containers.
+  const floors = scopedFloors();
+  let delUnits = 0, totalUnits = 0;
+  if (floors.length) {
+    for (const f of floors) for (const u of kitchenUnits(f)) {
+      totalUnits++;
+      if ((unitMap[+u.uid] || u.status) === 'D') delUnits++;
+    }
+  } else {
+    for (const c of CONTAINERS) { totalUnits += (c.unitQty||0); if (c.status === 'D') delUnits += (c.unitQty||0); }
+  }
   const el = document.getElementById('m-del');
   if (el) el.textContent = delUnits;
+  const sub = document.getElementById('m-del-sub');
+  if (sub) sub.textContent = 'of ' + (typeof TOTAL_KITCHENS !== 'undefined' && TOTAL_KITCHENS ? TOTAL_KITCHENS : totalUnits);
 }
 
 function renderTransitPerf() {
@@ -511,26 +570,39 @@ function renderTransitPerf() {
 function renderTable() {
   const tbody = document.getElementById('ctn-tbody');
   if (!tbody) return;
+  if (!CONTAINERS.length) {
+    tbody.innerHTML = '<tr><td colspan="14" style="padding:24px;text-align:center;color:var(--text-3);font-size:11px;">No container data. Re-run the update script.</td></tr>';
+    return;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
   tbody.innerHTML = CONTAINERS.map(c => {
     const bg=SCOLOR[c.status]||'#ccc', txt=STXT[c.status]||'#fff';
     const badgeStyle = c.status === 'PROJ'
       ? `background:transparent;border:1px solid rgba(13,42,107,0.35);color:${txt};`
       : `background:${bg};color:${txt};`;
-    const badge = `<span class="badge" style="${badgeStyle}">${ABBR[c.status]||c.status}</span>`;
+    const badge = `<span class="badge" style="${badgeStyle}">${esc(ABBR[c.status]||c.status)}</span>`;
+    const d = parseISO(c.deliveryISO);
+    const late = d && c.status !== 'D' && d < today;
+    const delCell = late
+      ? `<span style="font-weight:700;">${esc(c.delivery)}</span> <span style="font-size:9px;font-weight:700;color:#B04A2A;">LATE</span>`
+      : `<span style="font-weight:600;">${esc(c.delivery)}</span>`;
+    const note = c.note
+      ? ` <span title="${esc(c.note)}" style="color:var(--text-3);cursor:help;">&#9432;</span>`
+      : '';
     return `<tr>
-      <td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${c.status}"></span>${c.num}</span></td>
+      <td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>${esc(c.num)}</span></td>
       <td>${badge}</td>
-      <td class="mono" style="font-size:10px;">${c.code||'—'}</td>
-      <td style="font-size:10px;color:var(--text-3);">${c.week}</td>
-      <td style="font-size:10px;">${c.loadDate}</td>
-      <td style="font-size:10px;">${c.shipDate}</td>
-      <td style="font-size:10px;color:var(--text-3);">${c.vessel}</td>
-      <td style="font-size:10px;">${c.portArrival}</td>
-      <td style="font-size:10px;font-weight:600;">${c.delivery}</td>
-      <td style="font-size:10px;">${c.delivTime||'—'}</td>
+      <td class="mono" style="font-size:10px;">${esc(c.code||'—')}</td>
+      <td style="font-size:10px;color:var(--text-3);">${esc(c.week)}</td>
+      <td style="font-size:10px;">${esc(c.loadDate)}</td>
+      <td style="font-size:10px;">${esc(c.shipDate)}</td>
+      <td style="font-size:10px;color:var(--text-3);">${esc(c.vessel)}</td>
+      <td style="font-size:10px;">${esc(c.portArrival)}</td>
+      <td style="font-size:10px;">${delCell}</td>
+      <td style="font-size:10px;">${esc(c.delivTime||'—')}</td>
       <td style="font-size:10px;color:var(--text-3);">${c.confirmed?'Confirmed':'ETA'}</td>
-      <td style="font-size:10px;text-align:center;">${c.unitQty}</td>
-      <td style="font-size:10px;color:var(--text-3);">${c.units}</td>
+      <td style="font-size:10px;text-align:center;">${esc(c.unitQty)}</td>
+      <td style="font-size:10px;color:var(--text-3);">${esc(c.units)}${note}</td>
     </tr>`;
   }).join('');
 }
@@ -539,42 +611,62 @@ function renderNextUp() {
   const el = document.getElementById('next-up-list');
   if (!el) return;
   const today = new Date(); today.setHours(0,0,0,0);
-  const upcoming = CONTAINERS
-    .filter(c => c.status !== 'D' && c.delivery && c.delivery !== '—' && c.delivery !== '---' && !isNaN(new Date(c.delivery)))
-    .sort((a,b) => new Date(a.delivery)-new Date(b.delivery) || a.num - b.num)
-    .filter(c => new Date(c.delivery) >= today)
-    .slice(0,5);
-  if (!upcoming.length) { el.innerHTML='<div style="color:var(--text-3);font-size:11px;">No upcoming deliveries</div>'; return; }
+  const dated = CONTAINERS
+    .map(c => ({ c, d: parseISO(c.deliveryISO) }))
+    .filter(x => x.d && x.c.status !== 'D')
+    .sort((a,b) => a.d - b.d || String(a.c.num).localeCompare(String(b.c.num), undefined, {numeric:true}));
+
+  const overdue  = dated.filter(x => x.d <  today);
+  const upcoming = dated.filter(x => x.d >= today).slice(0,5);
+  const undated  = CONTAINERS.filter(c => c.status !== 'D' && !parseISO(c.deliveryISO)
+                                     && c.delivery && c.delivery !== '---' && c.delivery !== '—');
+
+  if (!overdue.length && !upcoming.length && !undated.length) {
+    el.innerHTML='<div style="color:var(--text-3);font-size:11px;">No upcoming deliveries</div>'; return;
+  }
   const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const ST_LABEL = { PROJ:'Projected', LDG:'Loading', LDD:'Loaded', ENR:'Sea Freight', INPRT:'In Port', D:'Delivered' };
-  const ST_COLOR = { PROJ:'#C5DCF4', LDG:'#BACFEE', LDD:'#82AADB', ENR:'#4476C4', INPRT:'#1D4D9A', D:'#0E2855' };
-  el.innerHTML = '<div>' + upcoming.map(c => {
-    const d = new Date(c.delivery);
+
+  function row(x, isLate) {
+    const c = x.c, d = x.d;
     const daysAway = Math.round((d - today) / 86400000);
-    const daysStr = daysAway === 0 ? 'Today' : daysAway + 'd';
-    const sLabel = ST_LABEL[c.status] || c.status;
-    const sColor = ST_COLOR[c.status] || '#9A9A94';
-    const floorStr = c.floors && c.floors !== '---' ? ' · FL ' + c.floors : '';
+    const daysStr = daysAway === 0 ? 'Today' : (isLate ? Math.abs(daysAway) + 'd late' : daysAway + 'd');
+    const sLabel = STATUS_LABEL[c.status] || c.status;
+    const sColor = SCOLOR[c.status] || '#9A9A94';
+    const floorStr = c.floors && c.floors !== '---' ? ' · FL ' + esc(c.floors) : '';
+    const noteStr = c.note ? ` <span title="${esc(c.note)}" style="color:var(--text-3);cursor:help;">&#9432;</span>` : '';
     return `<div class="nu-row">
       <div class="nu-date">${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span></div>
-      <div class="nu-info">CTN ${c.num}${floorStr} &nbsp;·&nbsp; <span style="color:${sColor};font-weight:700;">●</span><span class="nu-slabel" style="color:${sColor};font-weight:700;"> ${sLabel}</span><span class="nu-days"> &nbsp;·&nbsp; ${daysStr}</span></div>
+      <div class="nu-info">CTN ${esc(c.num)}${floorStr} &nbsp;·&nbsp; <span style="color:${sColor};font-weight:700;">●</span><span class="nu-slabel" style="color:${sColor};font-weight:700;"> ${sLabel}</span><span class="nu-days" style="${isLate?'color:#B04A2A;font-weight:700;':''}"> &nbsp;·&nbsp; ${daysStr}</span>${noteStr}</div>
     </div>`;
-  }).join('') + '</div>';
+  }
+
+  let html = '<div>';
+  if (overdue.length) {
+    html += `<div style="font-size:9px;font-weight:700;color:#B04A2A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Past due &#183; ${overdue.length}</div>`;
+    html += overdue.slice(0,3).map(x => row(x, true)).join('');
+    if (overdue.length > 3) html += `<div style="font-size:10px;color:var(--text-3);margin-bottom:6px;">+ ${overdue.length-3} more past due</div>`;
+    html += '<div style="height:8px;"></div>';
+  }
+  html += upcoming.map(x => row(x, false)).join('');
+  if (undated.length) {
+    html += `<div style="font-size:10px;color:var(--text-3);margin-top:8px;">${undated.length} container(s) with no firm date: ${undated.slice(0,4).map(c=>esc(c.num)).join(', ')}${undated.length>4?'…':''}</div>`;
+  }
+  el.innerHTML = html + '</div>';
 }
 
 function renderMiniMatrix() {
   const grid = document.getElementById('mini-matrix-grid');
   if (!grid) return;
-  // Use BUILDING_MATRIX floors, sorted top-down (29→3)
-  const floors = [...BUILDING_MATRIX].sort((a,b) => b.floor - a.floor);
+  // Only floors that have kitchens in this package, sorted top-down
+  const floors = scopedFloors().sort((a,b) => b.floor - a.floor);
   let html = '<div style="display:flex;flex-direction:column;gap:1px;">';
   for (const f of floors) {
     html += '<div style="display:flex;gap:1px;">';
     for (const u of f.units) {
       const st = unitMap[+u.uid] || u.status;
       const bg = (st && st !== '--') ? (SCOLOR[st]||'#e0ddd8') : '#e0ddd8';
-      html += `<div style="width:4px;height:5px;background:${bg};border-radius:1px;" title="${u.uid}:${st||'N/A'}"></div>`;
+      html += `<div style="width:4px;height:5px;background:${bg};border-radius:1px;" title="${esc(u.uid)}: ${esc(st||'N/A')}"></div>`;
     }
     html += '</div>';
   }
@@ -588,31 +680,35 @@ function renderBuildingMatrix() {
   const grid = document.getElementById('bldg-grid');
   if (!grid) return;
 
-  const SCOLOR = { PROJ:'#C5DCF4', LDG:'#BACFEE', LDD:'#82AADB', ENR:'#4476C4', INPRT:'#1D4D9A', D:'#0E2855' };
-  const STXT   = { PROJ:'#0D2A6B', LDG:'#0D2A6B', LDD:'#0D2A6B', ENR:'#fff', INPRT:'#fff', D:'#fff' };
-
   // Build merged uid→{ktype,status} from BUILDING_MATRIX + unitMap overrides
   const bm = {};
   for (const f of BUILDING_MATRIX)
     for (const u of f.units)
       bm[u.uid] = { ktype: u.ktype, status: unitMap[+u.uid] || u.status };
 
-  // Unit column suffixes (01–58)
+  const floors = scopedFloors().sort((a,b) => _bldgAsc ? a.floor - b.floor : b.floor - a.floor);
+  if (!floors.length) {
+    grid.innerHTML = '<div style="padding:24px;color:var(--text-3);font-size:11px;">No building matrix data. Re-run the update script.</div>';
+    return;
+  }
+
+  // Unit column suffixes, derived from the data (not hard-coded to 58)
+  let maxSuffix = 1;
+  for (const f of floors) for (const u of f.units) maxSuffix = Math.max(maxSuffix, +u.uid % 100);
   const unitCols = [];
-  for (let u = 1; u <= 58; u++) unitCols.push(String(u).padStart(2,'0'));
+  for (let u = 1; u <= maxSuffix; u++) unitCols.push(String(u).padStart(2,'0'));
 
   let html = '<table class="bldg-matrix"><thead><tr>';
   html += '<th style="width:52px;min-width:52px;"></th>';
   for (const uc of unitCols) html += `<th>${uc}</th>`;
   html += '</tr></thead><tbody>';
 
-  const floors = [...BUILDING_MATRIX].sort((a,b) => _bldgAsc ? a.floor - b.floor : b.floor - a.floor);
-
   for (const f of floors) {
-    // Delivery count for progress bar
+    // Progress counts only units that have a kitchen in this package.
+    const inScope = kitchenUnits(f);
     let delCount = 0;
-    for (const u of f.units) { if ((unitMap[+u.uid] || u.status) === 'D') delCount++; }
-    const totalUnits = f.units.length;
+    for (const u of inScope) { if ((unitMap[+u.uid] || u.status) === 'D') delCount++; }
+    const totalUnits = inScope.length;
     const pct = totalUnits > 0 ? Math.round(delCount / totalUnits * 100) : 0;
     const barCol = pct === 100 ? '#212745' : pct > 0 ? '#4E67C8' : 'var(--border)';
 
@@ -637,13 +733,15 @@ function renderBuildingMatrix() {
       if (isNA) {
         ktHtml = '<div class="bm-ktype bm-ktype-na">—</div>';
       } else if (st === 'PROJ') {
-        ktHtml = '<div class="bm-ktype bm-ktype-proj">' + (kt === '--' ? '—' : kt) + '</div>';
+        ktHtml = '<div class="bm-ktype bm-ktype-proj">' + (kt === '--' ? '—' : esc(kt)) + '</div>';
       } else {
         const bg = SCOLOR[st] || '#D8EDFC';
         const tc = STXT[st] || '#1A2A5E';
-        ktHtml = '<div class="bm-ktype" style="background:' + bg + ';color:' + tc + ';">' + (kt === '--' ? st : kt) + '</div>';
+        ktHtml = '<div class="bm-ktype" style="background:' + bg + ';color:' + tc + ';">' + (kt === '--' ? esc(st) : esc(kt)) + '</div>';
       }
-      html += '<td class="bm-cell" title="' + uid + ': ' + kt + ' · ' + st + '"><div class="bm-card"><div class="bm-card-id">' + uid + '</div>' + ktHtml + '</div></td>';
+      const owner = UNIT_OWNER[+uid];
+      const ownerStr = owner ? ' · CTN ' + owner : ' · no container';
+      html += '<td class="bm-cell" title="' + esc(uid + ': ' + kt + ' · ' + (STATUS_LABEL[st] || st) + ownerStr) + '"><div class="bm-card"><div class="bm-card-id">' + esc(uid) + '</div>' + ktHtml + '</div></td>';
     }
     html += '</tr>';
   }
@@ -665,15 +763,24 @@ function initUnitDropdown() {
   const sel = document.getElementById('dmg-unit');
   if (!sel) return;
   let html = '<option value="">&#8212; Select unit &#8212;</option>';
-  for (let floor = 3; floor <= 29; floor++) {
-    html += '<optgroup label="Floor ' + floor + '">';
-    for (let u = 1; u <= 58; u++) {
-      const uid = floor*100+u;
-      if (unitMap[uid]) html += '<option value="' + uid + '">' + uid + '</option>';
-    }
+  // Every unit that has a kitchen, whether or not it is on a container yet.
+  for (const f of scopedFloors().sort((a,b) => a.floor - b.floor)) {
+    const units = kitchenUnits(f);
+    if (!units.length) continue;
+    html += '<optgroup label="Floor ' + esc(f.floor) + '">';
+    for (const u of units) html += '<option value="' + esc(u.uid) + '">' + esc(u.uid) + '</option>';
     html += '</optgroup>';
   }
   sel.innerHTML = html;
+}
+
+function initFloorLabel() {
+  const el = document.getElementById('bldg-scope-label');
+  if (!el) return;
+  const fl = scopedFloors().map(f => f.floor).sort((a,b) => a-b);
+  el.textContent = fl.length
+    ? 'Unit Delivery Status · Floors ' + fl[0] + '–' + fl[fl.length-1]
+    : 'Unit Delivery Status';
 }
 
 // ── DAMAGE REPORT (session-only) ──
@@ -803,6 +910,7 @@ renderTable();
 renderNextUp();
 renderMiniMatrix();
 renderBuildingMatrix();
+initFloorLabel();
 initUnitDropdown();
 renderSession111w();
 </script>

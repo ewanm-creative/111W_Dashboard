@@ -1,0 +1,6 @@
+# Generated on every run — local diagnostic only
+111W_update_log.txt
+
+# Office / OneDrive noise
+~$*
+.~lock.*
