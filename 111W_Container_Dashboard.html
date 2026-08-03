@@ -111,15 +111,14 @@ tr:hover td { background: #F9F8F5; }
   .tw { overflow-x: unset; }
   th { padding: 6px 8px; font-size: 9px; }
   td { padding: 5px 8px; font-size: 10px; }
-  /* Keep: CTN#(1), Status(2), Delivery(9), Confirmed?(11), Unit Qty(12) */
+  /* Keep: CTN#(1), Status(2), Delivery(9), Confirmed?(11), Units(12) */
   #ctn table th:nth-child(3),  #ctn table td:nth-child(3),
   #ctn table th:nth-child(4),  #ctn table td:nth-child(4),
   #ctn table th:nth-child(5),  #ctn table td:nth-child(5),
   #ctn table th:nth-child(6),  #ctn table td:nth-child(6),
   #ctn table th:nth-child(7),  #ctn table td:nth-child(7),
   #ctn table th:nth-child(8),  #ctn table td:nth-child(8),
-  #ctn table th:nth-child(10), #ctn table td:nth-child(10),
-  #ctn table th:nth-child(13), #ctn table td:nth-child(13) { display: none; }
+  #ctn table th:nth-child(10), #ctn table td:nth-child(10) { display: none; }
   #bldg-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .form-grid { grid-template-columns: 1fr !important; }
 }
@@ -225,7 +224,7 @@ tr:hover td { background: #F9F8F5; }
       <thead><tr>
         <th>CTN #</th><th>Status</th><th>Ctnr Code</th><th>Load Wk</th><th>Load Date</th>
         <th>Ship Date</th><th>Vessel</th><th>Port Arrival</th>
-        <th>Delivery</th><th>Del. Time</th><th>Confirmed?</th><th>Unit Qty</th><th>Units</th>
+        <th>Delivery</th><th>Del. Time</th><th>Confirmed?</th><th>Units</th>
       </tr></thead>
       <tbody id="ctn-tbody"></tbody>
     </table>
@@ -312,7 +311,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 3, 2026 10:24 AM)
+// DATA_START (auto-generated Aug 3, 2026 4:09 PM)
 const CONTAINERS = [
   { num:"1", status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
   { num:"2", status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
@@ -359,7 +358,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"29.714285714285715" },
 ];
 
-const LAST_UPDATED = "Aug 3, 2026 10:24 AM";
+const LAST_UPDATED = "Aug 3, 2026 4:09 PM";
 const TOTAL_KITCHENS = 577;
 const DATA_WARNINGS = ["Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "13 kitchen(s) in the matrix are not in any container: 1150, 1151, 1248, 1249, 1250, 1251, 1252, 1253, 1254, 1255, 1256, 1257..."];
 
@@ -601,7 +600,6 @@ function renderTable() {
       <td style="font-size:10px;">${delCell}</td>
       <td style="font-size:10px;">${esc(c.delivTime||'—')}</td>
       <td style="font-size:10px;color:var(--text-3);">${c.confirmed?'Confirmed':'ETA'}</td>
-      <td style="font-size:10px;text-align:center;">${esc(c.unitQty)}</td>
       <td style="font-size:10px;color:var(--text-3);">${esc(c.units)}${note}</td>
     </tr>`;
   }).join('');
@@ -882,17 +880,16 @@ function sendReport111w() {
   const n = SESSION_ITEMS_111W.length;
   const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
-  // 1. Build report body and copy to clipboard
-  let body = 'Items:\n';
+  // 1. Build report text
+  let reportText = '';
   SESSION_ITEMS_111W.forEach((item, i) => {
-    body += (i + 1) + '. Unit: ' + item.unit + '\n';
-    body += '   Item Code: ' + (item.code || '—') + '\n';
-    body += '   Item Des.: ' + (item.itemdesc || '—') + '\n';
-    body += '   Issue Type: ' + (item.issuetype || '—') + '\n';
-    body += '   Issue Description: "' + item.issue + '"\n';
-    body += '\n';
+    reportText += (i + 1) + '. Unit: ' + item.unit + '\n';
+    reportText += '   Item Code: ' + (item.code || '—') + '\n';
+    reportText += '   Item Des.: ' + (item.itemdesc || '—') + '\n';
+    reportText += '   Issue Type: ' + (item.issuetype || '—') + '\n';
+    reportText += '   Issue Description: "' + item.issue + '"\n';
+    reportText += '\n';
   });
-  copyText(body);
 
   // 2. Download CSV
   const hdr  = ['Unit','Date','Item Code','Item Description','Issue Type','Issue'];
@@ -902,20 +899,39 @@ function sendReport111w() {
   );
   const csvStr = [hdr.join(','), ...rows].join('\r\n');
   const blob = new Blob([csvStr], { type: 'text/csv' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = '111W_Damage_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
-  URL.revokeObjectURL(url);
+  const burl = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = burl; a.download = '111W_Damage_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+  URL.revokeObjectURL(burl);
 
-  // 3. Open email with subject only — body is on clipboard
+  // 3. Build email subject
   const _sd = new Date(); const _sdate = (_sd.getMonth()+1) + '/' + _sd.getDate() + '/' + _sd.getFullYear();
   const subject = '111 Wall Service Request - ' + _sdate + ' - ' + n + ' item' + (n !== 1 ? 's' : '');
-  const emailNote = '111 WALL ST · SERVICE REPORT\nDate: ' + dateStr + '\nTotal Items: ' + n + ' item' + (n !== 1 ? 's' : '') + '\n\n*Report copied to clipboard - please paste it into the email*';
-  window.location.href = 'mailto:' + (typeof CONFIG !== 'undefined' ? CONFIG.notifyEmail : '')
-    + '?subject=' + encodeURIComponent(subject);
+  const mailtoHref = 'mailto:' + (typeof CONFIG !== 'undefined' ? CONFIG.notifyEmail : '') + '?subject=' + encodeURIComponent(subject);
 
-  // 4. Toast
-  showToast('<div style="font-size:13px;font-weight:700;margin-bottom:5px;">SERVICE ORDER REPORT</div><div style="font-size:11px;opacity:.75;">Report copied to clipboard - please paste it into the email and attach the CSV file in your downloads.</div>');
+  // 4. Show report panel
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
+  overlay.innerHTML =
+    '<div style="background:#fff;width:100%;max-width:520px;border-radius:14px 14px 0 0;padding:20px 20px 28px;box-shadow:0 -4px 24px rgba(0,0,0,.2);">' +
+      '<div style="font-size:13px;font-weight:700;color:#111;margin-bottom:2px;">111 WALL ST · SERVICE REPORT</div>' +
+      '<div style="font-size:11px;color:#666;margin-bottom:12px;">Date: ' + dateStr + ' &nbsp;·&nbsp; ' + n + ' item' + (n!==1?'s':'') + '</div>' +
+      '<textarea id="rpt-ta" readonly style="width:100%;height:160px;font-size:11px;font-family:monospace;border:1px solid #ddd;border-radius:6px;padding:8px;resize:none;box-sizing:border-box;color:#222;background:#fafafa;">' + reportText.trim() + '</textarea>' +
+      '<div style="display:flex;gap:8px;margin-top:12px;">' +
+        '<button id="rpt-copy" style="flex:1;padding:11px;background:#22735C;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Copy Report</button>' +
+        '<a id="rpt-email" href="' + mailtoHref + '" style="flex:1;padding:11px;background:#f0f0f0;color:#111;border-radius:8px;font-size:12px;font-weight:600;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;">Open Email</a>' +
+      '</div>' +
+      '<button id="rpt-close" style="width:100%;margin-top:8px;padding:8px;background:none;border:none;color:#999;font-size:12px;cursor:pointer;">Close</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  document.getElementById('rpt-copy').onclick = function() {
+    const ta = document.getElementById('rpt-ta');
+    ta.select(); ta.setSelectionRange(0, 99999);
+    try { document.execCommand('copy'); this.textContent = 'Copied!'; setTimeout(() => { this.textContent = 'Copy Report'; }, 2000); } catch(e) {}
+  };
+  document.getElementById('rpt-close').onclick = function() { overlay.remove(); };
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
 }
 
 initUnitMap();
