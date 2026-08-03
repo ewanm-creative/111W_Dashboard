@@ -312,7 +312,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 3, 2026 10:00 AM)
+// DATA_START (auto-generated Aug 3, 2026 10:15 AM)
 const CONTAINERS = [
   { num:"1", status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
   { num:"2", status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
@@ -359,7 +359,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"29.714285714285715" },
 ];
 
-const LAST_UPDATED = "Aug 3, 2026 10:00 AM";
+const LAST_UPDATED = "Aug 3, 2026 10:15 AM";
 const TOTAL_KITCHENS = 577;
 const DATA_WARNINGS = ["Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "13 kitchen(s) in the matrix are not in any container: 1150, 1151, 1248, 1249, 1250, 1251, 1252, 1253, 1254, 1255, 1256, 1257..."];
 
@@ -895,9 +895,12 @@ function sendReport111w() {
   const _sd = new Date(); const _sdate = (_sd.getMonth()+1) + '/' + _sd.getDate() + '/' + _sd.getFullYear();
   const subject = '111 Wall Service Request - ' + _sdate + ' - ' + n + ' item' + (n !== 1 ? 's' : '');
   const emailNote = '111 WALL ST · SERVICE REPORT\nDate: ' + dateStr + '\nTotal Items: ' + n + ' item' + (n !== 1 ? 's' : '') + '\n\n*Report copied to clipboard - please paste it into the email*';
-  window.location.href = 'mailto:' + (typeof CONFIG !== 'undefined' ? CONFIG.notifyEmail : '')
-    + '?subject=' + encodeURIComponent(subject)
-    + '&body=' + encodeURIComponent(emailNote);
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (!isMobile) {
+    window.location.href = 'mailto:' + (typeof CONFIG !== 'undefined' ? CONFIG.notifyEmail : '')
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(emailNote);
+  }
 
   // 4. Toast
   showToast('<div style="font-size:13px;font-weight:700;margin-bottom:5px;">SERVICE ORDER REPORT</div><div style="font-size:11px;opacity:.75;">Report copied to clipboard - please paste it into the email and attach the CSV file in your downloads.</div>');
