@@ -312,7 +312,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 3, 2026 10:20 AM)
+// DATA_START (auto-generated Aug 3, 2026 10:23 AM)
 const CONTAINERS = [
   { num:"1", status:"PROJ", week:"Wk 32", units:"301:313,315:321", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
   { num:"2", status:"PROJ", week:"Wk 32", units:"322:333,335:342", unitQty:20, vessel:"--", loadDate:"Aug 6, 2026", shipDate:"Aug 11, 2026", portArrival:"Aug 31, 2026", delivery:"Sep 5, 2026", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"\u2014", delivTime:"\u2014" },
@@ -359,7 +359,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"29.714285714285715" },
 ];
 
-const LAST_UPDATED = "Aug 3, 2026 10:20 AM";
+const LAST_UPDATED = "Aug 3, 2026 10:23 AM";
 const TOTAL_KITCHENS = 577;
 const DATA_WARNINGS = ["Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "13 kitchen(s) in the matrix are not in any container: 1150, 1151, 1248, 1249, 1250, 1251, 1252, 1253, 1254, 1255, 1256, 1257..."];
 
@@ -853,6 +853,22 @@ function clearAll111w() {
   renderSession111w();
 }
 
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(() => { copyTextFallback(text); });
+  } else {
+    copyTextFallback(text);
+  }
+}
+function copyTextFallback(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
 function showToast(html) {
   const t = document.createElement('div');
   t.innerHTML = html;
@@ -876,7 +892,7 @@ function sendReport111w() {
     body += '   Issue Description: "' + item.issue + '"\n';
     body += '\n';
   });
-  navigator.clipboard.writeText(body).catch(() => {});
+  copyText(body);
 
   // 2. Download CSV
   const hdr  = ['Unit','Date','Item Code','Item Description','Issue Type','Issue'];
