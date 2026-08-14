@@ -129,6 +129,11 @@ tr:hover td { background: #F9F8F5; }
 <body>
 <div class="shell">
 
+<!-- CLIENT BRAND -->
+<div style="text-align:center;padding:14px 0 4px;">
+  <img src="logo-dandamudi.png" alt="Dandamudi's Inc" style="height:52px;object-fit:contain;" onerror="this.style.display='none'">
+</div>
+
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left" style="display:flex;align-items:center;gap:14px;">
@@ -150,13 +155,16 @@ tr:hover td { background: #F9F8F5; }
 
 <!-- TABS -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-  <div class="tabs" style="margin-bottom:0;">
-    <button class="tab on" onclick="sw('ctn',this)">Container Schedule</button>
-    <button class="tab" onclick="sw('bldg',this)">Building Matrix</button>
-    <button class="tab" onclick="sw('dmg',this)">Damages/Service Orders</button>
-    <a href="https://1843288studiosnaiderochicag-my.sharepoint.com/:f:/g/personal/ewan_210designhouse_com/IgDlZTVeTomKSpBPpMX6v8ghAdOBXiG2CCMd3BkJnFmKKWA?e=6jB2xf" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-left:20px;padding:5px 12px;background:none;color:var(--text-2);border:1px solid var(--border);font-size:11px;font-weight:500;border-radius:5px;text-decoration:none;letter-spacing:.04em;">Install Drawings</a>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="tabs" style="margin-bottom:0;">
+      <button class="tab on" onclick="sw('ctn',this)">Container Schedule</button>
+      <button class="tab" onclick="sw('bldg',this)">Building Matrix</button>
+      <button class="tab" onclick="sw('dmg',this)">Damages/Service Orders</button>
+    </div>
+    <div class="tabs" style="margin-bottom:0;">
+      <a href="https://1843288studiosnaiderochicag-my.sharepoint.com/:f:/g/personal/ewan_210designhouse_com/IgDlZTVeTomKSpBPpMX6v8ghAdOBXiG2CCMd3BkJnFmKKWA?e=6jB2xf" target="_blank" class="tab" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0;opacity:.75"><path d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2L9.5 1.5z"/></svg>Shared Documents</a>
+    </div>
   </div>
-  <img src="logo-dandamudi.png" alt="" style="height:36px;object-fit:contain;" onerror="this.style.display='none'">
 </div>
 
 <!-- ===== CONTAINER SCHEDULE ===== -->
@@ -219,6 +227,9 @@ tr:hover td { background: #F9F8F5; }
 </svg></div><div class="rp-name">Delivered</div><div id="rp-D" class="rp-val"></div></div>
   </div>
 
+  <!-- ETA disclaimer -->
+  <div style="margin-bottom:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--text-2);text-align:center;">⚠ ETAs will become more accurate as each container approaches its destination. All dates are estimates and subject to change.</div>
+
   <!-- Table -->
   <div class="tw">
     <table>
@@ -258,9 +269,17 @@ tr:hover td { background: #F9F8F5; }
 
 <!-- ===== DAMAGE / OPEN ITEMS ===== -->
 <div id="dmg" class="panel">
+
+  <div style="margin-bottom:16px;padding:14px 16px;background:#fffbf0;border:1px solid #c8a84b;border-radius:8px;font-size:12px;color:var(--text-1);line-height:1.6;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#8a6800;margin-bottom:10px;">⚠ REPORT DAMAGES IMMEDIATELY — READ BEFORE SUBMITTING</div>
+    <p style="margin:0 0 8px;"><strong>Check every item as soon as the container is unloaded and shaken out in the building.</strong> Report on the spot — do not set it aside to do later.</p>
+    <p style="margin:0 0 8px;">If something is damaged, lost, or wrong → fill this form and submit promptly. <strong>Anything reported more than a couple of days after unload cannot be claimed as transportation damage</strong> — by that point the damage is assumed to have happened during handling or installation, and it will not be covered.</p>
+    <p style="margin:0;">Reports through Procore, Autodesk, or similar platforms come in during or after installation — those are installation reports, not delivery reports. Our contract ends at delivery, so by the time those come in the damage can no longer be traced back to transport.</p>
+  </div>
+
   <div class="form-card">
     <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Log a damage or open item</div>
-    <p class="form-sub" style="font-size:11px;color:var(--text-3);margin-bottom:14px;">Fill in each field and click <strong>+ Add to report</strong>. Repeat for each item. When done, click <strong>Send Report</strong> — this emails you the list and saves a CSV to your device. Items are cleared when you close the tab.</p>
+    <p class="form-sub" style="font-size:11px;color:var(--text-3);margin-bottom:14px;">Fill in each field and click <strong>+ Add to report</strong>. Repeat for each item. When done, click <strong>Send Report</strong> to email the list. Items are cleared when you close the tab.</p>
     <div class="form-grid">
       <div class="form-group">
         <label>1. Unit Number</label>
@@ -292,16 +311,21 @@ tr:hover td { background: #F9F8F5; }
         <textarea id="dmg-issue" placeholder="Describe what was found &#8212; damage type, location, severity&#8230;"></textarea>
       </div>
     </div>
-    <button class="btn-submit" onclick="addToReport111w()">+ Add to report</button>
-    <span class="form-msg" id="dmg-msg" style="display:none;margin-left:10px;font-size:11px;"></span>
+    <div style="margin-top:14px;">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--text-3);text-transform:uppercase;margin-bottom:6px;">Date Reported</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="date-pill" id="dmg-date-pill-111w"></span>
+        <button class="btn-submit" onclick="addToReport111w()">+ Add to report</button>
+        <button class="btn-submit" id="btn-send-111w" style="display:none;" onclick="sendReport111w()">&#9993; Send Report</button>
+        <button id="btn-copy-111w" style="display:none;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:500;padding:6px 14px;cursor:pointer;font-family:inherit;" onclick="copyReport111w()">&#9112; Copy</button>
+        <button id="btn-clear-111w" style="display:none;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:500;padding:6px 14px;cursor:pointer;font-family:inherit;" onclick="clearAll111w()">Clear all</button>
+        <span class="form-msg" id="dmg-msg" style="display:none;font-size:11px;"></span>
+      </div>
+    </div>
   </div>
   <div style="margin-top:20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div style="margin-bottom:12px;">
       <span style="font-size:11px;color:var(--text-3);" id="dmg-111w-count">0 items in this report</span>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-submit" id="btn-clear-111w" style="display:none;background:var(--surface);color:var(--text);border:1px solid var(--border);font-size:11px;padding:5px 12px;" onclick="clearAll111w()">Clear all</button>
-        <button class="btn-submit" id="btn-send-111w" style="display:none;font-size:11px;padding:5px 12px;" onclick="sendReport111w()">&#9993; Send Report</button>
-      </div>
     </div>
     <div id="dmg-111w-table" style="display:none;">
       <div class="tw"><table><thead><tr><th>Unit</th><th>Code</th><th>Item</th><th>Type</th><th>Issue</th><th></th></tr></thead><tbody id="dmg-session-tbody"></tbody></table></div>
@@ -312,7 +336,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 14, 2026 11:27 AM)
+// DATA_START (auto-generated Aug 14, 2026 2:29 PM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 1", delivery:"Sat Sep 5", deliveryISO:"2026-09-05", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"LDD", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC AJACCIO", loadDate:"Aug 7", shipDate:"Aug 18", portArrival:"Sep 5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -361,7 +385,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"30.096103896103894" },
 ];
 
-const LAST_UPDATED = "Aug 14, 2026 11:27 AM";
+const LAST_UPDATED = "Aug 14, 2026 2:29 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -471,7 +495,10 @@ function initDatePill() {
   const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pill = document.getElementById('today-pill');
+  const todayStr = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
   if (pill) pill.textContent = `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  const dmgPill = document.getElementById('dmg-date-pill-111w');
+  if (dmgPill) dmgPill.textContent = todayStr;
   const wk = Math.ceil((((d-new Date(d.getFullYear(),0,1))/86400000)+1)/7);
   const wkEl = document.getElementById('today-week');
   if (wkEl) wkEl.textContent = `Week ${wk}`;
@@ -802,8 +829,10 @@ function renderSession111w() {
   if (emptyEl) emptyEl.style.display = n === 0 ? 'block' : 'none';
   if (tableEl) tableEl.style.display = n > 0 ? 'block' : 'none';
   const btnSend  = document.getElementById('btn-send-111w');
+  const btnCopy  = document.getElementById('btn-copy-111w');
   const btnClear = document.getElementById('btn-clear-111w');
   if (btnSend)  btnSend.style.display  = n > 0 ? '' : 'none';
+  if (btnCopy)  btnCopy.style.display  = n > 0 ? '' : 'none';
   if (btnClear) btnClear.style.display = n > 0 ? '' : 'none';
   const tbody = document.getElementById('dmg-session-tbody');
   if (tbody) tbody.innerHTML = SESSION_ITEMS_111W.map((item, idx) => `<tr>
@@ -878,63 +907,47 @@ function showToast(html) {
   setTimeout(() => t.remove(), 5000);
 }
 
+function copyReport111w() {
+  if (!SESSION_ITEMS_111W.length) return;
+  const n = SESSION_ITEMS_111W.length;
+  const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  let text = '111 WALL ST · SERVICE REPORT\nDate: ' + dateStr + '\nTotal Items: ' + n + ' item' + (n !== 1 ? 's' : '') + '\n\n';
+  SESSION_ITEMS_111W.forEach((item, i) => {
+    text += (i + 1) + '. Unit: ' + item.unit + '\n';
+    text += '   Item Code: ' + (item.code || '—') + '\n';
+    text += '   Item Des.: ' + (item.itemdesc || '—') + '\n';
+    text += '   Issue Type: ' + (item.issuetype || '—') + '\n';
+    text += '   Issue Description: "' + item.issue + '"\n\n';
+  });
+  const btn = document.getElementById('btn-copy-111w');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => { btn.textContent = '✓ Copied'; setTimeout(() => { btn.innerHTML = '&#9112; Copy'; }, 2000); });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✓ Copied'; setTimeout(() => { btn.innerHTML = '&#9112; Copy'; }, 2000);
+  }
+}
+
 function sendReport111w() {
   if (!SESSION_ITEMS_111W.length) { alert('No items to send.'); return; }
   const n = SESSION_ITEMS_111W.length;
   const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-
-  // 1. Build report text
-  let reportText = '';
+  const subject = '111 Wall Service Request - ' + dateStr + ' - ' + n + ' item' + (n !== 1 ? 's' : '');
+  let body = '111 WALL ST · SERVICE REPORT\nDate: ' + dateStr + '\nTotal Items: ' + n + ' item' + (n !== 1 ? 's' : '') + '\n\n';
   SESSION_ITEMS_111W.forEach((item, i) => {
-    reportText += (i + 1) + '. Unit: ' + item.unit + '\n';
-    reportText += '   Item Code: ' + (item.code || '—') + '\n';
-    reportText += '   Item Des.: ' + (item.itemdesc || '—') + '\n';
-    reportText += '   Issue Type: ' + (item.issuetype || '—') + '\n';
-    reportText += '   Issue Description: "' + item.issue + '"\n';
-    reportText += '\n';
+    body += (i + 1) + '. Unit: ' + item.unit + '\n';
+    body += '   Item Code: ' + (item.code || '—') + '\n';
+    body += '   Item Des.: ' + (item.itemdesc || '—') + '\n';
+    body += '   Issue Type: ' + (item.issuetype || '—') + '\n';
+    body += '   Issue Description: "' + item.issue + '"\n\n';
   });
-
-  // 2. Download CSV
-  const hdr  = ['Unit','Date','Item Code','Item Description','Issue Type','Issue'];
-  const rows  = SESSION_ITEMS_111W.map(i =>
-    [i.unit, i.date, i.code||'', i.itemdesc||'', i.issuetype||'', i.issue]
-    .map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')
-  );
-  const csvStr = [hdr.join(','), ...rows].join('\r\n');
-  const blob = new Blob([csvStr], { type: 'text/csv' });
-  const burl = URL.createObjectURL(blob);
+  const email = typeof CONFIG !== 'undefined' ? CONFIG.notifyEmail : '';
   const a = document.createElement('a');
-  a.href = burl; a.download = '111W_Damage_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
-  URL.revokeObjectURL(burl);
-
-  // 3. Build email subject
-  const _sd = new Date(); const _sdate = (_sd.getMonth()+1) + '/' + _sd.getDate() + '/' + _sd.getFullYear();
-  const subject = '111 Wall Service Request - ' + _sdate + ' - ' + n + ' item' + (n !== 1 ? 's' : '');
-  const mailtoHref = 'mailto:' + (typeof CONFIG !== 'undefined' ? CONFIG.notifyEmail : '') + '?subject=' + encodeURIComponent(subject);
-
-  // 4. Show report panel
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
-  overlay.innerHTML =
-    '<div style="background:#fff;width:100%;max-width:520px;border-radius:14px 14px 0 0;padding:20px 20px 28px;box-shadow:0 -4px 24px rgba(0,0,0,.2);">' +
-      '<div style="font-size:13px;font-weight:700;color:#111;margin-bottom:2px;">111 WALL ST · SERVICE REPORT</div>' +
-      '<div style="font-size:11px;color:#666;margin-bottom:12px;">Date: ' + dateStr + ' &nbsp;·&nbsp; ' + n + ' item' + (n!==1?'s':'') + '</div>' +
-      '<textarea id="rpt-ta" readonly style="width:100%;height:160px;font-size:11px;font-family:monospace;border:1px solid #ddd;border-radius:6px;padding:8px;resize:none;box-sizing:border-box;color:#222;background:#fafafa;">' + reportText.trim() + '</textarea>' +
-      '<div style="display:flex;gap:8px;margin-top:12px;">' +
-        '<button id="rpt-copy" style="flex:1;padding:11px;background:#22735C;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Copy Report</button>' +
-        '<a id="rpt-email" href="' + mailtoHref + '" style="flex:1;padding:11px;background:#f0f0f0;color:#111;border-radius:8px;font-size:12px;font-weight:600;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;">Open Email</a>' +
-      '</div>' +
-      '<button id="rpt-close" style="width:100%;margin-top:8px;padding:8px;background:none;border:none;color:#999;font-size:12px;cursor:pointer;">Close</button>' +
-    '</div>';
-  document.body.appendChild(overlay);
-
-  document.getElementById('rpt-copy').onclick = function() {
-    const ta = document.getElementById('rpt-ta');
-    ta.select(); ta.setSelectionRange(0, 99999);
-    try { document.execCommand('copy'); this.textContent = 'Copied!'; setTimeout(() => { this.textContent = 'Copy Report'; }, 2000); } catch(e) {}
-  };
-  document.getElementById('rpt-close').onclick = function() { overlay.remove(); };
-  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+  a.href = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  a.click();
 }
 
 initUnitMap();
