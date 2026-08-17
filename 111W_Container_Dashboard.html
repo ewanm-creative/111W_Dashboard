@@ -33,6 +33,12 @@ h1 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2
 table { width: 100%; border-collapse: collapse; font-size: 11px; }
 th { text-align: left; padding: 8px 10px; color: var(--text-3); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--border); background: var(--bg); white-space: nowrap; }
 td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+/* Narrow column with rotated (bottom-to-top) header — keeps Port Arrival and Delivery tight */
+#ctn th.vhdr { writing-mode: vertical-rl; transform: rotate(180deg); padding: 8px 3px; width: 1%;
+               text-align: center; vertical-align: bottom; letter-spacing: .06em; }
+#ctn td.vcol { padding-left: 4px; padding-right: 4px; width: 1%; text-align: center; }
+/* Extra breathing room to the left of this column */
+#ctn th.gapl, #ctn td.gapl { padding-left: 24px; }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: #F9F8F5; }
 .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
@@ -111,14 +117,15 @@ tr:hover td { background: #F9F8F5; }
   .tw { overflow-x: unset; }
   th { padding: 6px 8px; font-size: 9px; }
   td { padding: 5px 8px; font-size: 10px; }
-  /* Keep: CTN#(1), Status(2), Ctnr Code(3), Delivery(9), Confirmed?(11), Units(12) */
-  #ctn table th:nth-child(4),  #ctn table td:nth-child(4),
-  #ctn table th:nth-child(5),  #ctn table td:nth-child(5),
-  #ctn table th:nth-child(6),  #ctn table td:nth-child(6),
-  #ctn table th:nth-child(7),  #ctn table td:nth-child(7),
-  #ctn table th:nth-child(8),  #ctn table td:nth-child(8),
-  #ctn table th:nth-child(10), #ctn table td:nth-child(10) { display: none; }
+  /* Keep: CTN#(1), Status(2), Ctnr Code(3), Delivery(8), Confirmed?(10), Floor(11), Units(12) */
+  /* Hide: Load Wk(4), Load Date(5), Port Arrival(6), Port Days(7), Del. Time(9) */
+  #ctn table th:nth-child(4), #ctn table td:nth-child(4),
+  #ctn table th:nth-child(5), #ctn table td:nth-child(5),
+  #ctn table th:nth-child(6), #ctn table td:nth-child(6),
+  #ctn table th:nth-child(7), #ctn table td:nth-child(7),
+  #ctn table th:nth-child(9), #ctn table td:nth-child(9) { display: none; }
   #ctn table th:nth-child(3), #ctn table td:nth-child(3) { font-size: 8px !important; padding: 4px 4px !important; }
+  #ctn table th:nth-child(11), #ctn table td:nth-child(11) { font-size: 9px !important; padding: 4px 4px !important; }
   #ctn table th:nth-child(12), #ctn table td:nth-child(12) { font-size: 9px !important; padding: 4px 4px !important; }
   #bldg-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .form-grid { grid-template-columns: 1fr !important; }
@@ -235,8 +242,8 @@ tr:hover td { background: #F9F8F5; }
     <table>
       <thead><tr>
         <th>CTN #</th><th>Status</th><th>Ctnr Code</th><th>Load Wk</th><th>Load Date</th>
-        <th>Ship Date</th><th>Vessel</th><th>Port Arrival</th>
-        <th>Delivery</th><th>Del. Time</th><th>Confirmed?</th><th>Units</th>
+        <th>Port Arrival</th><th class="vhdr">Port Days</th>
+        <th>Delivery</th><th class="vhdr">Del. Time</th><th>Confirmed?</th><th class="gapl">Floor</th><th>Units</th>
       </tr></thead>
       <tbody id="ctn-tbody"></tbody>
     </table>
@@ -336,7 +343,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 17, 2026 3:03 PM)
+// DATA_START (auto-generated Aug 17, 2026 3:38 PM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 2", delivery:"Sun Sep 6", deliveryISO:"2026-09-06", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"LDD", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 13", delivery:"Thu Sep 17", deliveryISO:"2026-09-17", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -385,7 +392,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.217316017316016" },
 ];
 
-const LAST_UPDATED = "Aug 17, 2026 3:03 PM";
+const LAST_UPDATED = "Aug 17, 2026 3:38 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -596,11 +603,43 @@ function renderTransitPerf() {
   ).join('');
 }
 
+const MON3 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Given a Date, return "Oct 19 - Oct 23" (Mon-Fri of the week it falls in)
+function weekRangeOf(d) {
+  if (!d || isNaN(d)) return '—';
+  const day = d.getDay();                       // 0=Sun .. 6=Sat
+  const back = (day === 0) ? 6 : day - 1;       // walk back to Monday
+  const mon = new Date(d); mon.setDate(d.getDate() - back);
+  const fri = new Date(mon); fri.setDate(mon.getDate() + 4);
+  return MON3[mon.getMonth()] + ' ' + mon.getDate() + ' - ' + MON3[fri.getMonth()] + ' ' + fri.getDate();
+}
+
+// For PROJ containers: week window of the projected delivery date
+function projWeekRange(iso) {
+  return weekRangeOf(parseISO(iso));
+}
+
+// Load Date has no ISO in the data (e.g. "Sep 24"). Anchor the year off the
+// delivery date, since loading always precedes delivery.
+function projLoadWeekRange(c) {
+  const raw = String(c.loadDate || '').trim();
+  const m = raw.match(/([A-Za-z]{3})[a-z]*\s+(\d{1,2})/);
+  if (!m) return raw || '—';
+  const mi = MON3.indexOf(m[1].charAt(0).toUpperCase() + m[1].slice(1,3).toLowerCase());
+  if (mi < 0) return raw;
+  const del = parseISO(c.deliveryISO);
+  const yr = del ? del.getFullYear() : new Date().getFullYear();
+  let d = new Date(yr, mi, +m[2]);
+  if (del && d > del) d = new Date(yr - 1, mi, +m[2]);   // load date sits in the prior year
+  return weekRangeOf(d);
+}
+
 function renderTable() {
   const tbody = document.getElementById('ctn-tbody');
   if (!tbody) return;
   if (!CONTAINERS.length) {
-    tbody.innerHTML = '<tr><td colspan="14" style="padding:24px;text-align:center;color:var(--text-3);font-size:11px;">No container data. Re-run the update script.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="12" style="padding:24px;text-align:center;color:var(--text-3);font-size:11px;">No container data. Re-run the update script.</td></tr>';
     return;
   }
   const today = new Date(); today.setHours(0,0,0,0);
@@ -611,10 +650,17 @@ function renderTable() {
       : `background:${bg};color:${txt};`;
     const badge = `<span class="badge" style="${badgeStyle}">${esc(ABBR[c.status]||c.status)}</span>`;
     const d = parseISO(c.deliveryISO);
-    const late = d && c.status !== 'D' && d < today;
-    const delCell = late
-      ? `<span style="font-weight:700;">${esc(c.delivery)}</span> <span style="font-size:9px;font-weight:700;color:#B04A2A;">LATE</span>`
-      : `<span style="font-weight:600;">${esc(c.delivery)}</span>`;
+    const isProj = c.status === 'PROJ';
+    const late = d && !isProj && c.status !== 'D' && d < today;
+    let delCell;
+    if (isProj) {
+      // Projected: show only the Mon-Fri week window, not a hard date
+      delCell = `<span style="font-weight:600;color:var(--text-2);">${esc(projWeekRange(c.deliveryISO))}</span>`;
+    } else if (late) {
+      delCell = `<span style="font-weight:700;">${esc(c.delivery)}</span> <span style="font-size:9px;font-weight:700;color:#B04A2A;">LATE</span>`;
+    } else {
+      delCell = `<span style="font-weight:600;">${esc(c.delivery)}</span>`;
+    }
     const note = c.note
       ? ` <span title="${esc(c.note)}" style="color:var(--text-3);cursor:help;">&#9432;</span>`
       : '';
@@ -623,14 +669,14 @@ function renderTable() {
       <td>${badge}</td>
       <td class="mono" style="font-size:10px;">${esc(c.code||'—')}</td>
       <td style="font-size:10px;color:var(--text-3);">${esc(c.week)}</td>
-      <td style="font-size:10px;">${esc(c.loadDate)}</td>
-      <td style="font-size:10px;">${esc(c.shipDate)}</td>
-      <td style="font-size:10px;color:var(--text-3);">${esc(c.vessel)}</td>
-      <td style="font-size:10px;">${esc(c.portArrival)}</td>
+      <td style="font-size:10px;">${isProj ? `<span style="color:var(--text-2);">${esc(projLoadWeekRange(c))}</span>` : esc(c.loadDate)}</td>
+      <td style="font-size:10px;">${isProj ? '—' : esc(c.portArrival)}</td>
+      <td class="vcol" style="font-size:10px;color:var(--text-3);">${isProj || !c.portDays || c.portDays === '---' ? '—' : esc(c.portDays)}</td>
       <td style="font-size:10px;">${delCell}</td>
-      <td style="font-size:10px;">${esc(c.delivTime||'—')}</td>
+      <td class="vcol" style="font-size:10px;">${isProj ? '—' : esc(c.delivTime||'—')}</td>
       <td style="font-size:10px;color:var(--text-3);">${c.confirmed?'Confirmed':'ETA'}</td>
-      <td style="font-size:10px;color:var(--text-3);">${esc(c.units)}${note}</td>
+      <td class="gapl" style="font-size:10px;font-weight:600;">${esc(c.floors && c.floors !== '---' ? c.floors : '—')}</td>
+      <td style="font-size:10px;color:var(--text);">${esc(c.units)}${note}</td>
     </tr>`;
   }).join('');
 }
@@ -663,8 +709,12 @@ function renderNextUp() {
     const sColor = SCOLOR[c.status] || '#9A9A94';
     const floorStr = c.floors && c.floors !== '---' ? ' · FL ' + esc(c.floors) : '';
     const noteStr = c.note ? ` <span title="${esc(c.note)}" style="color:var(--text-3);cursor:help;">&#9432;</span>` : '';
+    const isProj = c.status === 'PROJ';
+    const dateStr = isProj
+      ? `${projWeekRange(c.deliveryISO)} <span class="nu-tag">[Projected]</span>`
+      : `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span>`;
     return `<div class="nu-row">
-      <div class="nu-date">${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span></div>
+      <div class="nu-date">${dateStr}</div>
       <div class="nu-info">CTN ${esc(c.num)}${floorStr} &nbsp;·&nbsp; <span style="color:${sColor};font-weight:700;">●</span><span class="nu-slabel" style="color:${sColor};font-weight:700;"> ${sLabel}</span><span class="nu-days" style="${isLate?'color:#B04A2A;font-weight:700;':''}"> &nbsp;·&nbsp; ${daysStr}</span>${noteStr}</div>
     </div>`;
   }
