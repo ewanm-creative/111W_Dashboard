@@ -33,6 +33,20 @@ h1 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2
 table { width: 100%; border-collapse: collapse; font-size: 11px; }
 th { text-align: left; padding: 8px 10px; color: var(--text-3); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--border); background: var(--bg); white-space: nowrap; }
 td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+/* Building-matrix unit preview (hover on desktop, tap on mobile) */
+.bmp { position: fixed; z-index: 9999; display: none; background: var(--surface); border: 1px solid var(--border);
+       border-radius: 8px; box-shadow: 0 6px 22px rgba(0,0,0,.16); padding: 10px 12px; font-size: 11px;
+       line-height: 1.5; min-width: 160px; max-width: 240px; pointer-events: none; }
+.bmp.on { display: block; }
+.bmp-id { font-size: 13px; font-weight: 700; margin-bottom: 7px; letter-spacing: .02em; }
+.bmp-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.bmp-row + .bmp-row { margin-top: 3px; }
+.bmp-lbl { color: var(--text-3); white-space: nowrap; }
+.bmp-val { font-weight: 600; text-align: right; }
+.bmp-pill { display: inline-block; padding: 1px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+.bmp-sep { border-top: 1px solid var(--border); margin: 7px 0 6px; }
+.bm-cell[data-uid] { cursor: pointer; }
+
 /* Narrow column with rotated (bottom-to-top) header — keeps Port Arrival and Delivery tight */
 #ctn th.vhdr { writing-mode: vertical-rl; transform: rotate(180deg); padding: 8px 3px; width: 1%;
                text-align: center; vertical-align: bottom; letter-spacing: .06em; }
@@ -343,7 +357,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 17, 2026 4:08 PM)
+// DATA_START (auto-generated Aug 17, 2026 4:30 PM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 2", portDays:"4", delivery:"Sun Sep 6", deliveryISO:"2026-09-06", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"LDD", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 13", portDays:"4", delivery:"Thu Sep 17", deliveryISO:"2026-09-17", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -392,7 +406,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.217316017316016" },
 ];
 
-const LAST_UPDATED = "Aug 17, 2026 4:08 PM";
+const LAST_UPDATED = "Aug 17, 2026 4:30 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -752,7 +766,7 @@ function renderMiniMatrix() {
   grid.innerHTML = html;
 }
 
-let _bldgAsc = false;
+let _bldgAsc = true;   // default: bottom-up (lowest floor first)
 
 function renderBuildingMatrix() {
   const grid = document.getElementById('bldg-grid');
@@ -825,13 +839,109 @@ function renderBuildingMatrix() {
       }
       const owner = UNIT_OWNER[+uid];
       const ownerStr = owner ? ' · CTN ' + owner : ' · no container';
-      html += '<td class="bm-cell" title="' + esc(uid + ': ' + kt + ' · ' + (STATUS_LABEL[st] || st) + ownerStr) + '"><div class="bm-card"><div class="bm-card-id">' + esc(uid) + '</div>' + ktHtml + '</div></td>';
+      html += '<td class="bm-cell" data-uid="' + esc(uid) + '" data-kt="' + esc(kt) + '" data-st="' + esc(st) +
+              '" data-ctn="' + esc(owner == null ? '' : String(owner)) + '"' +
+              ' title="' + esc(uid + ': ' + kt + ' · ' + (STATUS_LABEL[st] || st) + ownerStr) + '">' +
+              '<div class="bm-card"><div class="bm-card-id">' + esc(uid) + '</div>' + ktHtml + '</div></td>';
     }
     html += '</tr>';
   }
 
   html += '</tbody></table>';
   grid.innerHTML = html;
+}
+
+// ── BUILDING MATRIX UNIT PREVIEW ──
+// Hover on desktop, tap on mobile. Delegated off #bldg-grid so it survives
+// every re-render (only the grid's children get replaced, not the grid).
+function initBldgPreview() {
+  const grid = document.getElementById('bldg-grid');
+  if (!grid || grid._bmpInit) return;
+  grid._bmpInit = true;
+
+  const pop = document.createElement('div');
+  pop.className = 'bmp';
+  document.body.appendChild(pop);
+
+  const ctnByNum = n => CONTAINERS.find(c => String(c.num) === String(n));
+
+  function pill(st) {
+    if (!st || st === '--') {
+      return '<span class="bmp-val" style="color:var(--text-3);font-weight:400;">Not in package</span>';
+    }
+    return '<span class="bmp-pill" style="background:' + (SCOLOR[st] || '#e0ddd8') + ';color:' +
+           (STXT[st] || '#5A5A54') + ';">' + esc(STATUS_LABEL[st] || st) + '</span>';
+  }
+
+  function build(td) {
+    const uid = td.getAttribute('data-uid');
+    if (!uid) return null;
+    const kt  = td.getAttribute('data-kt') || '--';
+    const st  = td.getAttribute('data-st') || '--';
+    const num = td.getAttribute('data-ctn') || '';
+    const c   = num ? ctnByNum(num) : null;
+
+    let h = '<div class="bmp-id">Unit ' + esc(uid) + '</div>';
+    h += '<div class="bmp-row"><span class="bmp-lbl">Kitchen</span><span class="bmp-val">' +
+         pill(st) + '</span></div>';
+    if (kt && kt !== '--') {
+      h += '<div class="bmp-row"><span class="bmp-lbl">Type</span>' +
+           '<span class="bmp-val">' + esc(kt) + '</span></div>';
+    }
+    h += '<div class="bmp-sep"></div>';
+    if (c) {
+      const isProj = c.status === 'PROJ';
+      const deliv  = isProj ? projWeekRange(c.deliveryISO) : c.delivery;
+      h += '<div class="bmp-row"><span class="bmp-lbl">Container</span>' +
+           '<span class="bmp-val">CTN ' + esc(String(c.num)) + '</span></div>';
+      h += '<div class="bmp-row"><span class="bmp-lbl">' + (isProj ? 'Est. delivery' : 'Delivery') +
+           '</span><span class="bmp-val">' + esc(deliv) + '</span></div>';
+    } else {
+      h += '<div class="bmp-row"><span class="bmp-lbl">Container</span>' +
+           '<span class="bmp-val" style="color:var(--text-3);font-weight:400;">Not assigned</span></div>';
+    }
+    return h;
+  }
+
+  function place(td) {
+    const r = td.getBoundingClientRect();
+    pop.style.visibility = 'hidden';
+    pop.classList.add('on');
+    const pw = pop.offsetWidth, ph = pop.offsetHeight;
+    let left = r.left + r.width / 2 - pw / 2;
+    let top  = r.top - ph - 8;                       // prefer above the cell
+    if (top < 8) top = r.bottom + 8;                 // flip below if clipped
+    left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
+    top  = Math.max(8, Math.min(top,  window.innerHeight - ph - 8));
+    pop.style.left = left + 'px';
+    pop.style.top  = top + 'px';
+    pop.style.visibility = '';
+  }
+
+  let pinned = null;                                  // tapped cell (mobile)
+  function show(td) { const h = build(td); if (!h) return; pop.innerHTML = h; place(td); }
+  function hide()   { pop.classList.remove('on'); }
+
+  const cellOf = e => e.target.closest && e.target.closest('.bm-cell[data-uid]');
+
+  grid.addEventListener('mouseover', e => {
+    if (pinned) return;
+    const td = cellOf(e); if (td) show(td); else hide();
+  });
+  grid.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+
+  // Tap to pin on touch devices; tap the same cell or anywhere else to dismiss.
+  grid.addEventListener('click', e => {
+    const td = cellOf(e);
+    if (!td) { pinned = null; hide(); return; }
+    if (pinned === td) { pinned = null; hide(); return; }
+    pinned = td; show(td);
+  });
+  document.addEventListener('click', e => {
+    if (!grid.contains(e.target)) { pinned = null; hide(); }
+  });
+  window.addEventListener('scroll', () => { pinned = null; hide(); }, true);
+  window.addEventListener('resize', () => { pinned = null; hide(); });
 }
 
 function setBldgDir(asc) {
@@ -1009,7 +1119,8 @@ renderTransitPerf();
 renderTable();
 renderNextUp();
 renderMiniMatrix();
-renderBuildingMatrix();
+setBldgDir(_bldgAsc);   // renders the matrix and syncs the toggle buttons
+initBldgPreview();
 initFloorLabel();
 initUnitDropdown();
 renderSession111w();
