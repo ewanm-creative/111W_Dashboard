@@ -33,6 +33,10 @@ h1 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2
 table { width: 100%; border-collapse: collapse; font-size: 11px; }
 th { text-align: left; padding: 8px 10px; color: var(--text-3); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--border); background: var(--bg); white-space: nowrap; }
 td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+/* Next-up row in the container schedule */
+#ctn tbody tr.next-up-row > td { background: #EAF3FC; font-weight: 500; }
+#ctn tbody tr.next-up-row > td:first-child { box-shadow: inset 3px 0 0 #4476C4; }
+
 /* Building-matrix unit preview (hover on desktop, tap on mobile) */
 .bmp { position: fixed; z-index: 9999; display: none; background: var(--surface); border: 1px solid var(--border);
        border-radius: 8px; box-shadow: 0 6px 22px rgba(0,0,0,.16); padding: 10px 12px; font-size: 11px;
@@ -229,7 +233,7 @@ tr:hover td { background: #F9F8F5; }
     <!-- Mini matrix -->
     <div id="mini-matrix-card" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:8px 14px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;min-width:320px;">
       <div style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Unit Status</div>
-      <div id="mini-matrix-grid"></div>
+      <div id="mini-matrix-grid" style="flex:1;width:100%;display:flex;align-items:stretch;justify-content:center;min-height:0;margin-bottom:16px;"></div>
     </div>
 
     <!-- Next Up -->
@@ -369,7 +373,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 17, 2026 4:51 PM)
+// DATA_START (auto-generated Aug 18, 2026 9:33 AM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 2", portDays:"4", delivery:"Sun Sep 6", deliveryISO:"2026-09-06", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"LDD", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 13", portDays:"4", delivery:"Thu Sep 17", deliveryISO:"2026-09-17", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -418,7 +422,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.217316017316016" },
 ];
 
-const LAST_UPDATED = "Aug 17, 2026 4:51 PM";
+const LAST_UPDATED = "Aug 18, 2026 9:33 AM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -669,7 +673,16 @@ function renderTable() {
     return;
   }
   const today = new Date(); today.setHours(0,0,0,0);
+
+  // Soonest upcoming delivery — highlighted as "next up" in the table.
+  const _next = CONTAINERS
+    .map(c => ({ c, d: parseISO(c.deliveryISO) }))
+    .filter(x => x.d && x.c.status !== 'D' && x.d >= today)
+    .sort((a,b) => a.d - b.d || String(a.c.num).localeCompare(String(b.c.num), undefined, {numeric:true}))[0];
+  const nextNum = _next ? String(_next.c.num) : null;
+
   tbody.innerHTML = CONTAINERS.map(c => {
+    const isNext = nextNum !== null && String(c.num) === nextNum;
     const bg=SCOLOR[c.status]||'#ccc', txt=STXT[c.status]||'#fff';
     const badgeStyle = c.status === 'PROJ'
       ? `background:transparent;border:1px solid rgba(13,42,107,0.35);color:${txt};`
@@ -690,7 +703,7 @@ function renderTable() {
     const note = c.note
       ? ` <span title="${esc(c.note)}" style="color:var(--text-3);cursor:help;">&#9432;</span>`
       : '';
-    return `<tr>
+    return `<tr${isNext ? ' class="next-up-row"' : ''}>
       <td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>${esc(c.num)}</span></td>
       <td>${badge}</td>
       <td class="mono" style="font-size:10px;">${esc(c.code||'—')}</td>
@@ -816,13 +829,15 @@ function renderMiniMatrix() {
   if (!grid) return;
   // Whole tower, top-down. Floors with no kitchens yet render as empty cells.
   const floors = [...BUILDING_MATRIX].sort((a,b) => b.floor - a.floor);
-  let html = '<div style="display:flex;flex-direction:column;gap:1px;">';
+  // Rows and cells flex to fill the card's height instead of sitting at a
+  // fixed 5px, so the grid doesn't leave dead space under it.
+  let html = '<div style="display:flex;flex-direction:column;gap:1px;flex:1;min-height:0;">';
   for (const f of floors) {
-    html += '<div style="display:flex;gap:1px;">';
+    html += '<div style="display:flex;gap:1px;flex:1;min-height:5px;justify-content:center;">';
     for (const u of f.units) {
       const st = unitMap[+u.uid] || u.status;
       const bg = (st && st !== '--') ? (SCOLOR[st]||'#e0ddd8') : '#e0ddd8';
-      html += `<div style="width:4px;height:5px;background:${bg};border-radius:1px;" title="${esc(u.uid)}: ${esc(st||'N/A')}"></div>`;
+      html += `<div style="width:4px;flex-shrink:0;background:${bg};border-radius:1px;" title="${esc(u.uid)}: ${esc(st||'N/A')}"></div>`;
     }
     html += '</div>';
   }
