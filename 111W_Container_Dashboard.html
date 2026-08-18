@@ -158,16 +158,14 @@ tr:hover td { background: #F9F8F5; }
   .tw { overflow-x: unset; }
   th { padding: 6px 8px; font-size: 9px; }
   td { padding: 5px 8px; font-size: 10px; }
-  /* Keep: CTN#(1), Status(2), Ctnr Code(3), Delivery(8), Confirmed?(10), Floor(11), Units(12) */
-  /* Hide: Load Wk(4), Load Date(5), Port Arrival(6), Port Days(7), Del. Time(9) */
-  #ctn table th:nth-child(4), #ctn table td:nth-child(4),
-  #ctn table th:nth-child(5), #ctn table td:nth-child(5),
-  #ctn table th:nth-child(6), #ctn table td:nth-child(6),
-  #ctn table th:nth-child(7), #ctn table td:nth-child(7),
-  #ctn table th:nth-child(9), #ctn table td:nth-child(9) { display: none; }
-  #ctn table th:nth-child(3), #ctn table td:nth-child(3) { font-size: 8px !important; padding: 4px 4px !important; }
-  #ctn table th:nth-child(11), #ctn table td:nth-child(11) { font-size: 9px !important; padding: 4px 4px !important; }
-  #ctn table th:nth-child(12), #ctn table td:nth-child(12) { font-size: 9px !important; padding: 4px 4px !important; }
+  /* Columns are targeted by CLASS, not nth-child, so adding, removing or
+     reordering a column can never silently blank the wrong one on phones.
+     Kept on mobile: CTN#, Status, Ctnr Code, Delivery, Confirmed?, Floor, Units */
+  #ctn .c-loadwk, #ctn .c-loaddate, #ctn .c-port, #ctn .c-pdays, #ctn .c-dtime { display: none; }
+  #ctn .c-code { font-size: 8px !important; padding: 4px 4px !important; }
+  #ctn .c-floor, #ctn .c-units { font-size: 9px !important; padding: 4px 4px !important; }
+  /* Internal view on a phone: let the extra columns scroll instead of overflow */
+  body.staff-mode #ctn .tw { overflow-x: auto; }
   #bldg-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .form-grid { grid-template-columns: 1fr !important; }
 }
@@ -282,10 +280,12 @@ tr:hover td { background: #F9F8F5; }
   <div class="tw">
     <table>
       <thead><tr>
-        <th>CTN #</th><th>Status</th><th>Ctnr Code</th><th>Load Wk</th><th>Load Date</th>
-        <th>Port Arrival</th><th class="vhdr">Port Days</th>
-        <th>Delivery</th><th class="vhdr">Del. Time</th><th>Confirmed?</th><th class="gapl">Floor</th><th>Units</th>
-        <th class="staff-col">Ship Date</th><th class="staff-col">Vessel</th>
+        <th class="c-num">CTN #</th><th class="c-status">Status</th><th class="c-code">Ctnr Code</th>
+        <th class="c-loadwk">Load Wk</th><th class="c-loaddate">Load Date</th>
+        <th class="c-ship staff-col">Ship Date</th><th class="c-vessel staff-col">Vessel</th>
+        <th class="c-port">Port Arrival</th><th class="c-pdays vhdr">Port Days</th>
+        <th class="c-deliv">Delivery</th><th class="c-dtime vhdr">Del. Time</th>
+        <th class="c-conf">Confirmed?</th><th class="c-floor gapl">Floor</th><th class="c-units">Units</th>
       </tr></thead>
       <tbody id="ctn-tbody"></tbody>
     </table>
@@ -293,8 +293,8 @@ tr:hover td { background: #F9F8F5; }
   <button id="ctn-copy" onclick="copySchedule(this)" title="Copy the next 10 deliveries for an email" style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid var(--border);background:var(--surface);border-radius:99px;font-size:10px;font-weight:600;color:var(--text-2);cursor:pointer;font-family:inherit;line-height:1.6;">
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy next 10
   </button>
-  <button id="staff-btn" onclick="staffClick()" title="Internal view — full dates, vessel and ship dates">
-    <svg id="staff-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span id="staff-label">Internal view</span>
+  <button id="staff-btn" onclick="staffClick()" title="View options">
+    <svg id="staff-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span id="staff-label">View</span>
   </button>
   <input id="staff-pin" type="password" inputmode="text" placeholder="PIN" autocomplete="off">
 </div>
@@ -392,7 +392,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 18, 2026 3:16 PM)
+// DATA_START (auto-generated Aug 18, 2026 4:05 PM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 2", portDays:"5", delivery:"Mon Sep 7", deliveryISO:"2026-09-07", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"LDD", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 13", portDays:"4", delivery:"Thu Sep 17", deliveryISO:"2026-09-17", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -441,7 +441,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.27445887445887" },
 ];
 
-const LAST_UPDATED = "Aug 18, 2026 3:16 PM";
+const LAST_UPDATED = "Aug 18, 2026 4:05 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -724,20 +724,20 @@ function renderTable() {
       ? ` <span title="${esc(c.note)}" style="color:var(--text-3);cursor:help;">&#9432;</span>`
       : '';
     return `<tr${isNext ? ' class="next-up-row"' : ''}>
-      <td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>${esc(c.num)}</span></td>
-      <td>${badge}</td>
-      <td class="mono" style="font-size:10px;">${esc(c.code||'—')}</td>
-      <td style="font-size:10px;color:var(--text-3);">${esc(c.week)}</td>
-      <td style="font-size:10px;">${isProj ? `<span style="color:var(--text-2);">${esc(projLoadWeekRange(c))}</span>` : esc(c.loadDate)}</td>
-      <td style="font-size:10px;">${isProj ? '—' : esc(c.portArrival)}</td>
-      <td class="vcol" style="font-size:10px;color:var(--text-3);">${isProj || !c.portDays || c.portDays === '---' ? '—' : esc(c.portDays)}</td>
-      <td style="font-size:10px;">${delCell}</td>
-      <td class="vcol" style="font-size:10px;">${isProj ? '—' : esc(c.delivTime||'—')}</td>
-      <td style="font-size:10px;color:${c.confirmed ? 'var(--text)' : '#D01C1F'};">${c.confirmed?'Confirmed':'ETA'}</td>
-      <td class="gapl" style="font-size:10px;font-weight:600;">${esc(c.floors && c.floors !== '---' ? c.floors : '—')}</td>
-      <td style="font-size:10px;color:var(--text);">${esc(c.units)}${note}</td>
-      <td class="staff-col" style="font-size:10px;">${esc(c.shipDate)}</td>
-      <td class="staff-col" style="font-size:10px;color:var(--text-3);">${esc(c.vessel)}</td>
+      <td class="c-num"><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>${esc(c.num)}</span></td>
+      <td class="c-status">${badge}</td>
+      <td class="c-code mono" style="font-size:10px;">${esc(c.code||'—')}</td>
+      <td class="c-loadwk" style="font-size:10px;color:var(--text-3);">${esc(c.week)}</td>
+      <td class="c-loaddate" style="font-size:10px;">${isProj ? `<span style="color:var(--text-2);">${esc(projLoadWeekRange(c))}</span>` : esc(c.loadDate)}</td>
+      <td class="c-ship staff-col" style="font-size:10px;">${esc(c.shipDate)}</td>
+      <td class="c-vessel staff-col" style="font-size:10px;color:var(--text-3);">${esc(c.vessel)}</td>
+      <td class="c-port" style="font-size:10px;">${isProj ? '—' : esc(c.portArrival)}</td>
+      <td class="c-pdays vcol" style="font-size:10px;color:var(--text-3);">${isProj || !c.portDays || c.portDays === '---' ? '—' : esc(c.portDays)}</td>
+      <td class="c-deliv" style="font-size:10px;">${delCell}</td>
+      <td class="c-dtime vcol" style="font-size:10px;">${isProj ? '—' : esc(c.delivTime||'—')}</td>
+      <td class="c-conf" style="font-size:10px;color:${c.confirmed ? 'var(--text)' : '#D01C1F'};">${c.confirmed?'Confirmed':'ETA'}</td>
+      <td class="c-floor gapl" style="font-size:10px;font-weight:600;">${esc(c.floors && c.floors !== '---' ? c.floors : '—')}</td>
+      <td class="c-units" style="font-size:10px;color:var(--text);">${esc(c.units)}${note}</td>
     </tr>`;
   }).join('');
 }
@@ -746,19 +746,14 @@ function renderTable() {
 // A convenience toggle, NOT security: everything it reveals is already present
 // in this file's data block and readable via View Source. It exists to keep the
 // contractor-facing table uncluttered, not to protect anything.
-const STAFF_PIN = '210D';
+const STAFF_PIN = '210DH';
 let STAFF = sessionStorage.getItem('staff111w') === '1';
 
 function applyStaff() {
   document.body.classList.toggle('staff-mode', STAFF);
+  // Label stays neutral in both states; the accent border is the only "on" cue.
   const lbl = document.getElementById('staff-label');
-  if (lbl) lbl.textContent = STAFF ? 'Internal view on' : 'Internal view';
-  const ico = document.getElementById('staff-icon');
-  if (ico) {   // swap padlock body between closed and open shackle
-    ico.innerHTML = STAFF
-      ? '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>'
-      : '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
-  }
+  if (lbl) lbl.textContent = STAFF ? 'View · full' : 'View';
   renderTable();
 }
 
@@ -803,23 +798,40 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── COPY SCHEDULE (next 10 deliveries, plain text for email) ──
-// Format: • Sun, Sep 6 [ETA] -FL3-CTN 1 (MEDU7973030)
+// • 111W CTN-1(MEDU7973030) FL 3- ETA:Mon Sep 07
+// • 111W CTN-1(MEDU7973030) FL 3- Confirmed:Mon Sep 07
+// • 111W CTN-4 FL 4- Est: Oct 26- Oct 30            (no code yet -> omitted)
+const COPY_PREFIX = '111W';
+const _D2 = n => String(n).padStart(2, '0');          // day is zero-padded
+
+// Mon-Fri window of the week a date falls in, zero-padded: "Sep 07- Sep 11"
+function copyWeekRange(iso) {
+  const dt = parseISO(iso);
+  if (!dt) return '—';
+  const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const day = dt.getDay(), back = (day === 0) ? 6 : day - 1;
+  const mon = new Date(dt); mon.setDate(dt.getDate() - back);
+  const fri = new Date(mon); fri.setDate(mon.getDate() + 4);
+  return M[mon.getMonth()] + ' ' + _D2(mon.getDate()) + '- ' + M[fri.getMonth()] + ' ' + _D2(fri.getDate());
+}
+
 function scheduleLine(c, d) {
   const days   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const isProj = c.status === 'PROJ';
 
-  // Projected containers keep the week window, same as the table.
-  const dateTxt = isProj
-    ? projWeekRange(c.deliveryISO)
-    : days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
-  const tag = isProj ? 'Projected' : (c.confirmed ? 'Confirmed' : 'ETA');
-
   const blank = v => !v || v === '--' || v === '---' || v === '—';
-  const flPart = blank(c.floors) ? '-' : ' -FL' + c.floors + '-';
-  const codePart = blank(c.code) ? '' : ' (' + c.code + ')';
+  const code  = blank(c.code)   ? '' : '(' + c.code + ')';   // omitted entirely when absent
+  const fl    = blank(c.floors) ? '—' : c.floors;
 
-  return '• ' + dateTxt + ' [' + tag + ']' + flPart + 'CTN ' + c.num + codePart;
+  // Projected -> week window with a leading space after the colon.
+  // Otherwise -> weekday + zero-padded date, no space after the colon.
+  const tail = isProj
+    ? 'Est: ' + copyWeekRange(c.deliveryISO)
+    : (c.confirmed ? 'Confirmed:' : 'ETA:') +
+      days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + _D2(d.getDate());
+
+  return '• ' + COPY_PREFIX + ' CTN-' + c.num + code + ' FL ' + fl + '- ' + tail;
 }
 
 function copySchedule(btn) {
