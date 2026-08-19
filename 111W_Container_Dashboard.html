@@ -51,6 +51,38 @@ body.staff-mode #staff-btn { border-color:var(--accent); color:var(--accent); }
 #ctn tbody tr.next-up-row > td { background: #EAF3FC; font-weight: 500; }
 #ctn tbody tr.next-up-row > td:first-child { box-shadow: inset 3px 0 0 #4476C4; }
 
+/* --- Building matrix: frozen floor column + sticky mirror scrollbar --- */
+
+/* Floor labels stay pinned while the grid scrolls sideways. Needs an opaque
+   background so the unit cards pass underneath rather than showing through. */
+#bldg-grid .bm-floor-lbl,
+#bldg-grid thead th:first-child {
+  position: sticky; left: 0; z-index: 3;
+  background: var(--bg);
+  box-shadow: 6px 0 6px -4px rgba(0,0,0,.10);
+}
+
+/* A second scrollbar above the grid, pinned to the top of the viewport.
+   Needs an explicit height, or the bar has no room to draw. overflow-x is
+   'scroll' not 'auto' so the track is always visible rather than fading out. */
+#bldg-scroll-top {
+  overflow-x: scroll; overflow-y: hidden;
+  height: 14px;
+  position: sticky; top: 0; z-index: 4;
+  background: var(--bg);
+  margin-bottom: 4px;
+  scrollbar-width: thin;                         /* Firefox */
+  scrollbar-color: rgba(0,0,0,.35) rgba(0,0,0,.07);
+}
+#bldg-scroll-spacer { height: 1px; }
+#bldg-scroll-top::-webkit-scrollbar { height: 11px; -webkit-appearance: none; }
+#bldg-scroll-top::-webkit-scrollbar-track { background: rgba(0,0,0,.07); border-radius: 6px; }
+#bldg-scroll-top::-webkit-scrollbar-thumb { background: rgba(0,0,0,.35); border-radius: 6px; border: 2px solid var(--bg); }
+#bldg-scroll-top::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.5); }
+
+/* Hoist units (suffix 50 / 51) — outline the whole unit card */
+.bm-card.bm-hoist { outline: 2px solid #93C5FD; outline-offset: -2px; }
+
 /* Building-matrix unit preview (hover on desktop, tap on mobile) */
 .bmp { position: fixed; z-index: 9999; display: none; background: var(--surface); border: 1px solid var(--border);
        border-radius: 8px; box-shadow: 0 6px 22px rgba(0,0,0,.16); padding: 10px 12px; font-size: 11px;
@@ -66,8 +98,13 @@ body.staff-mode #staff-btn { border-color:var(--accent); color:var(--accent); }
 .bm-cell[data-uid] { cursor: pointer; }
 
 /* Narrow column with rotated (bottom-to-top) header — keeps Port Arrival and Delivery tight */
-#ctn th.vhdr { writing-mode: vertical-rl; transform: rotate(180deg); padding: 8px 3px; width: 1%;
-               text-align: center; vertical-align: bottom; letter-spacing: .06em; }
+/* The rotated label is taller than a normal header cell, so the row needs an
+   explicit height — without it the text overflows past the table's top border. */
+#ctn thead th { height: 76px; vertical-align: bottom; }
+#ctn th.vhdr { padding: 0 4px 8px; width: 1%; vertical-align: bottom; text-align: center; }
+#ctn th.vhdr > span { writing-mode: vertical-rl; transform: rotate(180deg);
+                      display: inline-block; white-space: nowrap; line-height: 1;
+                      letter-spacing: .06em; }
 #ctn td.vcol { padding-left: 4px; padding-right: 4px; width: 1%; text-align: center; }
 /* Extra breathing room to the left of this column */
 #ctn th.gapl, #ctn td.gapl { padding-left: 24px; }
@@ -82,7 +119,8 @@ tr:hover td { background: #F9F8F5; }
 .nu-slabel { font-size:10px; font-weight:500; }
 .nu-days { display:none; }
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 0 1.5px rgba(0,0,0,.12); }
-.d-PROJ  { background: #C5DCF4; }
+/* Hollow, matching .bm-ktype-proj on the unit cards */
+.d-PROJ  { background: transparent; border: 1px solid rgba(78,103,200,0.55); box-shadow: none; }
 .d-LDG   { background: #BACFEE; }
 .d-LDD   { background: #82AADB; }
 .d-ENR   { background: #4476C4; }
@@ -95,7 +133,9 @@ tr:hover td { background: #F9F8F5; }
 .rp-line { flex: 1; height: 2px; background: var(--border); }
 .rp-name { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; text-align: center; }
 .rp-val  { font-size: 16px; font-weight: 700; color: var(--text); }
-.bldg-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; }
+/* No panel fill — the page background shows between the white unit cards so
+   they read as distinct tiles (matches 1010 Church). */
+.bldg-section { background: transparent; border: none; padding: 0; margin-bottom: 16px; }
 .leg { display: flex; gap: 12px; flex-wrap: wrap; font-size: 10px; color: var(--text-2); align-items: center; }
 .leg-i { display: flex; align-items: center; gap: 5px; }
 /* Building matrix table */
@@ -161,12 +201,15 @@ tr:hover td { background: #F9F8F5; }
   /* Columns are targeted by CLASS, not nth-child, so adding, removing or
      reordering a column can never silently blank the wrong one on phones.
      Kept on mobile: CTN#, Status, Ctnr Code, Delivery, Confirmed?, Floor, Units */
-  #ctn .c-loadwk, #ctn .c-loaddate, #ctn .c-port, #ctn .c-pdays, #ctn .c-dtime { display: none; }
+  #ctn .c-loadwk, #ctn .c-loaddate, #ctn .c-port, #ctn .c-pdays, #ctn .c-dtime,
+  #ctn .c-qty { display: none; }
   #ctn .c-code { font-size: 8px !important; padding: 4px 4px !important; }
   #ctn .c-floor, #ctn .c-units { font-size: 9px !important; padding: 4px 4px !important; }
   /* Internal view on a phone: let the extra columns scroll instead of overflow */
   body.staff-mode #ctn .tw { overflow-x: auto; }
   #bldg-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  /* Phones scroll the grid by touch — the mirror bar is just clutter there. */
+  #bldg-scroll-top { display: none !important; }
   .form-grid { grid-template-columns: 1fr !important; }
 }
 </style>
@@ -281,11 +324,12 @@ tr:hover td { background: #F9F8F5; }
     <table>
       <thead><tr>
         <th class="c-num">CTN #</th><th class="c-status">Status</th><th class="c-code">Ctnr Code</th>
-        <th class="c-loadwk">Load Wk</th><th class="c-loaddate">Load Date</th>
+        <th class="c-loadwk staff-col">Load Wk</th><th class="c-loaddate">Load Date</th>
         <th class="c-ship staff-col">Ship Date</th><th class="c-vessel staff-col">Vessel</th>
-        <th class="c-port">Port Arrival</th><th class="c-pdays vhdr">Port Days</th>
-        <th class="c-deliv">Delivery</th><th class="c-dtime vhdr">Del. Time</th>
-        <th class="c-conf">Confirmed?</th><th class="c-floor gapl">Floor</th><th class="c-units">Units</th>
+        <th class="c-port">Port Arrival</th><th class="c-pdays vhdr"><span>Port Days</span></th>
+        <th class="c-deliv">Delivery</th><th class="c-dtime vhdr"><span>Time</span></th>
+        <th class="c-conf">Confirmed?</th><th class="c-floor gapl">Floor</th>
+        <th class="c-qty vhdr"><span>Unit Qty</span></th><th class="c-units">Units</th>
       </tr></thead>
       <tbody id="ctn-tbody"></tbody>
     </table>
@@ -313,12 +357,16 @@ tr:hover td { background: #F9F8F5; }
       <span class="leg-i"><span class="dot d-PROJ"></span> Projected</span>
       <span class="leg-i"><span class="dot d-LDG"></span> Loading</span>
       <span class="leg-i"><span class="dot d-LDD"></span> Loaded</span>
-      <span class="leg-i"><span class="dot d-ENR"></span> En Route</span>
+      <span class="leg-i"><span class="dot d-ENR"></span> Sea Freight</span>
       <span class="leg-i"><span class="dot d-INPRT"></span> In Port</span>
       <span class="leg-i"><span class="dot d-D"></span> Delivered</span>
       <span class="leg-i"><span class="dot d-HOLD"></span> On Hold</span>
       <span class="leg-i"><span class="dot" style="background:#EBEBEB;border:1px solid #ccc;"></span> No Data</span>
+      <span class="leg-i"><span class="dot" style="background:transparent;outline:2px solid #93C5FD;outline-offset:-2px;border-radius:3px;"></span> Hoist Unit</span>
     </div>
+    <!-- Mirror scrollbar: sticks to the top of the viewport so you never have
+         to travel to the bottom of the 1500px-tall matrix to scroll sideways. -->
+    <div id="bldg-scroll-top"><div id="bldg-scroll-spacer"></div></div>
     <div id="bldg-grid" style="overflow-x:auto;"></div>
   </div>
 </div>
@@ -392,7 +440,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 19, 2026 10:00 AM)
+// DATA_START (auto-generated Aug 19, 2026 4:08 PM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 2", portDays:"5", delivery:"Mon Sep 7", deliveryISO:"2026-09-07", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"LDD", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 13", portDays:"4", delivery:"Thu Sep 17", deliveryISO:"2026-09-17", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -441,7 +489,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.27445887445887" },
 ];
 
-const LAST_UPDATED = "Aug 19, 2026 10:00 AM";
+const LAST_UPDATED = "Aug 19, 2026 4:08 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -727,7 +775,7 @@ function renderTable() {
       <td class="c-num"><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>${esc(c.num)}</span></td>
       <td class="c-status">${badge}</td>
       <td class="c-code mono" style="font-size:10px;">${esc(c.code||'—')}</td>
-      <td class="c-loadwk" style="font-size:10px;color:var(--text-3);">${esc(c.week)}</td>
+      <td class="c-loadwk staff-col" style="font-size:10px;color:var(--text-3);">${esc(c.week)}</td>
       <td class="c-loaddate" style="font-size:10px;color:var(--text-3);">${isProj ? esc(projLoadWeekRange(c)) : esc(c.loadDate)}</td>
       <td class="c-ship staff-col" style="font-size:10px;">${esc(c.shipDate)}</td>
       <td class="c-vessel staff-col" style="font-size:10px;color:var(--text-3);">${esc(c.vessel)}</td>
@@ -737,6 +785,7 @@ function renderTable() {
       <td class="c-dtime vcol" style="font-size:10px;">${isProj ? '—' : esc(c.delivTime||'—')}</td>
       <td class="c-conf" style="font-size:10px;color:${c.confirmed ? 'var(--text)' : '#D01C1F'};">${c.confirmed?'Confirmed':'ETA'}</td>
       <td class="c-floor gapl" style="font-size:10px;font-weight:600;">${esc(c.floors && c.floors !== '---' ? c.floors : '—')}</td>
+      <td class="c-qty vcol" style="font-size:10px;color:var(--text-3);">${c.unitQty || '—'}</td>
       <td class="c-units" style="font-size:10px;color:var(--text);">${esc(c.units)}${note}</td>
     </tr>`;
   }).join('');
@@ -943,6 +992,9 @@ function renderMiniMatrix() {
   grid.innerHTML = html;
 }
 
+// Hoist units — unit suffixes 50 and 51 on every floor.
+const HOIST_SUFFIX = new Set([50, 51]);
+
 let _bldgAsc = true;   // default: bottom-up (lowest floor first)
 
 function renderBuildingMatrix() {
@@ -1004,6 +1056,8 @@ function renderBuildingMatrix() {
       const st = d.status;
       const kt = d.ktype;
       const isNA = st === '--';
+      // Hoist units (suffix 50 / 51) — the whole unit card is outlined.
+      const isHoist = HOIST_SUFFIX.has(+uid % 100);
       let ktHtml;
       if (isNA) {
         ktHtml = '<div class="bm-ktype bm-ktype-na">—</div>';
@@ -1019,13 +1073,62 @@ function renderBuildingMatrix() {
       html += '<td class="bm-cell" data-uid="' + esc(uid) + '" data-kt="' + esc(kt) + '" data-st="' + esc(st) +
               '" data-ctn="' + esc(owner == null ? '' : String(owner)) + '"' +
               ' title="' + esc(uid + ': ' + kt + ' · ' + (STATUS_LABEL[st] || st) + ownerStr) + '">' +
-              '<div class="bm-card"><div class="bm-card-id">' + esc(uid) + '</div>' + ktHtml + '</div></td>';
+              '<div class="bm-card' + (isHoist ? ' bm-hoist' : '') + '"><div class="bm-card-id">' + esc(uid) + '</div>' + ktHtml + '</div></td>';
     }
     html += '</tr>';
   }
 
   html += '</tbody></table>';
   grid.innerHTML = html;
+  syncBldgScroll();   // content width changes with the top/bottom toggle
+}
+
+// ── MIRROR SCROLLBAR FOR THE BUILDING MATRIX ──
+// The matrix is ~2800px wide and ~1500px tall, so the real scrollbar sits a
+// full screen below where you're looking. This keeps a synced one at the top.
+// Width of the frozen floor-label column, so the mirror bar can start where
+// the scrollable units actually begin. Measured once from the rendered table.
+let _bldgInset = null;
+function bldgInset(grid) {
+  if (_bldgInset !== null) return _bldgInset;
+  if (grid.scrollLeft !== 0) return 58;            // can't measure mid-scroll
+  const tbl  = grid.querySelector('table');
+  const cell = grid.querySelector('tbody tr > td:nth-child(2)');   // first unit cell
+  if (tbl && cell) {
+    _bldgInset = Math.round(Math.max(0,
+      cell.getBoundingClientRect().left - tbl.getBoundingClientRect().left));
+  }
+  return _bldgInset === null ? 58 : _bldgInset;
+}
+
+function syncBldgScroll() {
+  const grid   = document.getElementById('bldg-grid');
+  const strip  = document.getElementById('bldg-scroll-top');
+  const spacer = document.getElementById('bldg-scroll-spacer');
+  if (!grid || !strip || !spacer) return;
+
+  // Start the bar past the frozen floor column, and shorten the spacer to match
+  // so both scrollbars travel exactly the same distance.
+  const inset = bldgInset(grid);
+  strip.style.marginLeft = inset + 'px';
+  spacer.style.width = Math.max(0, grid.scrollWidth - inset) + 'px';
+
+  // Always visible on desktop — no screen is wide enough to show all 58 units,
+  // so the bar is never redundant. Mobile hides it via CSS instead.
+  strip.style.display = '';
+
+  if (strip._synced) return;          // bind the two-way sync only once
+  strip._synced = true;
+  let lock = false;                   // stops the two handlers echoing each other
+  strip.addEventListener('scroll', () => {
+    if (lock) return;
+    lock = true; grid.scrollLeft = strip.scrollLeft; lock = false;
+  });
+  grid.addEventListener('scroll', () => {
+    if (lock) return;
+    lock = true; strip.scrollLeft = grid.scrollLeft; lock = false;
+  });
+  window.addEventListener('resize', syncBldgScroll);
 }
 
 // ── BUILDING MATRIX UNIT PREVIEW ──
@@ -1058,7 +1161,9 @@ function initBldgPreview() {
     const num = td.getAttribute('data-ctn') || '';
     const c   = num ? ctnByNum(num) : null;
 
-    let h = '<div class="bmp-id">Unit ' + esc(uid) + '</div>';
+    const hoistTag = HOIST_SUFFIX.has(+uid % 100)
+      ? ' <span style="font-size:9px;font-weight:600;color:#2C6FB5;">HOIST</span>' : '';
+    let h = '<div class="bmp-id">Unit ' + esc(uid) + hoistTag + '</div>';
     h += '<div class="bmp-row"><span class="bmp-lbl">Kitchen</span><span class="bmp-val">' +
          pill(st) + '</span></div>';
     if (kt && kt !== '--') {
