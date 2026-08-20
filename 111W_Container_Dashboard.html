@@ -163,6 +163,47 @@ tr:hover td { background: #F9F8F5; }
 .btn-submit { background: var(--accent); color: #fff; border: none; padding: 8px 20px; border-radius: var(--radius); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
 .btn-submit:hover { opacity: .88; }
 
+/* ── PHONE HELD SIDEWAYS (roughly 860 x 400) ──────────────────────────────
+   Landscape phones are ~860px wide, so they fall past the 700px mobile
+   breakpoint and get the full desktop layout — which assumes a tall window.
+   You rotate the phone to see MORE of the schedule, so this keeps every
+   column and instead strips back the surrounding furniture, which is what
+   was eating the 400px of height. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .shell { padding: 10px 12px 32px; }
+
+  /* Header down to one compact line */
+  .topbar { margin-bottom: 10px; padding-bottom: 8px; }
+  .topbar h1 { font-size: 14px; }
+  .topbar img { height: 24px !important; }
+  .shell > div:first-child { padding: 4px 0 0 !important; }
+  .shell > div:first-child img { height: 26px !important; }
+
+  /* The donut and unit-status cards are fixed-width and can't shrink, so they
+     force the row wide. Neither is needed when you're after the schedule. */
+  #mini-matrix-card { display: none !important; }
+  #ctn > div[style*="display:flex"] > div:has(canvas) { display: none !important; }
+
+  /* Remaining cards tighter */
+  .mc { padding: 7px 10px; }
+  .mc .val { font-size: 16px; }
+  .rp-icon { width: 20px; height: 20px; font-size: 10px; }
+  .rp-icon svg { width: 12px; height: 11px; }
+  .rp-val { font-size: 13px; }
+  .rp-name { font-size: 8px; }
+
+  /* Denser table so more columns land on screen before you have to scroll */
+  table { font-size: 10px; }
+  th { padding: 5px 6px; font-size: 9px; }
+  td { padding: 4px 6px; }
+
+  /* Rotated headers need less height when the viewport is this short */
+  #ctn thead th { height: 60px; }
+
+  /* The matrix mirror scrollbar is still useful here — keep it visible */
+  #bldg-scroll-top { display: block; }
+}
+
 @media (max-width: 700px) {
   .shell { padding: 12px 10px 40px; }
   .topbar { flex-direction: column; gap: 8px; margin-bottom: 12px; }
@@ -440,7 +481,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 20, 2026 10:00 AM)
+// DATA_START (auto-generated Aug 20, 2026 12:00 PM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 2", portDays:"5", delivery:"Mon Sep 7", deliveryISO:"2026-09-07", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"LDD", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 13", portDays:"4", delivery:"Thu Sep 17", deliveryISO:"2026-09-17", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -489,7 +530,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.27445887445887" },
 ];
 
-const LAST_UPDATED = "Aug 20, 2026 10:00 AM";
+const LAST_UPDATED = "Aug 20, 2026 12:00 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
