@@ -67,18 +67,27 @@ body.staff-mode #staff-btn { border-color:var(--accent); color:var(--accent); }
    'scroll' not 'auto' so the track is always visible rather than fading out. */
 #bldg-scroll-top {
   overflow-x: scroll; overflow-y: hidden;
-  height: 14px;
+  height: 18px;
   position: sticky; top: 0; z-index: 4;
   background: var(--bg);
-  margin-bottom: 4px;
-  scrollbar-width: thin;                         /* Firefox */
-  scrollbar-color: rgba(0,0,0,.35) rgba(0,0,0,.07);
+  margin-bottom: 6px;
+  scrollbar-width: auto;                         /* Firefox — 'thin' is hard to grab */
+  scrollbar-color: #7C8A99 rgba(0,0,0,.10);
 }
 #bldg-scroll-spacer { height: 1px; }
-#bldg-scroll-top::-webkit-scrollbar { height: 11px; -webkit-appearance: none; }
-#bldg-scroll-top::-webkit-scrollbar-track { background: rgba(0,0,0,.07); border-radius: 6px; }
-#bldg-scroll-top::-webkit-scrollbar-thumb { background: rgba(0,0,0,.35); border-radius: 6px; border: 2px solid var(--bg); }
-#bldg-scroll-top::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.5); }
+/* Chunky, always-on thumb. -webkit-appearance:none stops macOS from using its
+   overlay style, which fades out and is what made the grab bar disappear. */
+#bldg-scroll-top::-webkit-scrollbar { height: 16px; -webkit-appearance: none; }
+#bldg-scroll-top::-webkit-scrollbar-track {
+  background: rgba(0,0,0,.10); border-radius: 8px;
+}
+#bldg-scroll-top::-webkit-scrollbar-thumb {
+  background: #7C8A99; border-radius: 8px;
+  border: 3px solid var(--bg);                   /* inset so it reads as a pill */
+  min-width: 60px;                               /* never shrink to a sliver */
+}
+#bldg-scroll-top::-webkit-scrollbar-thumb:hover  { background: #5E6B78; }
+#bldg-scroll-top::-webkit-scrollbar-thumb:active { background: #47535E; }
 
 /* Hoist units (suffix 50 / 51) — outline the whole unit card */
 .bm-card.bm-hoist { outline: 2px solid #93C5FD; outline-offset: -2px; }
@@ -481,7 +490,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 26, 2026 11:10 AM)
+// DATA_START (auto-generated Aug 26, 2026 12:42 PM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 4", portDays:"4", delivery:"Tue Sep 8", deliveryISO:"2026-09-08", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"ENR", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -530,7 +539,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.27792207792208" },
 ];
 
-const LAST_UPDATED = "Aug 26, 2026 11:10 AM";
+const LAST_UPDATED = "Aug 26, 2026 12:42 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -633,6 +642,9 @@ function sw(id, btn) {
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   btn.classList.add('on');
+  // The matrix panel is display:none until now, so anything measured before
+  // this point read as zero width. Re-measure once it's actually on screen.
+  if (id === 'bldg') syncBldgScroll();
 }
 
 function initDatePill() {
@@ -1131,15 +1143,18 @@ function renderBuildingMatrix() {
 // the scrollable units actually begin. Measured once from the rendered table.
 let _bldgInset = null;
 function bldgInset(grid) {
-  if (_bldgInset !== null) return _bldgInset;
+  if (_bldgInset) return _bldgInset;               // 0 is not a valid cached value
+  if (!grid.clientWidth) return 58;                // panel still hidden — can't measure
   if (grid.scrollLeft !== 0) return 58;            // can't measure mid-scroll
   const tbl  = grid.querySelector('table');
   const cell = grid.querySelector('tbody tr > td:nth-child(2)');   // first unit cell
   if (tbl && cell) {
-    _bldgInset = Math.round(Math.max(0,
+    const v = Math.round(Math.max(0,
       cell.getBoundingClientRect().left - tbl.getBoundingClientRect().left));
+    if (v > 0) _bldgInset = v;                     // only cache a real measurement
+    return v || 58;
   }
-  return _bldgInset === null ? 58 : _bldgInset;
+  return 58;
 }
 
 function syncBldgScroll() {
@@ -1147,6 +1162,10 @@ function syncBldgScroll() {
   const strip  = document.getElementById('bldg-scroll-top');
   const spacer = document.getElementById('bldg-scroll-spacer');
   if (!grid || !strip || !spacer) return;
+
+  // Nothing is measurable while the panel is display:none — bail rather than
+  // caching a zero width, which would leave the bar with no thumb.
+  if (!grid.clientWidth) return;
 
   // Start the bar past the frozen floor column, and shorten the spacer to match
   // so both scrollbars travel exactly the same distance.
