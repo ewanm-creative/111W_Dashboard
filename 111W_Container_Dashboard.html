@@ -4,8 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>111 Wall · Logistics Dashboard</title>
-<link rel="icon" type="image/png" href="logo-lion.png">
+<link rel="icon" id="favicon" type="image/png" href="logo-lion.png">
 <link rel="apple-touch-icon" href="logo-lion.png">
+<script>
+// The lion is solid black, so it disappears against a dark browser tab strip.
+// Swap to the white version when the OS/browser is in dark mode. Done in JS
+// rather than an SVG media query because Safari ignores those entirely.
+(function () {
+  var link = document.getElementById('favicon');
+  if (!link || !window.matchMedia) return;
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function apply(dark) { link.href = dark ? 'logo-lion-dark.png' : 'logo-lion.png'; }
+  apply(mq.matches);
+  // React to the user flipping theme while the tab is open.
+  if (mq.addEventListener) mq.addEventListener('change', function (e) { apply(e.matches); });
+  else if (mq.addListener) mq.addListener(function (e) { apply(e.matches); });   // older Safari
+})();
+</script>
 <style>
 :root {
   --bg: #F4F3F0; --surface: #FFFFFF; --border: #E2DFD8;
@@ -508,7 +523,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Aug 28, 2026 4:27 PM)
+// DATA_START (auto-generated Aug 28, 2026 4:32 PM)
 const CONTAINERS = [
   { num:"1", status:"ENR", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 13", portArrival:"Sep 4", portDays:"4", delivery:"Tue Sep 8", deliveryISO:"2026-09-08", confirmed:false, floors:"3", note:"", code:"MEDU7973030", delivTime:"\u2014" },
   { num:"2", status:"ENR", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:false, floors:"3", note:"", code:"MSDU7213040", delivTime:"\u2014" },
@@ -557,7 +572,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.27792207792208" },
 ];
 
-const LAST_UPDATED = "Aug 28, 2026 4:27 PM";
+const LAST_UPDATED = "Aug 28, 2026 4:32 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
