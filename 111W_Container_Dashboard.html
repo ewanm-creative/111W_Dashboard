@@ -531,7 +531,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Sep 4, 2026 4:31 PM)
+// DATA_START (auto-generated Sep 8, 2026 11:43 AM)
 const CONTAINERS = [
   { num:"1", status:"INPRT", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, floors:"3", note:"", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"ENR", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -580,7 +580,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.36363636363636" },
 ];
 
-const LAST_UPDATED = "Sep 4, 2026 4:31 PM";
+const LAST_UPDATED = "Sep 8, 2026 11:43 AM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -688,6 +688,18 @@ function sw(id, btn) {
   if (id === 'bldg') syncBldgScroll();
 }
 
+// ISO-8601 week number — weeks start Monday, and week 1 is the one containing
+// the first Thursday of the year. This is the numbering shipping schedules and
+// the Excel "Wk 37" column use. A plain day-of-year/7 is off for most of the
+// year because it ignores where week boundaries actually fall.
+function isoWeek(dt) {
+  const t = new Date(Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+  const dayNum = t.getUTCDay() || 7;            // Mon=1 .. Sun=7
+  t.setUTCDate(t.getUTCDate() + 4 - dayNum);    // shift to that week's Thursday
+  const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  return Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
+}
+
 function initDatePill() {
   const d = new Date();
   const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -697,7 +709,7 @@ function initDatePill() {
   if (pill) pill.textContent = `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
   const dmgPill = document.getElementById('dmg-date-pill-111w');
   if (dmgPill) dmgPill.textContent = todayStr;
-  const wk = Math.ceil((((d-new Date(d.getFullYear(),0,1))/86400000)+1)/7);
+  const wk = isoWeek(d);
   const wkEl = document.getElementById('today-week');
   if (wkEl) wkEl.textContent = `Week ${wk}`;
   const stamp = document.getElementById('updated-stamp');
