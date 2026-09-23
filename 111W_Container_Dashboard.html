@@ -303,6 +303,97 @@ tr:hover td { background: #F9F8F5; }
   #bldg-scroll-top { display: none !important; }
   .form-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ══════════════════════ PRINT REPORT ══════════════════════
+   Sections are chosen by printReport(), not by whichever tab happens to be
+   open, and the page size is injected per print into #print-page-rule. */
+
+#print-head, #print-bldg, .print-sec { display: none; }
+
+.print-btn {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
+  margin-left: 6px; border: 1px solid var(--border); background: var(--surface);
+  border-radius: 99px; font-size: 10px; font-weight: 600; color: var(--text-2);
+  cursor: pointer; font-family: inherit; line-height: 1.6;
+}
+.print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* TOP LEVEL ON PURPOSE. Chrome only honours the `size` descriptor on a
+   top-level @page rule - nested inside @media print it is ignored and the
+   printer's own default paper wins, which is what silently forced Letter
+   portrait and clipped the matrix. printReport() appends a later top-level
+   rule that overrides this one. */
+@page { size: letter portrait; margin: 11mm 9mm; }
+
+@media print {
+  /* Status colours are the entire point of the matrix. */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { background: #fff !important; }
+  .shell { max-width: none !important; padding: 0 !important; }
+
+  /* Screen chrome that never belongs on paper. */
+  .tab-bar, #staff-btn, #staff-pin, #ctn-copy, .print-btn,
+  #bldg-scroll-top, #btn-top-down, #btn-bottom-up,
+  #mini-matrix-card, #bldg-mobile-note { display: none !important; }
+
+  #dmg, #cs, #ctn, #bldg { display: none !important; }
+  body.print-ctn  #ctn  { display: block !important; }
+  body.print-bldg #bldg { display: block !important; }
+  body.print-ctn.print-bldg #bldg { break-before: page; }
+
+  #print-head, .print-sec { display: block !important; }
+  #print-head { font-size: 9pt; color: #555; margin: 2px 0 10px; }
+  #print-head span + span::before { content: " \00b7 "; }
+  .print-sec {
+    font-size: 11pt; font-weight: 700; letter-spacing: .02em;
+    margin: 0 0 8px; padding-bottom: 4px; border-bottom: 1.5px solid #333;
+  }
+
+  /* ── Container schedule ─────────────────────────────────────
+     Portrait letter is ~748 CSS px inside the margins, just above the 700px
+     mobile breakpoint, so class-based column hiding stays off. Re-assert it
+     anyway, then restore staff-only columns exactly as the current view has
+     them - that is what makes the printout mirror the screen. */
+  #ctn th, #ctn td { display: table-cell !important; }
+  #ctn .staff-col { display: none !important; }
+  body.staff-mode #ctn .staff-col { display: table-cell !important; }
+
+  #sum-row { flex-wrap: wrap !important; gap: 8px !important; break-inside: avoid; }
+  #sum-row > * { flex: 1 1 210px !important; min-width: 0 !important; }
+  .route-pipeline { break-inside: avoid; overflow: visible !important; }
+  #ctn .tw { overflow: visible !important; }
+  #ctn table { font-size: 7.2pt !important; }
+  #ctn thead { display: table-header-group; }
+  #ctn tbody tr { break-inside: avoid; }
+  #ctn th, #ctn td { padding: 3px 4px !important; }
+  .note-bar { break-inside: avoid; }
+
+  /* ── Building matrix ────────────────────────────────────────
+     Scaled onto a single sheet - 11x17 when letter would shrink it too far.
+     transform, not zoom: zoom confuses pagination. */
+  /* Matrix-only print: every pixel above the grid comes straight out of the
+     matrix scale, so drop the brand strip and tighten the topbar (~95px back). */
+  body.print-bldg:not(.print-ctn) .shell > div:first-child { display: none !important; }
+  body.print-bldg:not(.print-ctn) .topbar { margin-bottom: 4px !important; padding-bottom: 0 !important; }
+  body.print-bldg:not(.print-ctn) .topbar img { height: 30px !important; }
+  body.print-bldg:not(.print-ctn) #print-head { margin: 0 0 6px !important; }
+  body.print-bldg:not(.print-ctn) .print-sec { margin-bottom: 5px !important; }
+  #bldg .leg { break-inside: avoid; margin-bottom: 8px !important; }
+  #bldg-grid { overflow: visible !important; display: block !important; }
+  #bldg-grid > table { display: none !important; }
+
+  #print-bldg { display: block !important; }
+  /* The frozen floor column is a scrolling affordance, and sticky positioning
+     derails pagination. */
+  #print-bldg .bm-floor-lbl,
+  #print-bldg thead th:first-child {
+    position: static !important; box-shadow: none !important;
+  }
+  /* The wrapper carries the SCALED footprint. A bare transform leaves the
+     original 2784px box in the layout and spills blank pages after it. */
+  .print-bm-scale { break-inside: avoid; overflow: hidden; }
+  .print-bm-scale > table { margin: 0 !important; }
+}
 </style>
 </head>
 <script src="config.js"></script>
@@ -333,6 +424,7 @@ tr:hover td { background: #F9F8F5; }
   </div>
 </div>
 
+<div id="print-head"><span id="print-when"></span><span id="print-view"></span></div>
 <!-- TABS -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
   <div class="tab-bar" style="display:flex;align-items:center;gap:8px;">
@@ -349,7 +441,8 @@ tr:hover td { background: #F9F8F5; }
 
 <!-- ===== CONTAINER SCHEDULE ===== -->
 <div id="ctn" class="panel on">
-  <div style="display:flex;gap:10px;margin-bottom:16px;align-items:stretch;width:100%;">
+  <div class="print-sec" id="print-sec-ctn">Container Schedule</div>
+  <div id="sum-row" style="display:flex;gap:10px;margin-bottom:16px;align-items:stretch;width:100%;">
 
     <!-- Metric cards + transit perf -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0;">
@@ -428,6 +521,9 @@ tr:hover td { background: #F9F8F5; }
   <button id="ctn-copy" onclick="copySchedule(this)" title="Copy the next 10 deliveries for an email" style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid var(--border);background:var(--surface);border-radius:99px;font-size:10px;font-weight:600;color:var(--text-2);cursor:pointer;font-family:inherit;line-height:1.6;">
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy next 10
   </button>
+  <button class="print-btn" onclick="printReport('ctn')" title="Print the container schedule">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print schedule
+  </button>
   <button id="staff-btn" onclick="staffClick()" title="View options">
     <svg id="staff-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span id="staff-label">View</span>
   </button>
@@ -436,12 +532,18 @@ tr:hover td { background: #F9F8F5; }
 
 <!-- ===== BUILDING MATRIX ===== -->
 <div id="bldg" class="panel">
+  <div class="print-sec" id="print-sec-bldg">Building Matrix</div>
   <div class="bldg-section">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
       <div id="bldg-scope-label" style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;">Unit Delivery Status</div>
-      <div style="display:flex;gap:6px;align-items:center;">
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div style="display:flex;gap:6px;align-items:center;">
         <button id="btn-top-down" onclick="setBldgDir(false)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid var(--accent);cursor:pointer;background:var(--accent);color:#fff;font-weight:600;font-family:inherit;">Top → Bottom</button>
         <button id="btn-bottom-up" onclick="setBldgDir(true)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid var(--border);cursor:pointer;background:var(--surface);color:var(--text-2);font-weight:400;font-family:inherit;">Bottom → Top</button>
+        </div>
+        <button class="print-btn" onclick="printReport('bldg')" title="Print the building matrix" style="margin-left:0;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print matrix
+        </button>
       </div>
     </div>
     <div class="leg" style="margin-bottom:10px;">
@@ -458,7 +560,7 @@ tr:hover td { background: #F9F8F5; }
     <!-- Mirror scrollbar: sticks to the top of the viewport so you never have
          to travel to the bottom of the 1500px-tall matrix to scroll sideways. -->
     <div id="bldg-scroll-top"><div id="bldg-scroll-spacer"></div></div>
-    <div id="bldg-grid" style="overflow-x:auto;"></div>
+  <div id="bldg-grid" style="overflow-x:auto;"></div>
   </div>
 </div>
 
@@ -531,7 +633,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Sep 22, 2026 4:30 PM)
+// DATA_START (auto-generated Sep 23, 2026 10:00 AM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -580,7 +682,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.36363636363636" },
 ];
 
-const LAST_UPDATED = "Sep 22, 2026 4:30 PM";
+const LAST_UPDATED = "Sep 23, 2026 10:00 AM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -1541,6 +1643,149 @@ applyStaff();           // restores internal view if it was on earlier this sess
 initFloorLabel();
 initUnitDropdown();
 renderSession111w();
+
+/* ══════════════════════ PRINT REPORT ══════════════════════
+   The matrix is scaled onto ONE sheet rather than tiled across several.
+   buildPrintMatrix() measures it, picks the smallest sheet that keeps the
+   scale readable, and returns that sheet's @page rule for printReport(). */
+
+/* Candidate sheets, smallest first. headroomPx reserves vertical space for the
+   page header, section title and status legend, which share the sheet. */
+const PRINT_SHEETS = [
+  { name: 'letter landscape',  wMM: 265.4, hMM: 201.9,
+    css: '@page { size: 11in 8.5in; margin: 7mm; }' },
+  { name: 'tabloid landscape', wMM: 417.8, hMM: 265.4,
+    css: '@page { size: 17in 11in; margin: 7mm; }' }
+];
+const PRINT_MIN_SCALE = 0.55;   // below this the unit cards stop being readable
+const PRINT_HEADROOM  = 155;    // px at 96dpi, for the header/title/legend
+                                // that share the sheet. Measured, not guessed:
+                                // 130 was ~75px short and cost a second page.
+
+const PRINT_PAGE = {
+  ctn : '@page { size: letter portrait; margin: 11mm 9mm; }',
+  bldg: PRINT_SHEETS[PRINT_SHEETS.length - 1].css,
+  all : '@page { size: letter portrait; margin: 11mm 9mm; }'
+};
+
+/* Returns the @page rule for the sheet it chose, or null if there is no matrix. */
+function buildPrintMatrix() {
+  const grid = document.getElementById('bldg-grid');
+  const src  = grid && grid.querySelector('table');
+  if (!src) return null;
+
+  const stale = document.getElementById('print-bldg');
+  if (stale) stale.remove();
+
+  /* The matrix panel is display:none whenever another tab is showing, and every
+     getBoundingClientRect() inside a hidden element returns 0 - which silently
+     produced a matrix clipped at the page edge. Reveal it off-screen to measure.
+     No width: absolute + shrink-to-fit gives the table its natural max-content
+     width; forcing one stretches the cells via the global table { width:100% }. */
+  const panel  = document.getElementById('bldg');
+  const hidden = panel && getComputedStyle(panel).display === 'none';
+  const saved  = hidden ? panel.getAttribute('style') : null;
+  if (hidden) {
+    panel.setAttribute('style',
+      'display:block!important;position:absolute;left:-10000px;top:0;');
+  }
+
+  const box = src.getBoundingClientRect();
+  /* '||' not a ternary: a hidden element measures 0, not undefined. */
+  const w = box.width  || 2784;
+  const h = box.height || 1561;
+
+  if (hidden) {
+    if (saved === null) panel.removeAttribute('style');
+    else panel.setAttribute('style', saved);
+  }
+
+  const px = function (mm) { return mm / 25.4 * 96; };
+  const fit = function (sheet) {
+    return Math.min(px(sheet.wMM) / w, (px(sheet.hMM) - PRINT_HEADROOM) / h, 1);
+  };
+
+  let sheet = PRINT_SHEETS[PRINT_SHEETS.length - 1];
+  let scale = fit(sheet);
+  for (let i = 0; i < PRINT_SHEETS.length; i++) {
+    const s = fit(PRINT_SHEETS[i]);
+    if (s >= PRINT_MIN_SCALE) { sheet = PRINT_SHEETS[i]; scale = s; break; }
+  }
+  if (!(scale > 0)) scale = 1;
+
+  const inner = src.cloneNode(true);          // keeps .bldg-matrix and every cell
+  inner.style.width           = w + 'px';
+  inner.style.transform       = 'scale(' + scale + ')';
+  inner.style.transformOrigin = 'top left';
+
+  const wrap = document.createElement('div');
+  wrap.className  = 'print-bm-scale';
+  wrap.style.width  = Math.ceil(w * scale) + 'px';
+  /* floor, not ceil: the fit is height-bound, so rounding up puts the box a
+     pixel over the page and costs a second blank sheet. */
+  wrap.style.height = Math.floor(h * scale) + 'px';
+  wrap.appendChild(inner);
+
+  const host = document.createElement('div');
+  host.id = 'print-bldg';
+  host.appendChild(wrap);
+  grid.appendChild(host);
+
+  return sheet.css;
+}
+
+/* mode: 'ctn' | 'bldg' | 'all' */
+function printReport(mode) {
+  mode = mode || 'all';
+  const wantCtn  = (mode !== 'bldg');
+  const wantBldg = (mode !== 'ctn');
+  const both     = wantCtn && wantBldg;
+
+  document.body.classList.toggle('print-ctn',  wantCtn);
+  document.body.classList.toggle('print-bldg', wantBldg);
+
+  const sc = document.getElementById('print-sec-ctn');
+  const sb = document.getElementById('print-sec-bldg');
+  if (sc) sc.textContent = (both ? 'Section 1 \u00b7 ' : '') + 'Container Schedule';
+  if (sb) sb.textContent = (both ? 'Section 2 \u00b7 ' : '') + 'Building Matrix';
+
+  const when = new Date().toLocaleString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit'
+  });
+  const w = document.getElementById('print-when');
+  const v = document.getElementById('print-view');
+  if (w) w.textContent = 'Printed ' + when;
+  if (v) v.textContent = (typeof STAFF !== 'undefined' && STAFF)
+    ? 'Internal view \u2014 all columns' : 'Client view';
+
+  /* Build first: the sheet the matrix needs decides the page size. */
+  let pageCss = PRINT_PAGE[mode] || PRINT_PAGE.all;
+  if (wantBldg) {
+    const chosen = buildPrintMatrix();
+    if (chosen && !wantCtn) pageCss = chosen;   // matrix-only print follows the matrix
+  }
+
+  /* Injected rather than a named @page rule - support for those is patchy, and
+     a rule appended here reliably beats the one in the stylesheet. */
+  let rule = document.getElementById('print-page-rule');
+  if (!rule) {
+    rule = document.createElement('style');
+    rule.id = 'print-page-rule';
+    document.head.appendChild(rule);
+  }
+  /* No @media print wrapper: see the note on the stylesheet's @page rule. */
+  rule.textContent = pageCss;
+
+  window.print();
+}
+
+/* Leaving the clone and the classes behind would double the matrix on screen. */
+window.addEventListener('afterprint', function () {
+  const host = document.getElementById('print-bldg');
+  if (host) host.remove();
+  document.body.classList.remove('print-ctn', 'print-bldg');
+});
 </script>
 </body>
 </html>
