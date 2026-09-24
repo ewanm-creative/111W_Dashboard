@@ -633,7 +633,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Sep 24, 2026 2:13 PM)
+// DATA_START (auto-generated Sep 24, 2026 4:30 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -682,7 +682,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.38354978354978" },
 ];
 
-const LAST_UPDATED = "Sep 24, 2026 2:13 PM";
+const LAST_UPDATED = "Sep 24, 2026 4:30 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -976,8 +976,10 @@ function renderTable() {
     } else {
       delCell = `<span style="font-weight:700;">${esc(c.delivery)}</span>`;
     }
-    const note = c.note
-      ? ` <span title="${esc(c.note)}" style="color:var(--text-3);cursor:help;">&#9432;</span>`
+    /* Internal commentary - staff view only. The text still ships in the page
+       source for everyone, so this hides it from the UI; it does not protect it. */
+    const note = (c.note && STAFF)
+      ? ` <span title="${esc(c.note)}" style="cursor:help;">${noteIcon()}</span>`
       : '';
 
     // Extra contents (mockups, replacement parts, items pulled from other
@@ -1013,6 +1015,17 @@ function renderTable() {
 // contractor-facing table uncluttered, not to protect anything.
 const STAFF_PIN = '210DH';
 let STAFF = sessionStorage.getItem('staff111w') === '1';
+
+function noteIcon() {
+  /* Inline SVG, not a glyph. The old &#9432; (U+24D8) is in an obscure Unicode
+     block and fonts without it fall back to a box, which read as a stray '?'.
+     A function declaration, not a const: this is called from the render chain,
+     and a top-level const would sit in the TDZ when applyStaff() runs at init. */
+  return '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" '
+       + 'stroke-width="1.5" style="vertical-align:-1px;color:var(--text-3);">'
+       + '<circle cx="8" cy="8" r="6.3"/><path d="M8 7.3v4"/>'
+       + '<circle cx="8" cy="4.8" r="0.4" fill="currentColor" stroke="none"/></svg>';
+}
 
 function applyStaff() {
   document.body.classList.toggle('staff-mode', STAFF);
