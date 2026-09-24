@@ -633,7 +633,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Sep 24, 2026 4:30 PM)
+// DATA_START (auto-generated Sep 24, 2026 5:35 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -682,7 +682,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"32.38354978354978" },
 ];
 
-const LAST_UPDATED = "Sep 24, 2026 4:30 PM";
+const LAST_UPDATED = "Sep 24, 2026 5:35 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -1013,7 +1013,22 @@ function renderTable() {
 // A convenience toggle, NOT security: everything it reveals is already present
 // in this file's data block and readable via View Source. It exists to keep the
 // contractor-facing table uncluttered, not to protect anything.
-const STAFF_PIN = '210DH';
+/* The PIN is stored as a SHA-256 digest so the literal isn't sitting in the
+   page source. Be clear-eyed about what that buys: a 5-character PIN falls to
+   an offline brute force in seconds, and every gated field is in the data
+   block whether or not anyone unlocks the view. This hides the string from
+   sight. It is not security.
+   To change the PIN, regenerate the digest of the UPPERCASED value:
+     python -c "import hashlib;print(hashlib.sha256('NEWPIN'.encode()).hexdigest())"
+   crypto.subtle needs a secure context, so this resolves on the published
+   https site but NOT on a local file:// copy - hence the explicit notice
+   rather than a silent 'Nope'. */
+const STAFF_PIN_HASH = '6bdebf0c75f0f688c885780d42511fef60ea643fbbe147df82e4439ad12d88c0';
+
+async function staffHash(s) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 let STAFF = sessionStorage.getItem('staff111w') === '1';
 
 function noteIcon() {
@@ -1049,10 +1064,19 @@ function staffClick() {
   box.focus();
 }
 
-function staffTry() {
+async function staffTry() {
   const box = document.getElementById('staff-pin');
   if (!box) return;
-  if (box.value.trim().toUpperCase() === STAFF_PIN) {
+  if (!(window.crypto && crypto.subtle)) {
+    box.value = '';
+    box.placeholder = 'https only';   // file:// has no crypto.subtle
+    setTimeout(() => { box.placeholder = 'PIN'; }, 2200);
+    return;
+  }
+  let digest;
+  try { digest = await staffHash(box.value.trim().toUpperCase()); }
+  catch (e) { digest = null; }
+  if (digest === STAFF_PIN_HASH) {
     STAFF = true;
     sessionStorage.setItem('staff111w', '1');
     box.classList.remove('on');
