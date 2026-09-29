@@ -73,6 +73,9 @@ body.staff-mode #staff-btn { border-color:var(--accent); color:var(--accent); }
 .extra-tag:hover, .extra-tag:focus { background: #D8EAFA; outline: none; }
 
 /* Next-up row in the container schedule */
+/* Delivered containers: strike the row data, but not CTN #, status or +EXTRA/notes. */
+#ctn tbody tr.del-row > td:not(.c-num):not(.c-status):not(.c-units),
+#ctn tbody tr.del-row .u-txt { text-decoration: line-through; }
 #ctn tbody tr.next-up-row > td { background: #EAF3FC; font-weight: 500; }
 #ctn tbody tr.next-up-row > td:first-child { box-shadow: inset 3px 0 0 #4476C4; }
 
@@ -633,7 +636,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Sep 29, 2026 12:27 PM)
+// DATA_START (auto-generated Sep 29, 2026 4:16 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -682,7 +685,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"31.392207792207795" },
 ];
 
-const LAST_UPDATED = "Sep 29, 2026 12:27 PM";
+const LAST_UPDATED = "Sep 29, 2026 4:16 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container Doors: could not read unit token '3rd Floor Doors' - those units are NOT tracked", "Container H1: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked", "23 kitchen(s) in the matrix are not in any container: 314, 334, 350, 351, 355, 450, 451, 550, 551, 650, 651, 750..."];
 
@@ -989,7 +992,8 @@ function renderTable() {
       ? ` <span class="extra-tag" tabindex="0" title="${esc(c.extra)}"` +
         ` data-extra="${esc(c.extra)}">+EXTRA</span>`
       : '';
-    return `<tr${isNext ? ' class="next-up-row"' : ''}>
+    const rowCls = [isNext ? 'next-up-row' : '', c.status === 'D' ? 'del-row' : ''].filter(Boolean).join(' ');
+    return `<tr${rowCls ? ' class="' + rowCls + '"' : ''}>
       <td class="c-num"><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>${esc(c.num)}</span></td>
       <td class="c-status">${badge}</td>
       <td class="c-code mono" style="font-size:10px;">${esc(c.code||'—')}</td>
@@ -1004,7 +1008,7 @@ function renderTable() {
       <td class="c-conf" style="font-size:10px;color:${c.confirmed ? 'var(--text)' : '#D01C1F'};">${c.confirmed?'Confirmed':'ETA'}</td>
       <td class="c-floor gapl" style="font-size:10px;font-weight:600;">${esc(c.floors && c.floors !== '---' ? c.floors : '—')}</td>
       <td class="c-qty vcol" style="font-size:10px;color:var(--text-3);">${c.unitQty || '—'}</td>
-      <td class="c-units" style="font-size:10px;color:var(--text);">${esc(c.units)}${extraTag}${note}</td>
+      <td class="c-units" style="font-size:10px;color:var(--text);"><span class="u-txt">${esc(c.units)}</span>${extraTag}${note}</td>
     </tr>`;
   }).join('');
 }
