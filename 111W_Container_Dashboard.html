@@ -201,6 +201,7 @@ tr:hover td { background: #F9F8F5; }
 .bm-fl-lbl { font-weight: 700; color: var(--text-3); }
 .bm-fl-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 3px; }
 .bm-fl-bar div { height: 100%; border-radius: 2px; }
+.bm-fl-pct { text-align: center; font-size: 9px; font-weight: 700; color: var(--text-2); }
 .bm-cell { padding: 0; cursor: default; }
 .bm-card { display: flex; flex-direction: column; align-items: stretch; padding: 4px 3px 3px; border-radius: 5px; background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,0.08); width: 44px; height: 54px; box-sizing: border-box; }
 .bm-card-id { font-size: 8px; font-weight: 700; color: var(--text); text-align: center; padding-bottom: 2px; margin-bottom: 2px; border-bottom: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -636,7 +637,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Oct 16, 2026 10:01 AM)
+// DATA_START (auto-generated Oct 16, 2026 11:46 AM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -685,7 +686,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"30.41212121212121" },
 ];
 
-const LAST_UPDATED = "Oct 16, 2026 10:01 AM";
+const LAST_UPDATED = "Oct 16, 2026 11:46 AM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = ["Container 32: could not read unit token 'TBD' - those units are NOT tracked", "Container 33: could not read unit token 'TBD' - those units are NOT tracked", "Container H2: could not read unit token 'HOIST UNITS' - those units are NOT tracked"];
 
@@ -1301,13 +1302,12 @@ function renderBuildingMatrix() {
     for (const u of inScope) { if ((unitMap[+u.uid] || u.status) === 'D') delCount++; }
     const totalUnits = inScope.length;
     const pct = totalUnits > 0 ? Math.round(delCount / totalUnits * 100) : 0;
-    const barCol = pct === 100 ? '#212745' : pct > 0 ? '#4E67C8' : 'var(--border)';
 
     // No kitchens assigned on this floor yet - show "—" rather than 0/58 · 0%,
     // which would read as "nothing delivered" instead of "not scheduled yet".
     const progress = totalUnits > 0
       ? `<div class="bm-fl-row"><span class="bm-fl-lbl">D</span><span>${delCount}/${totalUnits}</span></div>
-      <div class="bm-fl-bar"><div style="width:${pct}%;background:${barCol};"></div></div>`
+      <div class="bm-fl-pct">${pct}%</div>`
       : `<div class="bm-fl-row" title="No kitchen types assigned yet"><span style="color:var(--text-3);">&#8212;</span></div>`;
 
     html += '<tr>';
