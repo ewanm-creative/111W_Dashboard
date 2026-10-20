@@ -637,7 +637,7 @@ tr:hover td { background: #F9F8F5; }
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Oct 20, 2026 4:30 PM)
+// DATA_START (auto-generated Oct 20, 2026 6:13 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -683,7 +683,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"26.901298701298703" },
 ];
 
-const LAST_UPDATED = "Oct 20, 2026 4:30 PM";
+const LAST_UPDATED = "Oct 20, 2026 6:13 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = [];
 
@@ -1218,10 +1218,10 @@ function renderNextUp() {
     const isProj = c.status === 'PROJ';
     const dateStr = isProj
       ? `${projWeekRange(c.deliveryISO)} <span class="nu-tag">[Projected]</span>`
-      : `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span>`;
+      : `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}${(c.delivTime && !['--','---','—'].includes(c.delivTime)) ? ', ' + esc(c.delivTime) : ''} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span>`;
     return `<div class="nu-row">
-      <div class="nu-date">${dateStr}</div>
-      <div class="nu-info">CTN ${esc(c.num)}${floorStr} &nbsp;·&nbsp; <span style="color:${sColor};font-weight:700;">●</span><span class="nu-slabel" style="color:${sColor};font-weight:700;"> ${sLabel}</span><span class="nu-days" style="${isLate?'color:#B04A2A;font-weight:700;':''}"> &nbsp;·&nbsp; ${daysStr}</span>${noteStr}</div>
+      <div class="nu-date">CTN ${esc(c.num)} &nbsp;·&nbsp; ${dateStr}</div>
+      <div class="nu-info">${floorStr ? floorStr.replace(/^ · /, '') + ' &nbsp;·&nbsp; ' : ''}<span style="color:${sColor};font-weight:700;">●</span><span class="nu-slabel" style="color:${sColor};font-weight:700;"> ${sLabel}</span><span class="nu-days" style="${isLate?'color:#B04A2A;font-weight:700;':''}"> &nbsp;·&nbsp; ${daysStr}</span>${noteStr}</div>
     </div>`;
   }
 
