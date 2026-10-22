@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 <title>111 Wall · Logistics Dashboard</title>
 <link rel="icon" id="favicon" type="image/png" href="logo-lion.png">
 <link rel="apple-touch-icon" href="logo-lion.png">
@@ -28,7 +31,7 @@
   --accent: #4E67C8; --accent-dk: #212745; --accent-lt: #D8EDFC; --radius: 8px; --radius-lg: 12px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Bahnschrift', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; }
+body { background: var(--bg); color: var(--text); font-family: 'Barlow', 'Bahnschrift', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; }
 .shell { max-width: 1400px; margin: 0 auto; padding: 20px 24px 60px; }
 .sub { font-size: 10px; color: var(--text-3); margin-top: 3px; }
 h1 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
@@ -429,6 +432,28 @@ div[style*="text-transform:uppercase"][style*="font-size:10px"] { font-size: 13p
 .eta-note, .note-bar { background: none !important; border: none !important; border-radius: 0 !important; padding: 2px 0 !important; margin: 0 0 6px !important; font-size: 11px; color: var(--text-3); text-align: left; }
 .eta-note { color: #D01C1F !important; text-align: center !important; }   /* ETA note sits above the table, in the site's red */
 /* ===== LOOK-V2D END ===== */
+/* ===== DESLOP START (Oct 22 de-slop list). Revert: restore *.bak-deslop ===== */
+/* G5: tabs as separate bordered buttons; the active one is filled */
+.tabs { background: none !important; border: none !important; padding: 0 !important; gap: 6px !important; }
+.tab, .tab-bar .tabs .tab { background: var(--surface) !important; border: 1px solid var(--border) !important; border-radius: 2px !important; padding: 6px 14px !important; color: var(--text-2) !important; }
+.tab:hover { border-color: var(--accent) !important; color: var(--text) !important; }
+.tab.on, .tab-bar .tabs .tab.on { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; font-weight: 600 !important; }
+/* C4: no status dot before CTN # (status column already says it) */
+#ctn td.c-num .dot { display: none !important; }
+/* C7: normal text colour in the schedule instead of light grey */
+#ctn tbody td[style*="color:var(--text-3)"] { color: var(--text) !important; }
+/* C9: next-up row keeps its fill, loses the left accent bar */
+#ctn tbody tr.next-up-row > td:first-child { box-shadow: none !important; }
+/* D2: field labels in normal case */
+#dmg label { text-transform: none !important; letter-spacing: normal !important; font-size: 11px !important; }
+/* D4: report date as plain text */
+#dmg .date-pill { background: none !important; border: none !important; padding: 0 !important; color: var(--text) !important; font-weight: 600 !important; }
+/* Mobile unit numbers: phone browsers (iOS Safari, Chrome Android) auto-enlarge text in wide
+   table columns such as the unit lists. Turn that "text autosizing" off so the sizes set here are used. */
+html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* Schedule tables: one line per row on both sites (scroll sideways for long unit lists) */
+#ctn .tw td { white-space: nowrap; }
+/* ===== DESLOP END ===== */
 </style>
 </head>
 <script src="config.js"></script>
@@ -445,8 +470,8 @@ div[style*="text-transform:uppercase"][style*="font-size:10px"] { font-size: 13p
   <div class="topbar-left" style="display:flex;align-items:center;gap:14px;">
     <img src="logo-lion.png" alt="" style="height:56px;width:56px;object-fit:contain;flex-shrink:0;" onerror="this.style.display='none'">
     <div>
-      <h1>111 Wall · Concerto Millwork · Logistics Dashboard</h1>
-      <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Apartment Tower · Kitchens Only</div>
+      <h1>111 Wall — Container Logistics</h1>
+      <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Concerto Millwork · Apartment Tower · Kitchens Only</div>
       <div class="sub"><em id="updated-stamp">Updated —</em></div>
     </div>
   </div>
@@ -599,11 +624,9 @@ div[style*="text-transform:uppercase"][style*="font-size:10px"] { font-size: 13p
 <!-- ===== DAMAGE / OPEN ITEMS ===== -->
 <div id="dmg" class="panel">
 
-  <div style="margin-bottom:16px;padding:14px 16px;background:#fffbf0;border:1px solid #c8a84b;border-radius:8px;font-size:12px;color:var(--text-1);line-height:1.6;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#8a6800;margin-bottom:10px;">⚠ REPORT DAMAGES IMMEDIATELY — READ BEFORE SUBMITTING</div>
-    <p style="margin:0 0 8px;"><strong>Check every item as soon as the container is unloaded and shaken out in the building.</strong> Report on the spot — do not set it aside to do later.</p>
-    <p style="margin:0 0 8px;">If something is damaged, lost, or wrong → fill this form and submit promptly. <strong>Anything reported more than a couple of days after unload cannot be claimed as transportation damage</strong> — by that point the damage is assumed to have happened during handling or installation, and it will not be covered.</p>
-    <p style="margin:0;">Reports through Procore, Autodesk, or similar platforms come in during or after installation — those are installation reports, not delivery reports. Our contract ends at delivery, so by the time those come in the damage can no longer be traced back to transport.</p>
+  <div class="dmg-note" style="margin-bottom:16px;font-size:12px;line-height:1.6;color:var(--text);">
+    <p style="margin:0 0 4px;"><strong>Check every item as soon as the container is unloaded, and report anything damaged, lost or wrong the same day.</strong></p>
+    <p style="margin:0;color:var(--text-2);">Damage reported more than a couple of days after unload cannot be claimed as transportation damage; Procore or Autodesk reports made during installation are installation reports, not delivery reports.</p>
   </div>
 
   <div class="form-card">
@@ -611,19 +634,19 @@ div[style*="text-transform:uppercase"][style*="font-size:10px"] { font-size: 13p
     <p class="form-sub" style="font-size:11px;color:var(--text-3);margin-bottom:14px;">Fill in each field and click <strong>+ Add to report</strong>. Repeat for each item. When done, click <strong>Send Report</strong> to email the list. Items are cleared when you close the tab.</p>
     <div class="form-grid">
       <div class="form-group">
-        <label>1. Unit Number</label>
+        <label>Unit number</label>
         <select id="dmg-unit"></select>
       </div>
       <div class="form-group">
-        <label>2. Item Code</label>
+        <label>Item code</label>
         <input type="text" id="dmg-code" placeholder="e.g. 2PFCF000377 or 77">
       </div>
       <div class="form-group">
-        <label>3. Item Description</label>
+        <label>Item description</label>
         <input type="text" id="dmg-itemdesc" placeholder='e.g. Wall Unit W31" or Sink Base W31 1/2"'>
       </div>
       <div class="form-group">
-        <label>4. Issue Type</label>
+        <label>Issue type</label>
         <select id="dmg-issuetype">
           <option value="">&#8212; Select type &#8212;</option>
           <option value="LMI">LMI &#8211; Lost / Missing Item</option>
@@ -636,7 +659,7 @@ div[style*="text-transform:uppercase"][style*="font-size:10px"] { font-size: 13p
         </select>
       </div>
       <div class="form-group full">
-        <label>5. Issue Description</label>
+        <label>Issue description</label>
         <textarea id="dmg-issue" placeholder="Describe what was found &#8212; damage type, location, severity&#8230;"></textarea>
       </div>
     </div>
@@ -665,7 +688,7 @@ div[style*="text-transform:uppercase"][style*="font-size:10px"] { font-size: 13p
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Oct 22, 2026 10:00 AM)
+// DATA_START (auto-generated Oct 22, 2026 10:32 AM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -673,7 +696,7 @@ const CONTAINERS = [
   { num:"4", status:"D", week:"Wk 39", units:"404:418,439:442", unitQty:19, vessel:"ZIM ASIA", loadDate:"Sep 21", shipDate:"Sep 26", portArrival:"Oct 11", portDays:"8", delivery:"Mon Oct 19", deliveryISO:"2026-10-19", confirmed:true, floors:"4", note:"Temp: Nick emailed delivery date on 9/24/26 - Told him it was tentative", extra:"", code:"ZCSU7544860", delivTime:"7:00 AM" },
   { num:"5", status:"D", week:"Wk 39", units:"419:438", unitQty:20, vessel:"ZIM ASIA", loadDate:"Sep 22", shipDate:"Sep 26", portArrival:"Oct 11", portDays:"8", delivery:"Mon Oct 19", deliveryISO:"2026-10-19", confirmed:true, floors:"4", note:"Temp: Nick emailed delivery date on 9/24/26 - Told him it was tentative", extra:"", code:"ZCSU6588890", delivTime:"7:00 AM" },
   { num:"6", status:"INPRT", week:"Wk 40", units:"443:449,452:458,501:505", unitQty:19, vessel:"ZIM IBERIA V. 44W", loadDate:"Sep 30", shipDate:"Oct 2", portArrival:"Oct 19", portDays:"3", delivery:"Thu Oct 22", deliveryISO:"2026-10-22", confirmed:true, floors:"4,5", note:"", extra:"", code:"JXLU6389353", delivTime:"7:00 AM" },
-  { num:"7", status:"INPRT", week:"Wk 40", units:"506:524", unitQty:19, vessel:"ZIM IBERIA V. 44W", loadDate:"Sep 30", shipDate:"Oct 2", portArrival:"Oct 19", portDays:"3", delivery:"Thu Oct 22", deliveryISO:"2026-10-22", confirmed:true, floors:"5", note:"", extra:"", code:"JXLU6220070", delivTime:"10:00 AM" },
+  { num:"7", status:"D", week:"Wk 40", units:"506:524", unitQty:19, vessel:"ZIM IBERIA V. 44W", loadDate:"Sep 30", shipDate:"Oct 2", portArrival:"Oct 19", portDays:"3", delivery:"Thu Oct 22", deliveryISO:"2026-10-22", confirmed:true, floors:"5", note:"", extra:"", code:"JXLU6220070", delivTime:"10:00 AM" },
   { num:"8", status:"ENR", week:"Wk 41", units:"525:543", unitQty:19, vessel:"ZIM JAMAICA", loadDate:"Oct 7", shipDate:"Oct 9", portArrival:"Oct 25", portDays:"5", delivery:"Fri Oct 30", deliveryISO:"2026-10-30", confirmed:false, floors:"5", note:"", extra:"", code:"ZCSU7360272", delivTime:"\u2014" },
   { num:"9", status:"ENR", week:"Wk 41", units:"544:549,552:558,601:606", unitQty:19, vessel:"ZIM JAMAICA", loadDate:"Oct 7", shipDate:"Oct 9", portArrival:"Oct 25", portDays:"5", delivery:"Fri Oct 30", deliveryISO:"2026-10-30", confirmed:false, floors:"5,6", note:"", extra:"", code:"JXLU6471841", delivTime:"\u2014" },
   { num:"10", status:"ENR", week:"Wk 42", units:"607:622", unitQty:16, vessel:"CARMEL I V. 37W", loadDate:"Oct 14", shipDate:"Oct 16", portArrival:"Nov 1", portDays:"5", delivery:"Fri Nov 6", deliveryISO:"2026-11-06", confirmed:false, floors:"6", note:"", extra:"3rd Floor Doors (Flatpack)", code:"GOSU1011597", delivTime:"\u2014" },
@@ -711,7 +734,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"26.901298701298703" },
 ];
 
-const LAST_UPDATED = "Oct 22, 2026 10:00 AM";
+const LAST_UPDATED = "Oct 22, 2026 10:32 AM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = [];
 
@@ -740,7 +763,7 @@ const BUILDING_MATRIX = [
   { floor:8, units:[{uid:"801",ktype:"A01-K24-A",status:"PROJ"}, {uid:"802",ktype:"A02-K24",status:"PROJ"}, {uid:"803",ktype:"A03-K24",status:"PROJ"}, {uid:"804",ktype:"A03-K24-M",status:"PROJ"}, {uid:"805",ktype:"A03-K24-M",status:"PROJ"}, {uid:"806",ktype:"A07-K24",status:"PROJ"}, {uid:"807",ktype:"A03-K24",status:"PROJ"}, {uid:"808",ktype:"C4-K24",status:"PROJ"}, {uid:"809",ktype:"A03-K24",status:"PROJ"}, {uid:"810",ktype:"A03-K24-M",status:"PROJ"}, {uid:"811",ktype:"A03-K24-M",status:"PROJ"}, {uid:"812",ktype:"A02-K24",status:"PROJ"}, {uid:"813",ktype:"C1-K30",status:"PROJ"}, {uid:"814",ktype:"A07-K24-M",status:"PROJ"}, {uid:"815",ktype:"A04-K24",status:"PROJ"}, {uid:"816",ktype:"A01-K24-M",status:"PROJ"}, {uid:"817",ktype:"A05-K30",status:"PROJ"}, {uid:"818",ktype:"A02-K24-A",status:"PROJ"}, {uid:"819",ktype:"A03-K24-M",status:"PROJ"}, {uid:"820",ktype:"A02-K24-AM",status:"PROJ"}, {uid:"821",ktype:"A06-K24-AM",status:"PROJ"}, {uid:"822",ktype:"A02-K24-M",status:"PROJ"}, {uid:"823",ktype:"A03-K24-AM",status:"PROJ"}, {uid:"824",ktype:"A07-K24",status:"PROJ"}, {uid:"825",ktype:"B02L-K24",status:"PROJ"}, {uid:"826",ktype:"B03L-K24-A",status:"PROJ"}, {uid:"827",ktype:"B04L-K24-A",status:"PROJ"}, {uid:"828",ktype:"A07-K24-A",status:"PROJ"}, {uid:"829",ktype:"A07-K24-AM",status:"PROJ"}, {uid:"830",ktype:"A09-K24-M",status:"PROJ"}, {uid:"831",ktype:"C2-K30",status:"PROJ"}, {uid:"832",ktype:"C3-K30-A",status:"PROJ"}, {uid:"833",ktype:"B01L-K30",status:"PROJ"}, {uid:"834",ktype:"A07-K24",status:"PROJ"}, {uid:"835",ktype:"A02-K24",status:"PROJ"}, {uid:"836",ktype:"A03-K24",status:"PROJ"}, {uid:"837",ktype:"A07-K24-M",status:"PROJ"}, {uid:"838",ktype:"A07-K24",status:"PROJ"}, {uid:"839",ktype:"A10-K30",status:"PROJ"}, {uid:"840",ktype:"A01-K24-M",status:"PROJ"}, {uid:"841",ktype:"A04-K24",status:"PROJ"}, {uid:"842",ktype:"A03-K24-M",status:"PROJ"}, {uid:"843",ktype:"B06L-K24",status:"PROJ"}, {uid:"844",ktype:"A03-K24-M",status:"PROJ"}, {uid:"845",ktype:"A03-K24-M",status:"PROJ"}, {uid:"846",ktype:"A03-K24-M",status:"PROJ"}, {uid:"847",ktype:"A03-K24-M",status:"PROJ"}, {uid:"848",ktype:"A02-K24",status:"PROJ"}, {uid:"849",ktype:"A07-K24-A",status:"PROJ"}, {uid:"850",ktype:"A07-K24",status:"PROJ"}, {uid:"851",ktype:"A03-K24-A",status:"PROJ"}, {uid:"852",ktype:"A02-K24-A",status:"PROJ"}, {uid:"853",ktype:"A07-K24-M",status:"PROJ"}, {uid:"854",ktype:"B04L-K24-M",status:"PROJ"}, {uid:"855",ktype:"A01-K24-M",status:"PROJ"}, {uid:"856",ktype:"B08L-K24",status:"PROJ"}, {uid:"857",ktype:"A03-K24-M",status:"PROJ"}, {uid:"858",ktype:"B12L-K24",status:"PROJ"}] },
   { floor:7, units:[{uid:"701",ktype:"A01-K24-A",status:"LDD"}, {uid:"702",ktype:"A02-K24",status:"LDD"}, {uid:"703",ktype:"A03-K24",status:"LDD"}, {uid:"704",ktype:"A03-K24-M",status:"LDD"}, {uid:"705",ktype:"A03-K24-M",status:"LDG"}, {uid:"706",ktype:"A07-K24",status:"LDG"}, {uid:"707",ktype:"A03-K24",status:"LDG"}, {uid:"708",ktype:"C4-K24",status:"LDG"}, {uid:"709",ktype:"A03-K24",status:"LDG"}, {uid:"710",ktype:"A03-K24-M",status:"LDG"}, {uid:"711",ktype:"A03-K24-M",status:"LDG"}, {uid:"712",ktype:"A02-K24",status:"LDG"}, {uid:"713",ktype:"C1-K30",status:"LDG"}, {uid:"714",ktype:"A07-K24-M",status:"LDG"}, {uid:"715",ktype:"A04-K24",status:"LDG"}, {uid:"716",ktype:"A01-K24-M",status:"LDG"}, {uid:"717",ktype:"A05-K30",status:"LDG"}, {uid:"718",ktype:"A02-K24-A",status:"LDG"}, {uid:"719",ktype:"A03-K24-M",status:"LDG"}, {uid:"720",ktype:"A02-K24-AM",status:"LDG"}, {uid:"721",ktype:"A06-K24-AM",status:"LDG"}, {uid:"722",ktype:"A02-K24-M",status:"LDG"}, {uid:"723",ktype:"A03-K24-AM",status:"PROJ"}, {uid:"724",ktype:"A07-K24",status:"PROJ"}, {uid:"725",ktype:"B02L-K24",status:"PROJ"}, {uid:"726",ktype:"B03L-K24-A",status:"PROJ"}, {uid:"727",ktype:"B04L-K24-A",status:"PROJ"}, {uid:"728",ktype:"A07-K24-A",status:"PROJ"}, {uid:"729",ktype:"A07-K24-AM",status:"PROJ"}, {uid:"730",ktype:"A09-K24-M",status:"PROJ"}, {uid:"731",ktype:"C2-K30",status:"PROJ"}, {uid:"732",ktype:"C3-K30-A",status:"PROJ"}, {uid:"733",ktype:"B01L-K30",status:"PROJ"}, {uid:"734",ktype:"A07-K24",status:"PROJ"}, {uid:"735",ktype:"A02-K24",status:"PROJ"}, {uid:"736",ktype:"A03-K24",status:"PROJ"}, {uid:"737",ktype:"A07-K24-M",status:"PROJ"}, {uid:"738",ktype:"A07-K24",status:"PROJ"}, {uid:"739",ktype:"A10-K30",status:"PROJ"}, {uid:"740",ktype:"A01-K24-M",status:"PROJ"}, {uid:"741",ktype:"A04-K24",status:"PROJ"}, {uid:"742",ktype:"A03-K24-M",status:"PROJ"}, {uid:"743",ktype:"B06L-K24",status:"PROJ"}, {uid:"744",ktype:"A03-K24-M",status:"PROJ"}, {uid:"745",ktype:"A03-K24-M",status:"PROJ"}, {uid:"746",ktype:"A03-K24-M",status:"PROJ"}, {uid:"747",ktype:"A03-K24-M",status:"PROJ"}, {uid:"748",ktype:"A02-K24",status:"PROJ"}, {uid:"749",ktype:"A07-K24-A",status:"PROJ"}, {uid:"750",ktype:"A07-K24",status:"PROJ"}, {uid:"751",ktype:"A03-K24-A",status:"PROJ"}, {uid:"752",ktype:"A02-K24-A",status:"PROJ"}, {uid:"753",ktype:"A07-K24-M",status:"PROJ"}, {uid:"754",ktype:"B04L-K24-M",status:"PROJ"}, {uid:"755",ktype:"A01-K24-M",status:"PROJ"}, {uid:"756",ktype:"B08L-K24",status:"PROJ"}, {uid:"757",ktype:"A03-K24-M",status:"PROJ"}, {uid:"758",ktype:"B12L-K24",status:"PROJ"}] },
   { floor:6, units:[{uid:"601",ktype:"A01-K24-A",status:"ENR"}, {uid:"602",ktype:"A02-K24",status:"ENR"}, {uid:"603",ktype:"A03-K24",status:"ENR"}, {uid:"604",ktype:"A03-K24-M",status:"ENR"}, {uid:"605",ktype:"A03-K24-M",status:"ENR"}, {uid:"606",ktype:"A07-K24",status:"ENR"}, {uid:"607",ktype:"A03-K24",status:"ENR"}, {uid:"608",ktype:"C4-K24",status:"ENR"}, {uid:"609",ktype:"A03-K24",status:"ENR"}, {uid:"610",ktype:"A03-K24-M",status:"ENR"}, {uid:"611",ktype:"A03-K24-M",status:"ENR"}, {uid:"612",ktype:"A02-K24",status:"ENR"}, {uid:"613",ktype:"C1-K30",status:"ENR"}, {uid:"614",ktype:"A07-K24-M",status:"ENR"}, {uid:"615",ktype:"A04-K24",status:"ENR"}, {uid:"616",ktype:"A01-K24-M",status:"ENR"}, {uid:"617",ktype:"A05-K30",status:"ENR"}, {uid:"618",ktype:"A02-K24-A",status:"ENR"}, {uid:"619",ktype:"A03-K24-M",status:"ENR"}, {uid:"620",ktype:"A02-K24-AM",status:"ENR"}, {uid:"621",ktype:"A06-K24-AM",status:"ENR"}, {uid:"622",ktype:"A02-K24-M",status:"ENR"}, {uid:"623",ktype:"A03-K24-AM",status:"ENR"}, {uid:"624",ktype:"A07-K24",status:"ENR"}, {uid:"625",ktype:"B02L-K24",status:"ENR"}, {uid:"626",ktype:"B03L-K24-A",status:"ENR"}, {uid:"627",ktype:"B04L-K24-A",status:"ENR"}, {uid:"628",ktype:"A07-K24-A",status:"ENR"}, {uid:"629",ktype:"A07-K24-AM",status:"ENR"}, {uid:"630",ktype:"A09-K24-M",status:"ENR"}, {uid:"631",ktype:"C2-K30",status:"ENR"}, {uid:"632",ktype:"C3-K30-A",status:"ENR"}, {uid:"633",ktype:"B01L-K30",status:"ENR"}, {uid:"634",ktype:"A07-K24",status:"ENR"}, {uid:"635",ktype:"A02-K24",status:"ENR"}, {uid:"636",ktype:"A03-K24",status:"ENR"}, {uid:"637",ktype:"A07-K24-M",status:"ENR"}, {uid:"638",ktype:"A07-K24",status:"ENR"}, {uid:"639",ktype:"A10-K30",status:"ENR"}, {uid:"640",ktype:"A01-K24-M",status:"ENR"}, {uid:"641",ktype:"A04-K24",status:"ENR"}, {uid:"642",ktype:"A03-K24-M",status:"LDD"}, {uid:"643",ktype:"B06L-K24",status:"LDD"}, {uid:"644",ktype:"A03-K24-M",status:"LDD"}, {uid:"645",ktype:"A03-K24-M",status:"LDD"}, {uid:"646",ktype:"A03-K24-M",status:"LDD"}, {uid:"647",ktype:"A03-K24-M",status:"LDD"}, {uid:"648",ktype:"A02-K24",status:"LDD"}, {uid:"649",ktype:"A07-K24-A",status:"LDD"}, {uid:"650",ktype:"A07-K24",status:"PROJ"}, {uid:"651",ktype:"A03-K24-A",status:"PROJ"}, {uid:"652",ktype:"A02-K24-A",status:"LDD"}, {uid:"653",ktype:"A07-K24-M",status:"LDD"}, {uid:"654",ktype:"B04L-K24-M",status:"LDD"}, {uid:"655",ktype:"A01-K24-M",status:"LDD"}, {uid:"656",ktype:"B08L-K24",status:"LDD"}, {uid:"657",ktype:"A03-K24-M",status:"LDD"}, {uid:"658",ktype:"B12L-K24",status:"LDD"}] },
-  { floor:5, units:[{uid:"501",ktype:"A01-K24-A",status:"INPRT"}, {uid:"502",ktype:"A02-K24",status:"INPRT"}, {uid:"503",ktype:"A03-K24-A",status:"INPRT"}, {uid:"504",ktype:"A03-K24-M",status:"INPRT"}, {uid:"505",ktype:"A03-K24-M",status:"INPRT"}, {uid:"506",ktype:"A07-K24",status:"INPRT"}, {uid:"507",ktype:"A03-K24",status:"INPRT"}, {uid:"508",ktype:"C4-K24",status:"INPRT"}, {uid:"509",ktype:"A03-K24",status:"INPRT"}, {uid:"510",ktype:"A03-K24-M",status:"INPRT"}, {uid:"511",ktype:"A03-K24-M",status:"INPRT"}, {uid:"512",ktype:"A02-K24",status:"INPRT"}, {uid:"513",ktype:"C1-K30",status:"INPRT"}, {uid:"514",ktype:"A07-K24-M",status:"INPRT"}, {uid:"515",ktype:"A04-K24",status:"INPRT"}, {uid:"516",ktype:"A01-K24-M",status:"INPRT"}, {uid:"517",ktype:"A05-K30",status:"INPRT"}, {uid:"518",ktype:"A02-K24-A",status:"INPRT"}, {uid:"519",ktype:"A03-K24-M",status:"INPRT"}, {uid:"520",ktype:"A02-K24-AM",status:"INPRT"}, {uid:"521",ktype:"A06-K24-AM",status:"INPRT"}, {uid:"522",ktype:"A02-K24-M",status:"INPRT"}, {uid:"523",ktype:"A03-K24-AM",status:"INPRT"}, {uid:"524",ktype:"A07-K24",status:"INPRT"}, {uid:"525",ktype:"B02L-K24",status:"ENR"}, {uid:"526",ktype:"B03L-K24-A",status:"ENR"}, {uid:"527",ktype:"B04L-K24-A",status:"ENR"}, {uid:"528",ktype:"A07-K24-A",status:"ENR"}, {uid:"529",ktype:"A07-K24-AM",status:"ENR"}, {uid:"530",ktype:"A09-K24-M",status:"ENR"}, {uid:"531",ktype:"C2-K30",status:"ENR"}, {uid:"532",ktype:"C3-K30-A",status:"ENR"}, {uid:"533",ktype:"B01L-K30",status:"ENR"}, {uid:"534",ktype:"A07-K24",status:"ENR"}, {uid:"535",ktype:"A02-K24",status:"ENR"}, {uid:"536",ktype:"A03-K24",status:"ENR"}, {uid:"537",ktype:"A07-K24-M",status:"ENR"}, {uid:"538",ktype:"A07-K24",status:"ENR"}, {uid:"539",ktype:"A10-K30",status:"ENR"}, {uid:"540",ktype:"A01-K24-M",status:"ENR"}, {uid:"541",ktype:"A04-K24",status:"ENR"}, {uid:"542",ktype:"A03-K24-M",status:"ENR"}, {uid:"543",ktype:"B06L-K24",status:"ENR"}, {uid:"544",ktype:"A03-K24-M",status:"ENR"}, {uid:"545",ktype:"A03-K24-M",status:"ENR"}, {uid:"546",ktype:"A03-K24-M",status:"ENR"}, {uid:"547",ktype:"A03-K24-M",status:"ENR"}, {uid:"548",ktype:"A02-K24",status:"ENR"}, {uid:"549",ktype:"A07-K24-A",status:"ENR"}, {uid:"550",ktype:"A07-K24",status:"PROJ"}, {uid:"551",ktype:"A03-K24-A",status:"PROJ"}, {uid:"552",ktype:"A02-K24-A",status:"ENR"}, {uid:"553",ktype:"A07-K24-M",status:"ENR"}, {uid:"554",ktype:"B04L-K24-M",status:"ENR"}, {uid:"555",ktype:"A01-K24-M",status:"ENR"}, {uid:"556",ktype:"B08L-K24",status:"ENR"}, {uid:"557",ktype:"A03-K24-M",status:"ENR"}, {uid:"558",ktype:"B12L-K24",status:"ENR"}] },
+  { floor:5, units:[{uid:"501",ktype:"A01-K24-A",status:"INPRT"}, {uid:"502",ktype:"A02-K24",status:"INPRT"}, {uid:"503",ktype:"A03-K24-A",status:"INPRT"}, {uid:"504",ktype:"A03-K24-M",status:"INPRT"}, {uid:"505",ktype:"A03-K24-M",status:"INPRT"}, {uid:"506",ktype:"A07-K24",status:"D"}, {uid:"507",ktype:"A03-K24",status:"D"}, {uid:"508",ktype:"C4-K24",status:"D"}, {uid:"509",ktype:"A03-K24",status:"D"}, {uid:"510",ktype:"A03-K24-M",status:"D"}, {uid:"511",ktype:"A03-K24-M",status:"D"}, {uid:"512",ktype:"A02-K24",status:"D"}, {uid:"513",ktype:"C1-K30",status:"D"}, {uid:"514",ktype:"A07-K24-M",status:"D"}, {uid:"515",ktype:"A04-K24",status:"D"}, {uid:"516",ktype:"A01-K24-M",status:"D"}, {uid:"517",ktype:"A05-K30",status:"D"}, {uid:"518",ktype:"A02-K24-A",status:"D"}, {uid:"519",ktype:"A03-K24-M",status:"D"}, {uid:"520",ktype:"A02-K24-AM",status:"D"}, {uid:"521",ktype:"A06-K24-AM",status:"D"}, {uid:"522",ktype:"A02-K24-M",status:"D"}, {uid:"523",ktype:"A03-K24-AM",status:"D"}, {uid:"524",ktype:"A07-K24",status:"D"}, {uid:"525",ktype:"B02L-K24",status:"ENR"}, {uid:"526",ktype:"B03L-K24-A",status:"ENR"}, {uid:"527",ktype:"B04L-K24-A",status:"ENR"}, {uid:"528",ktype:"A07-K24-A",status:"ENR"}, {uid:"529",ktype:"A07-K24-AM",status:"ENR"}, {uid:"530",ktype:"A09-K24-M",status:"ENR"}, {uid:"531",ktype:"C2-K30",status:"ENR"}, {uid:"532",ktype:"C3-K30-A",status:"ENR"}, {uid:"533",ktype:"B01L-K30",status:"ENR"}, {uid:"534",ktype:"A07-K24",status:"ENR"}, {uid:"535",ktype:"A02-K24",status:"ENR"}, {uid:"536",ktype:"A03-K24",status:"ENR"}, {uid:"537",ktype:"A07-K24-M",status:"ENR"}, {uid:"538",ktype:"A07-K24",status:"ENR"}, {uid:"539",ktype:"A10-K30",status:"ENR"}, {uid:"540",ktype:"A01-K24-M",status:"ENR"}, {uid:"541",ktype:"A04-K24",status:"ENR"}, {uid:"542",ktype:"A03-K24-M",status:"ENR"}, {uid:"543",ktype:"B06L-K24",status:"ENR"}, {uid:"544",ktype:"A03-K24-M",status:"ENR"}, {uid:"545",ktype:"A03-K24-M",status:"ENR"}, {uid:"546",ktype:"A03-K24-M",status:"ENR"}, {uid:"547",ktype:"A03-K24-M",status:"ENR"}, {uid:"548",ktype:"A02-K24",status:"ENR"}, {uid:"549",ktype:"A07-K24-A",status:"ENR"}, {uid:"550",ktype:"A07-K24",status:"PROJ"}, {uid:"551",ktype:"A03-K24-A",status:"PROJ"}, {uid:"552",ktype:"A02-K24-A",status:"ENR"}, {uid:"553",ktype:"A07-K24-M",status:"ENR"}, {uid:"554",ktype:"B04L-K24-M",status:"ENR"}, {uid:"555",ktype:"A01-K24-M",status:"ENR"}, {uid:"556",ktype:"B08L-K24",status:"ENR"}, {uid:"557",ktype:"A03-K24-M",status:"ENR"}, {uid:"558",ktype:"B12L-K24",status:"ENR"}] },
   { floor:4, units:[{uid:"401",ktype:"A01-K24-A",status:"D"}, {uid:"402",ktype:"A02-K24",status:"D"}, {uid:"403",ktype:"A03-K24-A",status:"D"}, {uid:"404",ktype:"A03-K24-M",status:"D"}, {uid:"405",ktype:"A03-K24-M",status:"D"}, {uid:"406",ktype:"A07-K24",status:"D"}, {uid:"407",ktype:"A03-K24",status:"D"}, {uid:"408",ktype:"C4-K24",status:"D"}, {uid:"409",ktype:"A03-K24",status:"D"}, {uid:"410",ktype:"A03-K24-M",status:"D"}, {uid:"411",ktype:"A03-K24-M",status:"D"}, {uid:"412",ktype:"A02-K24",status:"D"}, {uid:"413",ktype:"C1-K30",status:"D"}, {uid:"414",ktype:"A07-K24-M",status:"D"}, {uid:"415",ktype:"A04-K24",status:"D"}, {uid:"416",ktype:"A01-K24-M",status:"D"}, {uid:"417",ktype:"A05-K30",status:"D"}, {uid:"418",ktype:"A02-K24-A",status:"D"}, {uid:"419",ktype:"A03-K24-M",status:"D"}, {uid:"420",ktype:"A02-K24-AM",status:"D"}, {uid:"421",ktype:"A06-K24-AM",status:"D"}, {uid:"422",ktype:"A02-K24-M",status:"D"}, {uid:"423",ktype:"A03-K24-AM",status:"D"}, {uid:"424",ktype:"A07-K24",status:"D"}, {uid:"425",ktype:"B02L-K24",status:"D"}, {uid:"426",ktype:"B03L-K24-A",status:"D"}, {uid:"427",ktype:"B04L-K24-A",status:"D"}, {uid:"428",ktype:"A07-K24-A",status:"D"}, {uid:"429",ktype:"A07-K24-AM",status:"D"}, {uid:"430",ktype:"A09-K24-M",status:"D"}, {uid:"431",ktype:"C2-K30",status:"D"}, {uid:"432",ktype:"C3-K30-A",status:"D"}, {uid:"433",ktype:"B01L-K30",status:"D"}, {uid:"434",ktype:"A07-K24",status:"D"}, {uid:"435",ktype:"A02-K24",status:"D"}, {uid:"436",ktype:"A03-K24",status:"D"}, {uid:"437",ktype:"A07-K24-M",status:"D"}, {uid:"438",ktype:"A07-K24",status:"D"}, {uid:"439",ktype:"A10-K30",status:"D"}, {uid:"440",ktype:"A01-K24-M",status:"D"}, {uid:"441",ktype:"A04-K24",status:"D"}, {uid:"442",ktype:"A03-K24-M",status:"D"}, {uid:"443",ktype:"B06L-K24",status:"INPRT"}, {uid:"444",ktype:"A03-K24-M",status:"INPRT"}, {uid:"445",ktype:"A03-K24-M",status:"INPRT"}, {uid:"446",ktype:"A03-K24-M",status:"INPRT"}, {uid:"447",ktype:"A03-K24-M",status:"INPRT"}, {uid:"448",ktype:"A02-K24",status:"INPRT"}, {uid:"449",ktype:"A07-K24-A",status:"INPRT"}, {uid:"450",ktype:"A07-K24",status:"PROJ"}, {uid:"451",ktype:"A03-K24-A",status:"PROJ"}, {uid:"452",ktype:"A02-K24-A",status:"INPRT"}, {uid:"453",ktype:"A07-K24-M",status:"INPRT"}, {uid:"454",ktype:"B04L-K24-M",status:"INPRT"}, {uid:"455",ktype:"A01-K24-M",status:"INPRT"}, {uid:"456",ktype:"B08L-K24",status:"INPRT"}, {uid:"457",ktype:"A03-K24-M",status:"INPRT"}, {uid:"458",ktype:"B12L-K24",status:"INPRT"}] },
   { floor:3, units:[{uid:"301",ktype:"A01-K24-A",status:"D"}, {uid:"302",ktype:"A02-K24",status:"D"}, {uid:"303",ktype:"A03-K24-A",status:"D"}, {uid:"304",ktype:"A03-K24-M",status:"D"}, {uid:"305",ktype:"A03-K24-M",status:"D"}, {uid:"306",ktype:"A07-K24",status:"D"}, {uid:"307",ktype:"A03-K24",status:"D"}, {uid:"308",ktype:"C4-K24",status:"D"}, {uid:"309",ktype:"A03-K24",status:"D"}, {uid:"310",ktype:"A03-K24-M",status:"D"}, {uid:"311",ktype:"A03-K24-M",status:"D"}, {uid:"312",ktype:"A02-K24",status:"D"}, {uid:"313",ktype:"C1-K30",status:"D"}, {uid:"314",ktype:"MOCK_UP",status:"LDD"}, {uid:"315",ktype:"A04-K24",status:"D"}, {uid:"316",ktype:"A01-K24-M",status:"D"}, {uid:"317",ktype:"A05-K30",status:"D"}, {uid:"318",ktype:"A02-K24-A",status:"D"}, {uid:"319",ktype:"A03-K24-M",status:"D"}, {uid:"320",ktype:"A02-K24-AM",status:"D"}, {uid:"321",ktype:"A06-K24-AM",status:"D"}, {uid:"322",ktype:"A02-K24-M",status:"D"}, {uid:"323",ktype:"A03-K24-AM",status:"D"}, {uid:"324",ktype:"A07-K24",status:"D"}, {uid:"325",ktype:"B02L-K24",status:"D"}, {uid:"326",ktype:"B03L-K24-A",status:"D"}, {uid:"327",ktype:"B04L-K24-A",status:"D"}, {uid:"328",ktype:"A07-K24-A",status:"D"}, {uid:"329",ktype:"A07-K24-AM",status:"D"}, {uid:"330",ktype:"A09-K24-M",status:"D"}, {uid:"331",ktype:"C2-K30",status:"D"}, {uid:"332",ktype:"C3-K30-A",status:"D"}, {uid:"333",ktype:"B01L-K30",status:"D"}, {uid:"334",ktype:"MOCK_UP",status:"LDD"}, {uid:"335",ktype:"A02-K24",status:"D"}, {uid:"336",ktype:"A03-K24",status:"D"}, {uid:"337",ktype:"A07-K24-M",status:"D"}, {uid:"338",ktype:"A07-K24",status:"D"}, {uid:"339",ktype:"A10-K30",status:"D"}, {uid:"340",ktype:"A01-K24-M",status:"D"}, {uid:"341",ktype:"A04-K24",status:"D"}, {uid:"342",ktype:"A03-K24-M",status:"D"}, {uid:"343",ktype:"B06L-K24",status:"D"}, {uid:"344",ktype:"A03-K24-M",status:"D"}, {uid:"345",ktype:"A03-K24-M",status:"D"}, {uid:"346",ktype:"A03-K24-M",status:"D"}, {uid:"347",ktype:"A03-K24-M",status:"D"}, {uid:"348",ktype:"A02-K24",status:"D"}, {uid:"349",ktype:"A07-K24-A",status:"D"}, {uid:"350",ktype:"A07-K24",status:"PROJ"}, {uid:"351",ktype:"A03-K24-A",status:"PROJ"}, {uid:"352",ktype:"A02-K24-A",status:"D"}, {uid:"353",ktype:"A07-K24-M",status:"D"}, {uid:"354",ktype:"A11-K30",status:"D"}, {uid:"355",ktype:"MOCK_UP",status:"LDD"}, {uid:"356",ktype:"B02L-K24",status:"D"}, {uid:"357",ktype:"A03-K24-M",status:"D"}, {uid:"358",ktype:"B12L-K24",status:"D"}] },
 ];
@@ -847,6 +870,47 @@ function initDatePill() {
   if (stamp && LAST_UPDATED) stamp.textContent = `Updated ${LAST_UPDATED}`;
 }
 
+// ── Container status ring (crisp on high-DPI screens, thin ring, square-swatch legend) ──
+// Function declarations so they are hoisted ahead of the init chain.
+function drawStatusRing(canvas, groups, total) {
+  if (!canvas || !canvas.getContext) return;
+  const S = 160, dpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+  canvas.width = S * dpr; canvas.height = S * dpr;
+  if (canvas.style) { canvas.style.width = S + 'px'; canvas.style.height = S + 'px'; }
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  if (typeof ctx.setTransform === 'function') ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, S, S);
+  const cx = 80, cy = 80, r = 62, gap = 0.035;
+  let a = -Math.PI / 2;
+  for (const g of groups) {
+    const sl = (g.n / total) * Math.PI * 2;
+    ctx.beginPath(); ctx.arc(cx, cy, r, a + gap / 2, a + sl - gap / 2);
+    ctx.strokeStyle = g.color; ctx.lineWidth = 12; ctx.lineCap = 'butt'; ctx.stroke();
+    a += sl;
+  }
+  const font = (typeof getComputedStyle === 'function' && document.body) ? getComputedStyle(document.body).fontFamily : 'sans-serif';
+  ctx.fillStyle = '#1C1B18'; ctx.font = '600 30px ' + (font || 'sans-serif');
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(total, cx, cy + 1);
+}
+function statusRingLegend(groups) {
+  return groups.map(g =>
+    '<div style="display:flex;align-items:center;gap:6px;font-size:10px;">' +
+      '<span style="width:8px;height:8px;background:' + g.color + ';flex-shrink:0;display:inline-block;"></span>' +
+      '<span style="color:var(--text-2);flex:1;">' + g.label + '</span>' +
+      '<span style="font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;">' + g.n + '</span>' +
+    '</div>').join('');
+}
+function renderStatusRing(canvas, groups, total) {
+  drawStatusRing(canvas, groups, total);
+  const leg = document.getElementById('donut-legend');
+  if (leg) leg.innerHTML = statusRingLegend(groups);
+  // redraw once the web font has loaded so the centre number uses it
+  if (typeof document !== 'undefined' && document.fonts && document.fonts.ready)
+    document.fonts.ready.then(() => drawStatusRing(canvas, groups, total));
+}
+
 function renderDonut() {
   // Grouped counts — for donut chart
   const GROUP_MAP    = { D:'Delivered', INPRT:'Arrived', ENR:'EnRoute', LDD:'EnRoute', LDG:'EnRoute', PROJ:'Projected', HOLD:'Hold' };
@@ -858,34 +922,8 @@ function renderDonut() {
 
   const canvas = document.getElementById('status-chart');
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const total = CONTAINERS.length, cx=80, cy=80, r=65, inner=42;
-  let angle = -Math.PI/2;
-  ctx.clearRect(0,0,160,160);
-  for (const g of GROUP_ORDER) {
-    if (!gCounts[g]) continue;
-    const slice = (gCounts[g]/total)*Math.PI*2;
-    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,angle,angle+slice);
-    ctx.closePath(); ctx.fillStyle=GROUP_COLORS[g]; ctx.fill();
-    angle += slice;
-  }
-  ctx.beginPath(); ctx.arc(cx,cy,inner,0,Math.PI*2);
-  ctx.fillStyle='#fff'; ctx.fill();
-  ctx.fillStyle='#1C1B18'; ctx.font='700 22px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(total, cx, cy-8);
-  ctx.font='11px system-ui'; ctx.fillStyle='#8B8680';
-  ctx.fillText('containers', cx, cy+10);
-  const leg = document.getElementById('donut-legend');
-  if (!leg) return;
-  leg.innerHTML = GROUP_ORDER.filter(g=>gCounts[g]).map(g =>
-    `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-      <div style="display:flex;align-items:center;gap:5px;">
-        <span style="width:8px;height:8px;border-radius:50%;background:${GROUP_COLORS[g]};flex-shrink:0;display:inline-block;"></span>
-        <span style="font-size:10px;color:var(--text-2);">${GROUP_LABELS[g]}</span>
-      </div>
-      <span style="font-size:10px;font-weight:600;">${gCounts[g]}</span>
-    </div>`
-  ).join('');
+  const groups = GROUP_ORDER.filter(g => gCounts[g]).map(g => ({ label: GROUP_LABELS[g], color: GROUP_COLORS[g], n: gCounts[g] }));
+  renderStatusRing(canvas, groups, CONTAINERS.length);
 }
 
 function renderPipeline() {
@@ -1020,7 +1058,7 @@ function renderTable() {
       : '';
     const rowCls = [isNext ? 'next-up-row' : '', c.status === 'D' ? 'del-row' : ''].filter(Boolean).join(' ');
     return `<tr${rowCls ? ' class="' + rowCls + '"' : ''}>
-      <td class="c-num"><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>${esc(c.num)}</span></td>
+      <td class="c-num"><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>CTNR ${esc(c.num)}</span></td>
       <td class="c-status">${badge}</td>
       <td class="c-code mono" style="font-size:10px;">${esc(c.code||'—')}</td>
       <td class="c-loadwk staff-col" style="font-size:10px;color:var(--text-3);">${esc(c.week)}</td>
@@ -1320,7 +1358,18 @@ function renderBuildingMatrix() {
   for (const uc of unitCols) html += `<th>${uc}</th>`;
   html += '</tr></thead><tbody>';
 
+  // M1: floors with no kitchen types yet collapse into one row ("Floors 29–13").
+  let emptyRun = [];
+  const flushEmpty = () => {
+    if (!emptyRun.length) return;
+    const lbl = emptyRun.length === 1 ? String(emptyRun[0]) : emptyRun[0] + '–' + emptyRun[emptyRun.length - 1];
+    html += `<tr class="bm-empty-run"><td class="bm-floor-lbl"><div class="bm-fl-num" style="font-size:12px;">${lbl}</div></td>` +
+            `<td colspan="${unitCols.length}" style="padding:10px 12px;font-size:12px;color:var(--text-2);text-align:left;border:none;">Floors ${lbl} — not yet scheduled (no kitchen types assigned)</td></tr>`;
+    emptyRun = [];
+  };
   for (const f of floors) {
+    if (!kitchenUnits(f).length) { emptyRun.push(f.floor); continue; }
+    flushEmpty();
     // Progress counts only units that have a kitchen in this package.
     const inScope = kitchenUnits(f);
     let delCount = 0;
@@ -1373,6 +1422,7 @@ function renderBuildingMatrix() {
     html += '</tr>';
   }
 
+  flushEmpty();
   html += '</tbody></table>';
   grid.innerHTML = html;
   syncBldgScroll();   // content width changes with the top/bottom toggle
