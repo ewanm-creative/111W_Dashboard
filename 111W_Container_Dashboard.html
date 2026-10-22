@@ -455,16 +455,20 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 /* Schedule tables: one line per row on both sites (scroll sideways for long unit lists) */
 #ctn .tw td { white-space: nowrap; }
 /* BOOK flag next to the delivery date: outline tag, same height as the date text, tapered right end */
-.book-tag { position: relative; display: inline-block; box-sizing: border-box; height: 12px; line-height: 10px;
-  margin: 0 7px 0 5px; padding: 0 1px 0 3px; border: 1px solid var(--accent); border-right: 0; border-radius: 0 !important;
-  background: none; color: var(--accent); font-size: 8px; font-weight: 700; letter-spacing: .04em; vertical-align: 1px; }
-.book-tag { cursor: pointer; }
+.book-tag { display: inline-block; line-height: 0; cursor: pointer; vertical-align: -2px; margin: 0 4px 0 5px; }
 .book-tag:focus { outline: none; }
-.book-tag::after { content: ""; position: absolute; top: 1.1px; right: -3.9px; width: 7.8px; height: 7.8px; box-sizing: border-box;
-  border-top: 1px solid var(--accent); border-right: 1px solid var(--accent); transform: rotate(45deg); }
+.book-tag svg { display: block; overflow: visible; }
+.book-tag .bt-o { fill: var(--accent); }
+.book-tag .bt-i { fill: #fff; }
+.book-tag path { fill: var(--accent); }
 /* Container codes in bold */
 #ctn .tw td.c-code { font-weight: 600; }
 /* ===== DESLOP END ===== */
+/* +EXTRA shortens to +E on phones */
+.extra-tag .x-short { display: none; }
+@media (max-width: 700px) { .extra-tag .x-full { display: none; } .extra-tag .x-short { display: inline; } }
+/* BOOK tag in the Next Up card, sized to the date line */
+.book-tag.nu-book { vertical-align: -2px; margin: 0 4px 0 6px; }
 </style>
 </head>
 <script src="config.js"></script>
@@ -699,7 +703,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Oct 22, 2026 12:38 PM)
+// DATA_START (auto-generated Oct 22, 2026 4:30 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, bookable:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, bookable:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -708,8 +712,8 @@ const CONTAINERS = [
   { num:"5", status:"D", week:"Wk 39", units:"419:438", unitQty:20, vessel:"ZIM ASIA", loadDate:"Sep 22", shipDate:"Sep 26", portArrival:"Oct 11", portDays:"8", delivery:"Mon Oct 19", deliveryISO:"2026-10-19", confirmed:true, bookable:true, floors:"4", note:"Temp: Nick emailed delivery date on 9/24/26 - Told him it was tentative", extra:"", code:"ZCSU6588890", delivTime:"7:00 AM" },
   { num:"6", status:"INPRT", week:"Wk 40", units:"443:449,452:458,501:505", unitQty:19, vessel:"ZIM IBERIA V. 44W", loadDate:"Sep 30", shipDate:"Oct 2", portArrival:"Oct 19", portDays:"4", delivery:"Fri Oct 23", deliveryISO:"2026-10-23", confirmed:true, bookable:true, floors:"4,5", note:"", extra:"", code:"JXLU6389353", delivTime:"7:00 AM" },
   { num:"7", status:"D", week:"Wk 40", units:"506:524", unitQty:19, vessel:"ZIM IBERIA V. 44W", loadDate:"Sep 30", shipDate:"Oct 2", portArrival:"Oct 19", portDays:"3", delivery:"Thu Oct 22", deliveryISO:"2026-10-22", confirmed:true, bookable:true, floors:"5", note:"", extra:"", code:"JXLU6220070", delivTime:"10:00 AM" },
-  { num:"8", status:"ENR", week:"Wk 41", units:"525:543", unitQty:19, vessel:"ZIM JAMAICA", loadDate:"Oct 7", shipDate:"Oct 9", portArrival:"Oct 25", portDays:"4", delivery:"Thu Oct 29", deliveryISO:"2026-10-29", confirmed:false, bookable:true, floors:"5", note:"", extra:"", code:"ZCSU7360272", delivTime:"\u2014" },
-  { num:"9", status:"ENR", week:"Wk 41", units:"544:549,552:558,601:606", unitQty:19, vessel:"ZIM JAMAICA", loadDate:"Oct 7", shipDate:"Oct 9", portArrival:"Oct 25", portDays:"4", delivery:"Thu Oct 29", deliveryISO:"2026-10-29", confirmed:false, bookable:true, floors:"5,6", note:"", extra:"", code:"JXLU6471841", delivTime:"\u2014" },
+  { num:"8", status:"ENR", week:"Wk 41", units:"525:543", unitQty:19, vessel:"ZIM JAMAICA", loadDate:"Oct 7", shipDate:"Oct 9", portArrival:"Oct 25", portDays:"4", delivery:"Thu Oct 29", deliveryISO:"2026-10-29", confirmed:true, bookable:true, floors:"5", note:"", extra:"", code:"ZCSU7360272", delivTime:"7:00 AM" },
+  { num:"9", status:"ENR", week:"Wk 41", units:"544:549,552:558,601:606", unitQty:19, vessel:"ZIM JAMAICA", loadDate:"Oct 7", shipDate:"Oct 9", portArrival:"Oct 25", portDays:"4", delivery:"Thu Oct 29", deliveryISO:"2026-10-29", confirmed:true, bookable:true, floors:"5,6", note:"", extra:"", code:"JXLU6471841", delivTime:"10:00 AM" },
   { num:"10", status:"ENR", week:"Wk 42", units:"607:622", unitQty:16, vessel:"CARMEL I V. 37W", loadDate:"Oct 14", shipDate:"Oct 16", portArrival:"Nov 1", portDays:"4", delivery:"Thu Nov 5", deliveryISO:"2026-11-05", confirmed:false, bookable:false, floors:"6", note:"", extra:"3rd Floor Doors (Flatpack)", code:"GOSU1011597", delivTime:"\u2014" },
   { num:"11", status:"ENR", week:"Wk 42", units:"623:641", unitQty:19, vessel:"CARMEL I V. 37W", loadDate:"Oct 14", shipDate:"Oct 16", portArrival:"Nov 1", portDays:"4", delivery:"Thu Nov 5", deliveryISO:"2026-11-05", confirmed:false, bookable:false, floors:"6", note:"", extra:"", code:"ZCSU6677030", delivTime:"\u2014" },
   { num:"12", status:"LDD", week:"Wk 43", units:"314,334,355,642:649,652:658,701:704", unitQty:22, vessel:"--", loadDate:"Oct 19", shipDate:"Oct 23", portArrival:"Nov 8", portDays:"4", delivery:"Thu Nov 12", deliveryISO:"2026-11-12", confirmed:false, bookable:false, floors:"3,6,7", note:"", extra:"205 E. 53rd Mockup (MLD) +  J252/26 (Mockup Doors)", code:"ZCSU6797904", delivTime:"\u2014" },
@@ -745,7 +749,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"26.215584415584416" },
 ];
 
-const LAST_UPDATED = "Oct 22, 2026 12:38 PM";
+const LAST_UPDATED = "Oct 22, 2026 4:30 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = [];
 
@@ -1055,7 +1059,7 @@ function renderTable() {
       delCell = `<span style="font-weight:700;">${esc(c.delivery)}</span>`;
     }
     // BOOK tag: ticked BOOKABLE in the Logistics Matrix, not yet confirmed, not delivered.
-    if (c.bookable && !c.confirmed && c.status !== 'D') delCell += ' <span class="book-tag" tabindex="0" title="Container is ready to schedule. Book delivery over email.">BOOK</span>';
+    if (c.bookable && !c.confirmed && c.status !== 'D') delCell += ' ' + bookTag(false);
     /* Internal commentary - staff view only. The text still ships in the page
        source for everyone, so this hides it from the UI; it does not protect it. */
     const note = (c.note && STAFF)
@@ -1067,7 +1071,7 @@ function renderTable() {
     // since spelling it out inline would widen the column for every row.
     const extraTag = (c.extra && String(c.extra).trim())
       ? ` <span class="extra-tag" tabindex="0" title="${esc(c.extra)}"` +
-        ` data-extra="${esc(c.extra)}">+EXTRA</span>`
+        ` data-extra="${esc(c.extra)}"><span class="x-full">+EXTRA</span><span class="x-short">+E</span></span>`
       : '';
     const rowCls = [isNext ? 'next-up-row' : '', c.status === 'D' ? 'del-row' : ''].filter(Boolean).join(' ');
     return `<tr${rowCls ? ' class="' + rowCls + '"' : ''}>
@@ -1272,6 +1276,25 @@ function copySchedule(btn) {
   }
 }
 
+// BOOK flag: one SVG polygon (box + point) with BOOK drawn as Barlow Bold outlines,
+// pre-centred in the box, so it renders identically in every browser and font setting.
+// big = Next Up card size. Paths generated from barlow-latin-700 (cap 7px / 5px).
+const BOOK_GEO = {
+  big:   { H: 13, b: 32, d: 'M7.76 6.41Q8.71 6.9 8.71 8.04Q8.71 9.01 8.04 9.5Q7.38 10 6.32 10H3.73Q3.68 10 3.64 9.96Q3.61 9.93 3.61 9.88V3.12Q3.61 3.07 3.64 3.04Q3.68 3 3.73 3H6.24Q8.61 3 8.61 4.92Q8.61 5.92 7.76 6.35Q7.7 6.38 7.76 6.41ZM5.02 4.26V5.82Q5.02 5.87 5.07 5.87H6.24Q6.71 5.87 6.97 5.65Q7.23 5.43 7.23 5.05Q7.23 4.66 6.97 4.44Q6.71 4.21 6.24 4.21H5.07Q5.02 4.21 5.02 4.26ZM7.29 7.9Q7.29 7.49 7.04 7.25Q6.78 7.02 6.31 7.02H5.07Q5.02 7.02 5.02 7.07V8.73Q5.02 8.78 5.07 8.78H6.32Q6.78 8.78 7.04 8.54Q7.29 8.31 7.29 7.9ZM10.07 7.57V5.43Q10.07 4.69 10.4 4.12Q10.73 3.55 11.32 3.23Q11.92 2.92 12.7 2.92Q13.49 2.92 14.08 3.23Q14.68 3.55 15.01 4.12Q15.34 4.69 15.34 5.43V7.57Q15.34 8.32 15.01 8.9Q14.68 9.48 14.08 9.79Q13.49 10.11 12.7 10.11Q11.92 10.11 11.32 9.79Q10.73 9.47 10.4 8.89Q10.07 8.32 10.07 7.57ZM13.93 7.62V5.42Q13.93 4.84 13.59 4.48Q13.26 4.13 12.7 4.13Q12.15 4.13 11.81 4.48Q11.48 4.84 11.48 5.42V7.62Q11.48 8.2 11.81 8.55Q12.15 8.9 12.7 8.9Q13.25 8.9 13.59 8.55Q13.93 8.2 13.93 7.62ZM16.68 7.57V5.43Q16.68 4.69 17.01 4.12Q17.34 3.55 17.93 3.23Q18.53 2.92 19.31 2.92Q20.1 2.92 20.69 3.23Q21.29 3.55 21.62 4.12Q21.95 4.69 21.95 5.43V7.57Q21.95 8.32 21.62 8.9Q21.29 9.48 20.69 9.79Q20.1 10.11 19.31 10.11Q18.53 10.11 17.93 9.79Q17.34 9.47 17.01 8.89Q16.68 8.32 16.68 7.57ZM20.54 7.62V5.42Q20.54 4.84 20.2 4.48Q19.87 4.13 19.31 4.13Q18.76 4.13 18.42 4.48Q18.09 4.84 18.09 5.42V7.62Q18.09 8.2 18.42 8.55Q18.76 8.9 19.31 8.9Q19.86 8.9 20.2 8.55Q20.54 8.2 20.54 7.62ZM23.43 9.88V3.12Q23.43 3.07 23.46 3.04Q23.5 3 23.55 3H24.71Q24.77 3 24.8 3.04Q24.84 3.07 24.84 3.12V5.92Q24.84 5.95 24.86 5.96Q24.88 5.96 24.9 5.94L27.21 3.07Q27.27 3 27.36 3H28.68Q28.76 3 28.78 3.04Q28.8 3.09 28.76 3.15L26.53 6Q26.5 6.04 26.52 6.07L28.88 9.86Q28.9 9.92 28.9 9.93Q28.9 10 28.8 10H27.48Q27.38 10 27.34 9.92L25.55 7.04Q25.55 7.02 25.53 7.02Q25.51 7.02 25.48 7.04L24.86 7.83Q24.84 7.87 24.84 7.89V9.88Q24.84 9.93 24.8 9.96Q24.77 10 24.71 10H23.55Q23.5 10 23.46 9.96Q23.43 9.93 23.43 9.88Z' },
+  small: { H: 11, b: 24, d: 'M6.18 5.44Q6.86 5.79 6.86 6.6Q6.86 7.29 6.39 7.65Q5.92 8 5.15 8H3.3Q3.27 8 3.24 7.97Q3.22 7.95 3.22 7.91V3.09Q3.22 3.05 3.24 3.02Q3.27 3 3.3 3H5.1Q6.79 3 6.79 4.37Q6.79 5.09 6.18 5.39Q6.14 5.41 6.18 5.44ZM4.23 3.9V5.01Q4.23 5.05 4.26 5.05H5.1Q5.43 5.05 5.62 4.89Q5.8 4.74 5.8 4.46Q5.8 4.19 5.62 4.03Q5.43 3.86 5.1 3.86H4.26Q4.23 3.86 4.23 3.9ZM5.85 6.5Q5.85 6.21 5.67 6.04Q5.48 5.87 5.15 5.87H4.26Q4.23 5.87 4.23 5.91V7.09Q4.23 7.13 4.26 7.13H5.15Q5.48 7.13 5.67 6.96Q5.85 6.79 5.85 6.5ZM7.83 6.26V4.74Q7.83 4.21 8.07 3.8Q8.3 3.39 8.73 3.17Q9.15 2.94 9.71 2.94Q10.28 2.94 10.7 3.17Q11.12 3.39 11.36 3.8Q11.6 4.21 11.6 4.74V6.26Q11.6 6.8 11.36 7.21Q11.12 7.63 10.7 7.85Q10.28 8.08 9.71 8.08Q9.15 8.08 8.73 7.85Q8.3 7.62 8.07 7.21Q7.83 6.8 7.83 6.26ZM10.59 6.3V4.73Q10.59 4.31 10.35 4.06Q10.11 3.81 9.71 3.81Q9.32 3.81 9.08 4.06Q8.84 4.31 8.84 4.73V6.3Q8.84 6.71 9.08 6.96Q9.32 7.21 9.71 7.21Q10.1 7.21 10.35 6.96Q10.59 6.71 10.59 6.3ZM12.55 6.26V4.74Q12.55 4.21 12.79 3.8Q13.02 3.39 13.45 3.17Q13.87 2.94 14.43 2.94Q15 2.94 15.42 3.17Q15.85 3.39 16.08 3.8Q16.32 4.21 16.32 4.74V6.26Q16.32 6.8 16.08 7.21Q15.85 7.63 15.42 7.85Q15 8.08 14.43 8.08Q13.87 8.08 13.45 7.85Q13.02 7.62 12.79 7.21Q12.55 6.8 12.55 6.26ZM15.31 6.3V4.73Q15.31 4.31 15.07 4.06Q14.83 3.81 14.43 3.81Q14.04 3.81 13.8 4.06Q13.56 4.31 13.56 4.73V6.3Q13.56 6.71 13.8 6.96Q14.04 7.21 14.43 7.21Q14.82 7.21 15.07 6.96Q15.31 6.71 15.31 6.3ZM17.38 7.91V3.09Q17.38 3.05 17.4 3.02Q17.42 3 17.46 3H18.3Q18.33 3 18.36 3.02Q18.38 3.05 18.38 3.09V5.09Q18.38 5.11 18.4 5.11Q18.41 5.11 18.42 5.1L20.07 3.05Q20.12 3 20.18 3H21.12Q21.18 3 21.2 3.03Q21.21 3.06 21.18 3.11L19.59 5.14Q19.57 5.17 19.58 5.19L21.27 7.9Q21.28 7.94 21.28 7.95Q21.28 8 21.21 8H20.27Q20.2 8 20.17 7.94L18.9 5.89Q18.89 5.87 18.88 5.87Q18.86 5.87 18.85 5.89L18.4 6.45Q18.38 6.48 18.38 6.49V7.91Q18.38 7.95 18.36 7.97Q18.33 8 18.3 8H17.46Q17.42 8 17.4 7.97Q17.38 7.95 17.38 7.91Z' }
+};
+function bookTag(big) {
+  const g = big ? BOOK_GEO.big : BOOK_GEO.small, h = g.H, W = g.b + h / 2;
+  const T = 1.4 * Math.SQRT2;   // angled edge thickness 1.4px, measured square to the edge
+  return '<span class="book-tag' + (big ? ' nu-book' : '') + '" tabindex="0" title="Container is ready to schedule. Book delivery over email.">' +
+    '<svg width="' + W + '" height="' + h + '" viewBox="0 0 ' + W + ' ' + h + '" role="img" aria-label="BOOK">' +
+    // Outer shape in accent, inner in white: 1px sides, the angled point edges
+    // a touch heavier (T) so they read as the same weight as the straight sides.
+    '<polygon class="bt-o" points="0,0 ' + g.b + ',0 ' + W + ',' + h / 2 + ' ' + g.b + ',' + h + ' 0,' + h + '"/>' +
+    '<polygon class="bt-i" points="1,1 ' + (g.b + 1 - T) + ',1 ' + (W - T) + ',' + h / 2 + ' ' + (g.b + 1 - T) + ',' + (h - 1) + ' 1,' + (h - 1) + '"/>' +
+    '<path d="' + g.d + '"/></svg></span>';
+}
+
 function renderNextUp() {
   const el = document.getElementById('next-up-list');
   if (!el) return;
@@ -1303,7 +1326,7 @@ function renderNextUp() {
     const isProj = c.status === 'PROJ';
     const dateStr = isProj
       ? `${projWeekRange(c.deliveryISO)} <span class="nu-tag">[Projected]</span>`
-      : `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}${(c.delivTime && !['--','---','—'].includes(c.delivTime)) ? ', ' + esc(c.delivTime) : ''} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span>`;
+      : `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}${(c.delivTime && !['--','---','—'].includes(c.delivTime)) ? ', ' + esc(c.delivTime) : ''} <span class="nu-tag">[${c.confirmed ? 'Confirmed' : 'ETA'}]</span>${(c.bookable && !c.confirmed && c.status !== 'D') ? ' ' + bookTag(true) : ''}`;
     return `<div class="nu-row">
       <div class="nu-date">CTN ${esc(c.num)} &nbsp;·&nbsp; ${dateStr}</div>
       <div class="nu-info">${floorStr ? floorStr.replace(/^ · /, '') + ' &nbsp;·&nbsp; ' : ''}<span style="color:${sColor};font-weight:700;">●</span><span class="nu-slabel" style="color:${sColor};font-weight:700;"> ${sLabel}</span><span class="nu-days" style="${isLate?'color:#B04A2A;font-weight:700;':''}"> &nbsp;·&nbsp; ${daysStr}</span>${noteStr}</div>
