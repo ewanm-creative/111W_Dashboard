@@ -78,7 +78,8 @@ body.staff-mode #staff-btn { border-color:var(--accent); color:var(--accent); }
 /* Next-up row in the container schedule */
 /* Delivered containers: dim the row data, but not CTN #, status or +EXTRA/notes. */
 #ctn tbody tr.del-row > td:not(.c-num):not(.c-status):not(.c-units),
-#ctn tbody tr.del-row .u-txt { opacity: .5; }
+#ctn tbody tr.del-row .u-txt,
+#ctn tbody tr.del-row .num-txt { opacity: .5; }
 #ctn tbody tr.next-up-row > td { background: #EAF3FC; font-weight: 500; }
 #ctn tbody tr.next-up-row > td:first-child { box-shadow: inset 3px 0 0 #4476C4; }
 
@@ -457,6 +458,8 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 .book-tag { position: relative; display: inline-block; box-sizing: border-box; height: 12px; line-height: 10px;
   margin: 0 7px 0 5px; padding: 0 1px 0 3px; border: 1px solid var(--accent); border-right: 0; border-radius: 0 !important;
   background: none; color: var(--accent); font-size: 8px; font-weight: 700; letter-spacing: .04em; vertical-align: 1px; }
+.book-tag { cursor: pointer; }
+.book-tag:focus { outline: none; }
 .book-tag::after { content: ""; position: absolute; top: 1.1px; right: -3.9px; width: 7.8px; height: 7.8px; box-sizing: border-box;
   border-top: 1px solid var(--accent); border-right: 1px solid var(--accent); transform: rotate(45deg); }
 /* Container codes in bold */
@@ -696,7 +699,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Oct 22, 2026 12:22 PM)
+// DATA_START (auto-generated Oct 22, 2026 12:35 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, bookable:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, bookable:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -742,7 +745,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"26.92987012987013" },
 ];
 
-const LAST_UPDATED = "Oct 22, 2026 12:22 PM";
+const LAST_UPDATED = "Oct 22, 2026 12:35 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = [];
 
@@ -1052,7 +1055,7 @@ function renderTable() {
       delCell = `<span style="font-weight:700;">${esc(c.delivery)}</span>`;
     }
     // BOOK tag: ticked BOOKABLE in the Logistics Matrix, not yet confirmed, not delivered.
-    if (c.bookable && !c.confirmed && c.status !== 'D') delCell += ' <span class="book-tag" title="Ready to book a delivery time">BOOK</span>';
+    if (c.bookable && !c.confirmed && c.status !== 'D') delCell += ' <span class="book-tag" tabindex="0" title="Container is ready to schedule. Book delivery over email.">BOOK</span>';
     /* Internal commentary - staff view only. The text still ships in the page
        source for everyone, so this hides it from the UI; it does not protect it. */
     const note = (c.note && STAFF)
@@ -1068,7 +1071,7 @@ function renderTable() {
       : '';
     const rowCls = [isNext ? 'next-up-row' : '', c.status === 'D' ? 'del-row' : ''].filter(Boolean).join(' ');
     return `<tr${rowCls ? ' class="' + rowCls + '"' : ''}>
-      <td class="c-num"><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span>CTNR ${esc(c.num)}</span></td>
+      <td class="c-num"><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;"><span class="dot d-${esc(c.status)}"></span><span class="num-txt">CTNR ${esc(c.num)}</span></span></td>
       <td class="c-status">${badge}</td>
       <td class="c-code mono" style="font-size:10px;">${esc(c.code||'—')}</td>
       <td class="c-loadwk staff-col" style="font-size:10px;color:var(--text-3);">${esc(c.week)}</td>
@@ -1187,6 +1190,12 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const txt = t.getAttribute('data-extra') || '';
     if (txt) showToast('<strong>Extra contents</strong><br>' + txt);
+  });
+  document.addEventListener('click', function (e) {
+    const t = e.target.closest && e.target.closest('.book-tag');
+    if (!t) return;
+    e.preventDefault();
+    showToast('<strong>Ready to book</strong><br>' + t.getAttribute('title'));
   });
 })();
 
