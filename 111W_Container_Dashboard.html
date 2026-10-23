@@ -77,7 +77,8 @@ body.staff-mode #staff-btn { border-color:var(--accent); color:var(--accent); }
 
 /* Next-up row in the container schedule */
 /* Delivered containers: dim the row data, but not CTN #, status or +EXTRA/notes. */
-#ctn tbody tr.del-row > td:not(.c-num):not(.c-status):not(.c-units),
+#ctn tbody tr.del-row > td:not(.c-num):not(.c-status):not(.c-units):not(.c-floor),
+#ctn tbody tr.del-row .fl-txt,
 #ctn tbody tr.del-row .u-txt,
 #ctn tbody tr.del-row .num-txt { opacity: .5; }
 #ctn tbody tr.next-up-row > td { background: #EAF3FC; font-weight: 500; }
@@ -486,6 +487,17 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 @media print { #pin-sheet { display: none !important; } }
 /* Phones: drop Transit Performance and the Container Status ring to cut scrolling */
 @media (max-width: 700px) { .m-hide { display: none !important; } }
+/* Copy icon in the Next Up card header */
+#nu-copy { display: inline-flex; align-items: center; justify-content: center; padding: 2px; margin: -2px;
+  border: 0; background: none; color: var(--text-3); cursor: pointer; }
+#nu-copy:hover, #nu-copy.done { color: var(--text); }
+#nu-copy:focus { outline: none; }
+@media print { #nu-copy { display: none !important; } }
+/* Desktop: Next Up capped so it doesn't stretch; Unit Status card takes the spare width */
+@media (min-width: 701px) and (min-height: 561px) {
+  #sum-row #next-up-card { flex: 0 1 460px !important; min-width: 0 !important; }
+  #sum-row #mini-matrix-card { flex: 1 1 auto !important; }
+}
 </style>
 </head>
 <script src="config.js"></script>
@@ -569,7 +581,10 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
     <!-- Next Up -->
     <div id="next-up-card" style="flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 16px;display:flex;flex-direction:column;">
-      <div style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Next Up</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;">Next Up</div>
+        <button id="nu-copy" type="button" onclick="copyNextUp(this)" title="Copy these deliveries for an email" aria-label="Copy Next Up"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+      </div>
       <div id="next-up-list" style="flex:1;"></div>
     </div>
   </div>
@@ -720,7 +735,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Oct 23, 2026 11:45 AM)
+// DATA_START (auto-generated Oct 23, 2026 4:30 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, bookable:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, bookable:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -766,7 +781,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"26.36709956709957" },
 ];
 
-const LAST_UPDATED = "Oct 23, 2026 11:45 AM";
+const LAST_UPDATED = "Oct 23, 2026 4:30 PM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = [];
 
@@ -1104,9 +1119,9 @@ function renderTable() {
       <td class="c-deliv" style="font-size:10px;">${delCell}</td>
       <td class="c-dtime vcol" style="font-size:10px;">${isProj ? '—' : esc(c.delivTime||'—')}</td>
       <td class="c-conf" style="font-size:10px;color:${c.confirmed ? 'var(--text)' : '#D01C1F'};">${c.confirmed?'Confirmed':'ETA'}</td>
-      <td class="c-floor gapl" style="font-size:10px;font-weight:600;">${esc(c.floors && c.floors !== '---' ? c.floors : '—')}</td>
+      <td class="c-floor gapl" style="font-size:10px;font-weight:600;"><span class="fl-txt">${esc(c.floors && c.floors !== '---' ? c.floors : '—')}</span>${extraTag}</td>
       <td class="c-qty vcol" style="font-size:10px;color:var(--text-3);">${c.unitQty || '—'}</td>
-      <td class="c-units" style="font-size:10px;color:var(--text);"><span class="u-txt">${esc(c.units)}</span>${extraTag}${note}</td>
+      <td class="c-units" style="font-size:10px;color:var(--text);"><span class="u-txt">${esc(c.units)}</span>${note}</td>
     </tr>`;
   }).join('');
 }
@@ -1300,6 +1315,46 @@ function copySchedule(btn) {
   }
 }
 
+// ── COPY NEXT UP (copy icon on the Next Up card) ──
+// Same containers the card shows (past due first, then the next 5), same line
+// format as Copy next 10. Ready-to-book lines are bold when pasted into email
+// (HTML clipboard) and wrapped in *...* in plain text (bold in Teams/WhatsApp).
+function nextUpRows() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dated = CONTAINERS
+    .map(c => ({ c, d: parseISO(c.deliveryISO) }))
+    .filter(x => x.d && x.c.status !== 'D')
+    .sort((a,b) => a.d - b.d || String(a.c.num).localeCompare(String(b.c.num), undefined, {numeric:true}));
+  return dated.filter(x => x.d < today).slice(0,3).concat(dated.filter(x => x.d >= today).slice(0,5));
+}
+function copyNextUp(btn) {
+  const rows = nextUpRows();
+  if (!rows.length) { alert('No upcoming deliveries to copy.'); return; }
+  const isBook = c => c.bookable && !c.confirmed && c.status !== 'D';
+  const lines = rows.map(x => ({ t: scheduleLine(x.c, x.d), b: isBook(x.c) }));
+  const text = lines.map(l => l.b ? l.t.replace(/^• (.*)$/, '• *$1*') : l.t).join('\n');
+  const html = '<div style="font-family:Calibri,Arial,sans-serif;font-size:11pt;">' +
+    lines.map(l => l.b ? '<b>' + esc(l.t) + '</b>' : esc(l.t)).join('<br>') + '</div>';
+  const done = () => { btn.classList.add('done'); btn.title = 'Copied'; setTimeout(() => { btn.classList.remove('done'); btn.title = 'Copy these deliveries for an email'; }, 2000); };
+  const plain = () => {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(legacy);
+    else legacy();
+  };
+  function legacy() {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+    navigator.clipboard.write([new ClipboardItem({
+      'text/html':  new Blob([html], { type: 'text/html' }),
+      'text/plain': new Blob([text], { type: 'text/plain' })
+    })]).then(done).catch(plain);
+  } else plain();
+}
+
 // BOOK flag: one SVG polygon (box + point) with BOOK drawn as Barlow Bold outlines,
 // pre-centred in the box, so it renders identically in every browser and font setting.
 // big = Next Up card size. Paths generated from barlow-latin-700 (cap 7px / 5px).
@@ -1384,7 +1439,7 @@ function renderMiniMatrix() {
     for (const u of f.units) {
       const st = unitMap[+u.uid] || u.status;
       const bg = (st && st !== '--') ? (SCOLOR[st]||'#e0ddd8') : '#e0ddd8';
-      html += `<div style="width:4px;flex-shrink:0;background:${bg};border-radius:1px;" title="${esc(u.uid)}: ${esc(st||'N/A')}"></div>`;
+      html += `<div style="flex:1 1 4px;min-width:3px;max-width:9px;background:${bg};border-radius:1px;" title="${esc(u.uid)}: ${esc(st||'N/A')}"></div>`;
     }
     html += '</div>';
   }
