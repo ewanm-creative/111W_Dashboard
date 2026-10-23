@@ -484,6 +484,8 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 #pin-sheet .ps-btns .ps-cancel { flex: 0 0 48px; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
 #pin-sheet .ps-btns .ps-go { background: var(--accent); border-color: var(--accent); color: #fff; }
 @media print { #pin-sheet { display: none !important; } }
+/* Phones: drop Transit Performance and the Container Status ring to cut scrolling */
+@media (max-width: 700px) { .m-hide { display: none !important; } }
 </style>
 </head>
 <script src="config.js"></script>
@@ -546,14 +548,14 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
         <div class="val" style="color:#4E67C8;" id="m-del">—</div>
         <div class="vsub" id="m-del-sub">of 577</div>
       </div>
-      <div class="mc" style="margin:0;grid-column:1/-1;padding:12px 16px;">
+      <div class="mc m-hide" style="margin:0;grid-column:1/-1;padding:12px 16px;">
         <div class="lbl" style="margin-bottom:8px;">Transit Performance</div>
         <div id="transit-perf-table"></div>
       </div>
     </div>
 
     <!-- Donut -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;gap:10px;">
+    <div class="m-hide" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;gap:10px;">
       <div style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;">Container Status</div>
       <canvas id="status-chart" width="160" height="160"></canvas>
       <div id="donut-legend" style="display:flex;flex-direction:column;gap:4px;width:100%;padding:0 4px;"></div>
@@ -718,7 +720,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Oct 23, 2026 10:42 AM)
+// DATA_START (auto-generated Oct 23, 2026 11:45 AM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, bookable:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, bookable:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -764,7 +766,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"26.36709956709957" },
 ];
 
-const LAST_UPDATED = "Oct 23, 2026 10:42 AM";
+const LAST_UPDATED = "Oct 23, 2026 11:45 AM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = [];
 
