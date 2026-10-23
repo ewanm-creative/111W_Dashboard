@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
-<title>111 Wall · Logistics Dashboard</title>
+<title>111 Wall | Concerto Logistics</title>
 <link rel="icon" id="favicon" type="image/png" href="logo-lion.png">
 <link rel="apple-touch-icon" href="logo-lion.png">
 <script>
@@ -469,6 +469,21 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 @media (max-width: 700px) { .extra-tag .x-full { display: none; } .extra-tag .x-short { display: inline; } }
 /* BOOK tag in the Next Up card, sized to the date line */
 .book-tag.nu-book { vertical-align: -2px; margin: 0 4px 0 6px; }
+/* PIN pop-up on phones: 16px field (no iOS zoom), big buttons */
+#pin-sheet { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,.35);
+  align-items: flex-start; justify-content: center; padding-top: 18vh; }
+#pin-sheet.open { display: flex; }
+#pin-sheet .ps-card { width: min(260px, calc(100% - 32px)); box-sizing: border-box; background: var(--surface, #fff);
+  border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+#pin-sheet #staff-pin { display: block !important; width: 100%; box-sizing: border-box; margin: 0 0 12px;
+  font-size: 16px; padding: 10px 12px; border-radius: 8px; letter-spacing: .2em; }
+#pin-sheet #staff-pin:focus { outline: none; border-color: var(--accent); }
+#pin-sheet .ps-btns { display: flex; gap: 8px; }
+#pin-sheet .ps-btns button { flex: 1; height: 40px; border-radius: 8px; font: inherit; font-size: 14px; font-weight: 600;
+  border: 1px solid var(--border); background: var(--surface, #fff); color: var(--text); }
+#pin-sheet .ps-btns .ps-cancel { flex: 0 0 48px; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+#pin-sheet .ps-btns .ps-go { background: var(--accent); border-color: var(--accent); color: #fff; }
+@media print { #pin-sheet { display: none !important; } }
 </style>
 </head>
 <script src="config.js"></script>
@@ -485,8 +500,8 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
   <div class="topbar-left" style="display:flex;align-items:center;gap:14px;">
     <img src="logo-lion.png" alt="" style="height:56px;width:56px;object-fit:contain;flex-shrink:0;" onerror="this.style.display='none'">
     <div>
-      <h1>111 Wall — Container Logistics</h1>
-      <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Concerto Millwork · Apartment Tower · Kitchens Only</div>
+      <h1>111 Wall | Concerto Logistics</h1>
+      <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Concerto Millwork Dashboards | for stakeholder communication</div>
       <div class="sub"><em id="updated-stamp">Updated —</em></div>
     </div>
   </div>
@@ -703,7 +718,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Oct 22, 2026 4:30 PM)
+// DATA_START (auto-generated Oct 23, 2026 10:34 AM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, bookable:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, bookable:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -749,7 +764,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"26.215584415584416" },
 ];
 
-const LAST_UPDATED = "Oct 22, 2026 4:30 PM";
+const LAST_UPDATED = "Oct 23, 2026 10:34 AM";
 const TOTAL_KITCHENS = 580;
 const DATA_WARNINGS = [];
 
@@ -1204,13 +1219,13 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 // ── COPY SCHEDULE (next 10 deliveries, plain text for email) ──
-// • 111W CTN-1(MEDU7973030) FL 3- ETA:Mon Sep 07
-// • 111W CTN-1(MEDU7973030) FL 3- Confirmed:Mon Sep 07
-// • 111W CTN-4 FL 4- Projected: Oct 26- Oct 30      (no code yet -> omitted)
+// • 111W CTN-1 (MEDU7973030) FL 3 -ETA: Mon 9/7
+// • 111W CTN-1 (MEDU7973030) FL 3 -Confirmed: Thu 10/29 10am
+// • 111W CTN-4 FL 3 -Projected: 10/26-10/30      (no code yet -> omitted)
 const COPY_PREFIX = '111W';
 const _D2 = n => String(n).padStart(2, '0');          // day is zero-padded
 
-// Mon-Fri window of the week a date falls in, zero-padded: "Sep 07- Sep 11"
+// Mon-Fri window of the week a date falls in: "10/26-10/30"
 function copyWeekRange(iso) {
   const dt = parseISO(iso);
   if (!dt) return '—';
@@ -1218,7 +1233,14 @@ function copyWeekRange(iso) {
   const day = dt.getDay(), back = (day === 0) ? 6 : day - 1;
   const mon = new Date(dt); mon.setDate(dt.getDate() - back);
   const fri = new Date(mon); fri.setDate(mon.getDate() + 4);
-  return M[mon.getMonth()] + ' ' + _D2(mon.getDate()) + '-' + M[fri.getMonth()] + ' ' + _D2(fri.getDate());
+  return (mon.getMonth() + 1) + '/' + mon.getDate() + '-' + (fri.getMonth() + 1) + '/' + fri.getDate();
+}
+
+// "10:00 AM" -> "10am", "10:30 AM" -> "10:30am", "12:00pm" -> "12pm"; anything else unchanged
+function copyTime(t) {
+  const m = String(t).trim().match(/^(\d{1,2})(?::(\d{2}))?\s*([ap])\.?\s*m\.?$/i);
+  if (!m) return String(t).trim();
+  return m[1] + (m[2] && m[2] !== '00' ? ':' + m[2] : '') + m[3].toLowerCase() + 'm';
 }
 
 function scheduleLine(c, d) {
@@ -1227,19 +1249,19 @@ function scheduleLine(c, d) {
   const isProj = c.status === 'PROJ';
 
   const blank = v => !v || v === '--' || v === '---' || v === '—';
-  const code  = blank(c.code)   ? '' : '(' + c.code + ')';   // omitted entirely when absent
+  const code  = blank(c.code)   ? '' : ' (' + c.code + ')';   // omitted entirely when absent
   const fl    = blank(c.floors) ? '—' : c.floors;
 
   // Projected -> week window with a leading space after the colon.
   // Otherwise -> weekday + zero-padded date, no space after the colon.
   // A delivery time is only meaningful once there's a firm date, so it is
   // appended to ETA/Confirmed lines only — never to an estimated window.
-  const tm = blank(c.delivTime) ? '' : ', ' + c.delivTime;
+  const tm = blank(c.delivTime) ? '' : ' ' + copyTime(c.delivTime);
 
   const tail = isProj
     ? 'Projected: ' + copyWeekRange(c.deliveryISO)
-    : (c.confirmed ? 'Confirmed:' : 'ETA:') +
-      days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + _D2(d.getDate()) + tm;
+    : (c.confirmed ? 'Confirmed: ' : 'ETA: ') +
+      days[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + tm;
 
   return '• ' + COPY_PREFIX + ' CTN-' + c.num + code + ' FL ' + fl + ' -' + tail;
 }
@@ -1944,6 +1966,49 @@ window.addEventListener('afterprint', function () {
   if (host) host.remove();
   document.body.classList.remove('print-ctn', 'print-bldg');
 });
+
+// PIN pop-up on phones. Moves the existing PIN field into a centred card with a
+// 16px font (iOS zooms on anything smaller) and Cancel / Unlock buttons. The check
+// itself is still staffTry(). Desktop keeps the small inline field. Wrapped in try
+// so a failure here can never break the rest of the page.
+(function () {
+  try {
+    const mq = window.matchMedia('(max-width: 700px), (pointer: coarse)');
+    const box = document.getElementById('staff-pin');
+    if (!box) return;
+    box.setAttribute('autocapitalize', 'characters');
+    box.setAttribute('autocorrect', 'off');
+    box.setAttribute('spellcheck', 'false');
+    box.setAttribute('enterkeyhint', 'go');
+    const home = box.parentNode, next = box.nextSibling;
+    const sh = document.createElement('div');
+    sh.id = 'pin-sheet';
+    sh.innerHTML = '<div class="ps-card"><div class="ps-slot"></div>' +
+      '<div class="ps-btns"><button type="button" class="ps-cancel" aria-label="Back" title="Back">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>' +
+      '<button type="button" class="ps-go">View</button></div></div>';
+    document.body.appendChild(sh);
+    const slot = sh.querySelector('.ps-slot');
+    const close = () => {
+      sh.classList.remove('open'); box.classList.remove('on'); box.value = ''; box.blur();
+      home.insertBefore(box, next);
+    };
+    sh.querySelector('.ps-cancel').addEventListener('click', close);
+    sh.addEventListener('click', e => { if (e.target === sh) close(); });
+    sh.querySelector('.ps-go').addEventListener('click', () => staffTry());
+    const orig = window.staffClick;
+    window.staffClick = function () {
+      if (STAFF || !mq.matches) return orig();
+      slot.appendChild(box);
+      sh.classList.add('open');
+      box.value = ''; box.classList.add('on'); box.focus();
+    };
+    // staffTry() drops the 'on' class after a correct PIN: close the card then.
+    new MutationObserver(() => {
+      if (sh.classList.contains('open') && STAFF) close();
+    }).observe(box, { attributes: true, attributeFilter: ['class'] });
+  } catch (e) { /* keep the inline field */ }
+})();
 </script>
 </body>
 </html>
