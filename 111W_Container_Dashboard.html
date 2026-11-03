@@ -737,7 +737,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Nov 3, 2026 10:00 AM)
+// DATA_START (auto-generated Nov 3, 2026 10:09 AM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, bookable:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, bookable:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -783,7 +783,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"24.82857142857143" },
 ];
 
-const LAST_UPDATED = "Nov 3, 2026 10:00 AM";
+const LAST_UPDATED = "Nov 3, 2026 10:09 AM";
 const TOTAL_KITCHENS = 1567;
 const DATA_WARNINGS = ["987 kitchen(s) in the matrix are not in any container: 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1311, 1312..."];
 
@@ -1433,12 +1433,20 @@ function renderMiniMatrix() {
   if (!grid) return;
   // Whole tower, top-down. Floors with no kitchens yet render as empty cells.
   const floors = [...BUILDING_MATRIX].sort((a,b) => b.floor - a.floor);
+  let maxSuf = 0;
+  for (const f of floors) for (const u of f.units) maxSuf = Math.max(maxSuf, +u.uid % 100);
   // Rows and cells flex to fill the card's height instead of sitting at a
   // fixed 5px, so the grid doesn't leave dead space under it.
   let html = '<div style="display:flex;flex-direction:column;gap:1px;flex:1;min-height:0;">';
   for (const f of floors) {
     html += '<div style="display:flex;gap:1px;flex:1;min-height:5px;justify-content:center;">';
-    for (const u of f.units) {
+    // One slot per unit number (01..highest on any floor) so the columns line
+    // up; a unit number that doesn't exist on this floor is an empty slot.
+    const bySuf = {};
+    for (const u of f.units) bySuf[+u.uid % 100] = u;
+    for (let k = 1; k <= maxSuf; k++) {
+      const u = bySuf[k];
+      if (!u) { html += '<div style="flex:1 1 4px;min-width:3px;max-width:9px;"></div>'; continue; }
       const st = unitMap[+u.uid] || u.status;
       const bg = (st && st !== '--') ? (SCOLOR[st]||'#e0ddd8') : '#e0ddd8';
       html += `<div style="flex:1 1 4px;min-width:3px;max-width:9px;background:${bg};border-radius:1px;" title="${esc(u.uid)}: ${esc(st||'N/A')}"></div>`;
