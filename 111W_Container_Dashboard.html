@@ -506,6 +506,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 #so-sched td.so-num { font-weight: 700; font-size: 11px; }
 #so-sched .tw { overflow-x: auto; }
 #so-sched tr.so-closed > td:not(.so-sts) { opacity: .5; }
+#so-sched tr.so-ccm > td { font-weight: 700; }
 </style>
 </head>
 <script src="config.js"></script>
@@ -681,7 +682,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
   <div id="so-sched" style="margin-bottom:20px;">
     <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Service order schedule</div>
-    <div class="tw"><table><thead><tr><th>SO #</th><th>Status</th><th>Description</th><th>Est. Ready</th><th>Ship Date</th><th>Container</th><th>Delivery</th><th>Items</th></tr></thead><tbody id="so-tbody"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>SO #</th><th>Status</th><th>JO #</th><th>Description</th><th>Part Type</th><th>Reported</th><th>Confirmed</th><th>Est. Ready</th><th>Container</th><th>Delivery</th><th>Items</th></tr></thead><tbody id="so-tbody"></tbody></table></div>
   </div>
 
   <div class="dmg-note" style="margin-bottom:16px;font-size:12px;line-height:1.6;color:var(--text);">
@@ -695,7 +696,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
     <div class="form-grid">
       <div class="form-group">
         <label>Unit number</label>
-        <select id="dmg-unit"></select>
+        <input type="text" id="dmg-unit" inputmode="numeric" autocomplete="off" placeholder="e.g. 1258">
       </div>
       <div class="form-group">
         <label>Item code</label>
@@ -748,7 +749,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Nov 5, 2026 2:37 PM)
+// DATA_START (auto-generated Nov 5, 2026 4:02 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, bookable:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, bookable:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -763,8 +764,8 @@ const CONTAINERS = [
   { num:"11", status:"INPRT", week:"Wk 42", units:"623:641", unitQty:19, vessel:"CARMEL I V. 37W", loadDate:"Oct 14", shipDate:"Oct 16", portArrival:"Nov 2", portDays:"3", delivery:"Thu Nov 5", deliveryISO:"2026-11-05", confirmed:true, bookable:true, floors:"6", note:"", extra:"", code:"ZCSU6677030", delivTime:"12:30 PM" },
   { num:"12", status:"ENR", week:"Wk 43", units:"314,334,355,642:649,652:658,701:704", unitQty:22, vessel:"ZIM PACIFIC", loadDate:"Oct 19", shipDate:"Oct 27", portArrival:"Nov 11", portDays:"6", delivery:"Tue Nov 17", deliveryISO:"2026-11-17", confirmed:true, bookable:true, floors:"3,6,7", note:"", extra:"J252/26 (Mockup Door Replacements)", code:"ZCSU6797904", delivTime:"7:00 AM" },
   { num:"13", status:"ENR", week:"Wk 43", units:"705:723", unitQty:19, vessel:"ZIM PACIFIC", loadDate:"Oct 21", shipDate:"Oct 27", portArrival:"Nov 11", portDays:"6", delivery:"Tue Nov 17", deliveryISO:"2026-11-17", confirmed:true, bookable:true, floors:"7", note:"", extra:"", code:"ZCSU6760090", delivTime:"12:30 PM" },
-  { num:"14", status:"ENR", week:"Wk 44", units:"724:742", unitQty:19, vessel:"ZIM ATLANTIC", loadDate:"Oct 27", shipDate:"Oct 31", portArrival:"Nov 16", portDays:"4", delivery:"Fri Nov 20", deliveryISO:"2026-11-20", confirmed:false, bookable:false, floors:"7", note:"", extra:"", code:"ZCSU6896466", delivTime:"\u2014" },
-  { num:"15", status:"ENR", week:"Wk 44", units:"743:749,752:758,801:805", unitQty:19, vessel:"ZIM ATLANTIC", loadDate:"Oct 28", shipDate:"Oct 31", portArrival:"Nov 16", portDays:"4", delivery:"Fri Nov 20", deliveryISO:"2026-11-20", confirmed:false, bookable:false, floors:"7,8", note:"", extra:"", code:"TGBU5477394", delivTime:"\u2014" },
+  { num:"14", status:"ENR", week:"Wk 44", units:"724:742", unitQty:19, vessel:"ZIM ATLANTIC", loadDate:"Oct 27", shipDate:"Oct 31", portArrival:"Nov 16", portDays:"4", delivery:"Fri Nov 20", deliveryISO:"2026-11-20", confirmed:false, bookable:true, floors:"7", note:"", extra:"", code:"ZCSU6896466", delivTime:"\u2014" },
+  { num:"15", status:"ENR", week:"Wk 44", units:"743:749,752:758,801:805", unitQty:19, vessel:"ZIM ATLANTIC", loadDate:"Oct 28", shipDate:"Oct 31", portArrival:"Nov 16", portDays:"4", delivery:"Fri Nov 20", deliveryISO:"2026-11-20", confirmed:false, bookable:true, floors:"7,8", note:"", extra:"", code:"TGBU5477394", delivTime:"\u2014" },
   { num:"16", status:"LDG", week:"Wk 45", units:"806:822", unitQty:17, vessel:"MSC CANDICE", loadDate:"Nov 3", shipDate:"Nov 14", portArrival:"Nov 27", portDays:"4", delivery:"Tue Dec 1", deliveryISO:"2026-12-01", confirmed:false, bookable:false, floors:"8", note:"", extra:"", code:"--", delivTime:"\u2014" },
   { num:"17", status:"LDG", week:"Wk 45", units:"823:840", unitQty:18, vessel:"MSC CANDICE", loadDate:"Nov 4", shipDate:"Nov 14", portArrival:"Nov 27", portDays:"4", delivery:"Tue Dec 1", deliveryISO:"2026-12-01", confirmed:false, bookable:false, floors:"8", note:"", extra:"", code:"--", delivTime:"\u2014" },
   { num:"18", status:"LDG", week:"Wk 45", units:"841:849,852:858,901:902", unitQty:18, vessel:"MSC CANDICE", loadDate:"Nov 6", shipDate:"Nov 14", portArrival:"Nov 27", portDays:"4", delivery:"Tue Dec 1", deliveryISO:"2026-12-01", confirmed:false, bookable:false, floors:"8,9", note:"", extra:"", code:"--", delivTime:"\u2014" },
@@ -794,7 +795,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"24.885714285714286" },
 ];
 
-const LAST_UPDATED = "Nov 5, 2026 2:37 PM";
+const LAST_UPDATED = "Nov 5, 2026 4:02 PM";
 const TOTAL_KITCHENS = 1567;
 const DATA_WARNINGS = ["1 unit(s) are in a container but not in the building matrix: 201", "957 kitchen(s) in the matrix are not in any container: 1331, 1332, 1333, 1334, 1335, 1336, 1337, 1338, 1339, 1340, 1341, 1342...", "SO Link: status column header reads 'So Items' - rename it 'SO Status'"];
 
@@ -829,11 +830,11 @@ const BUILDING_MATRIX = [
 ];
 
 const SERVICE_ORDERS = [
-  {"so": "111W-0D", "desc": "3rd Floor Doors (Flatpack)", "sts": "CLOSED", "ready": "Oct 6", "ship": "Oct 13", "ctnr": "CTNR 10", "deliv": "Thu Nov 5", "items": "All Doors for CTNR's 1-3 that were missing"},
-  {"so": "111W-0H", "desc": "3rd Floor Doors Handles", "sts": "CLOSED", "ready": "Oct 6", "ship": "Oct 13", "ctnr": "Airfreight", "deliv": "Mon Oct 26", "items": "105 Base Unit Handles"},
-  {"so": "111W-LC-1", "desc": "Mockup Door replacements: 314,334,355", "sts": "EN ROUTE", "ready": "Oct 16", "ship": "Oct 23", "ctnr": "CTNR 12", "deliv": "Tue Nov 17", "items": "Doors to update mockup door styles to new standard"},
-  {"so": "111W-LC-2", "desc": "Unit 58 floor 3:12 replacment cabientry", "sts": "IN PRODUCTION", "ready": "TBD", "ship": "TBD", "ctnr": "TBD", "deliv": "--", "items": "Cabinets to convert from MR to AFF"},
-  {"so": "111W-D-01", "desc": "Damages on Floors 3,4,5 -7 items", "sts": "CCM TO CONFIRM", "ready": "TBD", "ship": "TBD", "ctnr": "TBD", "deliv": "--", "items": "7 items: 353, 453, 520, 433, 431, 422, 425"},
+  {"so": "111W-0D", "jo": "N/A", "desc": "3rd Floor Doors (Flatpack)", "part": "Late production", "sts": "CLOSED", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/06/26", "ctnr": "CTNR 10", "deliv": "11/05/26", "items": "All Doors for CTNR's 1-3 that were missing"},
+  {"so": "111W-0H", "jo": "N/A", "desc": "3rd Floor Doors Handles", "part": "Late production", "sts": "CLOSED", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/06/26", "ctnr": "Airfreight", "deliv": "10/26/26", "items": "105 Base Unit Handles"},
+  {"so": "111W-LC-1", "jo": "J252/26", "desc": "Mockup Door replacements: 314,334,355", "part": "layout changes", "sts": "EN ROUTE", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/16/26", "ctnr": "CTNR 12", "deliv": "11/17/26", "items": "Doors to update mockup door styles to new standard"},
+  {"so": "111W-LC-2", "jo": "TBD", "desc": "Unit 58 floor 3:12 replacment cabientry", "part": "layout changes", "sts": "IN PRODUCTION", "reported": "09/01/26", "confirmed": "09/01/26", "ready": "TBD", "ctnr": "TBD", "deliv": "--", "items": "Cabinets to convert from MR to AFF"},
+  {"so": "111W-D-01", "jo": "TBD", "desc": "Damages on Floors 3,4,5 -7 items", "part": "damage replacement", "sts": "CCM TO CONFIRM", "reported": "11/04/26", "confirmed": "TBD", "ready": "TBD", "ctnr": "TBD", "deliv": "--", "items": "7 items: 353, 453, 520, 433, 431, 422, 425"},
 ];
 // DATA_END
 
@@ -1741,21 +1742,6 @@ function setBldgDir(asc) {
   renderBuildingMatrix();
 }
 
-function initUnitDropdown() {
-  const sel = document.getElementById('dmg-unit');
-  if (!sel) return;
-  let html = '<option value="">&#8212; Select unit &#8212;</option>';
-  // Every unit that has a kitchen, whether or not it is on a container yet.
-  for (const f of scopedFloors().sort((a,b) => a.floor - b.floor)) {
-    const units = kitchenUnits(f);
-    if (!units.length) continue;
-    html += '<optgroup label="Floor ' + esc(f.floor) + '">';
-    for (const u of units) html += '<option value="' + esc(u.uid) + '">' + esc(u.uid) + '</option>';
-    html += '</optgroup>';
-  }
-  sel.innerHTML = html;
-}
-
 function initFloorLabel() {
   const el = document.getElementById('bldg-scope-label');
   if (!el) return;
@@ -1794,7 +1780,7 @@ function renderSession111w() {
 }
 
 function addToReport111w() {
-  const unit  = document.getElementById('dmg-unit').value;
+  const unit  = document.getElementById('dmg-unit').value.trim();
   const issue = document.getElementById('dmg-issue').value.trim();
   const msgEl = document.getElementById('dmg-msg');
   function showMsg(t, err) {
@@ -1802,7 +1788,7 @@ function addToReport111w() {
     msgEl.textContent = t; msgEl.style.color = err ? '#CC3030' : '#2A7A3A'; msgEl.style.display = 'inline';
     setTimeout(() => { msgEl.style.display = 'none'; }, 3200);
   }
-  if (!unit)  { showMsg('Please select a unit.', true); return; }
+  if (!unit)  { showMsg('Please enter a unit.', true); return; }
   if (!issue) { showMsg('Please describe the issue.', true); return; }
   SESSION_ITEMS_111W.push({
     unit,
@@ -1905,18 +1891,20 @@ function renderSO() {
   if (!tb) return;
   const rows = (typeof SERVICE_ORDERS !== 'undefined') ? SERVICE_ORDERS : [];
   if (!rows.length) {
-    tb.innerHTML = '<tr><td colspan="8" style="padding:16px;text-align:center;color:var(--text-3);">No service orders.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="11" style="padding:16px;text-align:center;color:var(--text-3);">No service orders.</td></tr>';
     return;
   }
-  const STAGE = { 'REQUESTED':'PROJ', 'CONFIRMED':'LDG', 'IN PRODUCTION':'LDD', 'EN ROUTE':'ENR', 'DELIVERED':'D', 'CLOSED':'D' };
+  const STAGE = { 'REQUESTED':'PROJ', 'CONFIRMED':'PROJ', 'IN PRODUCTION':'PROJ', 'EN ROUTE':'ENR', 'DELIVERED':'D', 'CLOSED':'D' };
   tb.innerHTML = rows.map(o => {
     const k = STAGE[o.sts];
-    const st = (!k || k === 'PROJ') ? `background:transparent;border:1px solid rgba(13,42,107,0.35);color:${STXT.PROJ};`
+    const st = o.sts === 'CCM TO CONFIRM' ? 'background:#D01C1F;color:#fff;'   // in CCM's court
+             : (!k || k === 'PROJ') ? `background:transparent;border:1px solid rgba(13,42,107,0.35);color:${STXT.PROJ};`
              : `background:${SCOLOR[k]};color:${STXT[k]};`;
     const badge = `<span class="badge" style="${st}">${esc(o.sts)}</span>`;
-    return `<tr${o.sts === 'CLOSED' ? ' class="so-closed"' : ''}>` +
-      `<td class="so-num">${esc(o.so)}</td><td class="so-sts">${badge}</td><td>${esc(o.desc)}</td>` +
-      `<td>${esc(o.ready)}</td><td>${esc(o.ship)}</td><td>${esc(o.ctnr)}</td>` +
+    const cls = o.sts === 'CLOSED' ? ' class="so-closed"' : o.sts === 'CCM TO CONFIRM' ? ' class="so-ccm"' : '';
+    return `<tr${cls}>` +
+      `<td class="so-num">${esc(o.so)}</td><td class="so-sts">${badge}</td><td>${esc(o.jo)}</td><td>${esc(o.desc)}</td><td>${esc(o.part)}</td>` +
+      `<td>${esc(o.reported)}</td><td>${esc(o.confirmed)}</td><td>${esc(o.ready)}</td><td>${esc(o.ctnr)}</td>` +
       `<td style="font-weight:700;">${esc(o.deliv)}</td><td>${esc(o.items)}</td></tr>`;
   }).join('');
 }
@@ -1935,7 +1923,6 @@ setBldgDir(_bldgAsc);   // renders the matrix and syncs the toggle buttons
 initBldgPreview();
 applyStaff();           // restores internal view if it was on earlier this session
 initFloorLabel();
-initUnitDropdown();
 renderSession111w();
 
 /* ══════════════════════ PRINT REPORT ══════════════════════
