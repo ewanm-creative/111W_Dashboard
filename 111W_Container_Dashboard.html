@@ -682,7 +682,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
   <div id="so-sched" style="margin-bottom:20px;">
     <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Service order schedule</div>
-    <div class="tw"><table><thead><tr><th>SO #</th><th>Status</th><th>JO #</th><th>Description</th><th>Part Type</th><th>Reported</th><th>Confirmed</th><th>Est. Ready</th><th>Container</th><th>Delivery</th><th>Items</th></tr></thead><tbody id="so-tbody"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>SO #</th><th>Status</th><th>JO #</th><th>Description</th><th>Part Type</th><th>Reported</th><th>Confirmed</th><th class="staff-col">Est. Ready</th><th>Ship Date</th><th>Container</th><th>Delivery</th><th>Items</th></tr></thead><tbody id="so-tbody"></tbody></table></div>
   </div>
 
   <div class="dmg-note" style="margin-bottom:16px;font-size:12px;line-height:1.6;color:var(--text);">
@@ -749,7 +749,7 @@ html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-ad
 
 </div><!-- /.shell -->
 <script>
-// DATA_START (auto-generated Nov 9, 2026 2:03 PM)
+// DATA_START (auto-generated Nov 9, 2026 3:21 PM)
 const CONTAINERS = [
   { num:"1", status:"D", week:"Wk 32", units:"301:313,315:320", unitQty:19, vessel:"CONTI CHIAVARI", loadDate:"Aug 6", shipDate:"Aug 14", portArrival:"Sep 4", portDays:"5", delivery:"Wed Sep 9", deliveryISO:"2026-09-09", confirmed:true, bookable:true, floors:"3", note:"Trouble Unloading  - there were some detention charges", extra:"", code:"MEDU7973030", delivTime:"7:00 AM" },
   { num:"2", status:"D", week:"Wk 32", units:"321:333,335:340", unitQty:19, vessel:"MSC INGRID", loadDate:"Aug 7", shipDate:"Aug 21", portArrival:"Sep 11", portDays:"4", delivery:"Tue Sep 15", deliveryISO:"2026-09-15", confirmed:true, bookable:true, floors:"3", note:"", extra:"", code:"MSDU7213040", delivTime:"7:00 AM" },
@@ -794,7 +794,7 @@ const TRANSIT_PERF = [
   { label:"Total Transit Time", value:"27.342105263157897" },
 ];
 
-const LAST_UPDATED = "Nov 9, 2026 2:03 PM";
+const LAST_UPDATED = "Nov 9, 2026 3:21 PM";
 const TOTAL_KITCHENS = 1567;
 const DATA_WARNINGS = ["987 kitchen(s) in the matrix are not in any container: 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1311, 1312...", "SO Link: status column header reads 'So Items' - rename it 'SO Status'"];
 
@@ -829,11 +829,11 @@ const BUILDING_MATRIX = [
 ];
 
 const SERVICE_ORDERS = [
-  {"so": "111W-0D", "jo": "N/A", "desc": "3rd Floor Doors (Flatpack)", "part": "Late production", "sts": "CLOSED", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/06/26", "ctnr": "CTNR 10", "deliv": "11/05/26", "items": "All Doors for CTNR's 1-3 that were missing"},
-  {"so": "111W-0H", "jo": "N/A", "desc": "3rd Floor Doors Handles", "part": "Late production", "sts": "CLOSED", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/06/26", "ctnr": "Airfreight", "deliv": "10/26/26", "items": "105 Base Unit Handles"},
-  {"so": "111W-LC-1", "jo": "J252/26", "desc": "Mockup Door replacements: 314,334,355", "part": "layout changes", "sts": "EN ROUTE", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/16/26", "ctnr": "CTNR 12", "deliv": "11/17/26", "items": "Doors to update mockup door styles to new standard"},
-  {"so": "111W-LC-2", "jo": "TBD", "desc": "Unit 58 floor 3:12 replacment cabientry", "part": "layout changes", "sts": "IN PRODUCTION", "reported": "09/01/26", "confirmed": "09/01/26", "ready": "TBD", "ctnr": "TBD", "deliv": "--", "items": "Cabinets to convert from MR to AFF"},
-  {"so": "111W-D-01", "jo": "TBD", "desc": "Damages on Floors 3,4,5 -8 items", "part": "damage replacement", "sts": "CCM TO CONFIRM", "reported": "11/04/26", "confirmed": "11/09/26", "ready": "TBD", "ctnr": "TBD", "deliv": "--", "items": "7 items: 353, 453, 520, 433, 431, 422, 425"},
+  {"so": "111W-0D", "jo": "N/A", "desc": "3rd Floor Doors (Flatpack)", "part": "Late production", "sts": "CLOSED", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/06/26", "ship": "10/13/26", "ctnr": "CTNR 10", "deliv": "11/05/26", "items": "All Doors for CTNR's 1-3 that were missing"},
+  {"so": "111W-0H", "jo": "N/A", "desc": "3rd Floor Doors Handles", "part": "Late production", "sts": "CLOSED", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/06/26", "ship": "10/13/26", "ctnr": "Airfreight", "deliv": "10/26/26", "items": "105 Base Unit Handles"},
+  {"so": "111W-LC-1", "jo": "J252/26", "desc": "Mockup Door replacements: 314,334,355", "part": "layout changes", "sts": "EN ROUTE", "reported": "08/04/26", "confirmed": "08/04/26", "ready": "10/16/26", "ship": "10/23/26", "ctnr": "CTNR 12", "deliv": "11/17/26", "items": "Doors to update mockup door styles to new standard"},
+  {"so": "111W-LC-2", "jo": "TBD", "desc": "Unit 58 floor 3:12 replacment cabientry", "part": "layout changes", "sts": "IN PRODUCTION", "reported": "09/01/26", "confirmed": "09/01/26", "ready": "TBD", "ship": "TBD", "ctnr": "TBD", "deliv": "--", "items": "Cabinets to convert from MR to AFF"},
+  {"so": "111W-D-01", "jo": "TBD", "desc": "Damages on Floors 3,4,5 -8 items", "part": "damage replacement", "sts": "CCM TO CONFIRM", "reported": "11/04/26", "confirmed": "11/09/26", "ready": "TBD", "ship": "TBD", "ctnr": "TBD", "deliv": "--", "items": "7 items: 353, 453, 520, 433, 431, 422, 425"},
 ];
 // DATA_END
 
@@ -1890,7 +1890,7 @@ function renderSO() {
   if (!tb) return;
   const rows = (typeof SERVICE_ORDERS !== 'undefined') ? SERVICE_ORDERS : [];
   if (!rows.length) {
-    tb.innerHTML = '<tr><td colspan="11" style="padding:16px;text-align:center;color:var(--text-3);">No service orders.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="12" style="padding:16px;text-align:center;color:var(--text-3);">No service orders.</td></tr>';
     return;
   }
   const STAGE = { 'REQUESTED':'PROJ', 'CONFIRMED':'PROJ', 'IN PRODUCTION':'PROJ', 'EN ROUTE':'ENR', 'DELIVERED':'D', 'CLOSED':'D' };
@@ -1903,7 +1903,7 @@ function renderSO() {
     const cls = o.sts === 'CLOSED' ? ' class="so-closed"' : o.sts === 'CCM TO CONFIRM' ? ' class="so-ccm"' : '';
     return `<tr${cls}>` +
       `<td class="so-num">${esc(o.so)}</td><td class="so-sts">${badge}</td><td>${esc(o.jo)}</td><td>${esc(o.desc)}</td><td>${esc(o.part)}</td>` +
-      `<td>${esc(o.reported)}</td><td>${esc(o.confirmed)}</td><td>${esc(o.ready)}</td><td>${esc(o.ctnr)}</td>` +
+      `<td>${esc(o.reported)}</td><td>${esc(o.confirmed)}</td><td class="staff-col">${esc(o.ready)}</td><td>${esc(o.ship)}</td><td>${esc(o.ctnr)}</td>` +
       `<td style="font-weight:700;">${esc(o.deliv)}</td><td>${esc(o.items)}</td></tr>`;
   }).join('');
 }
